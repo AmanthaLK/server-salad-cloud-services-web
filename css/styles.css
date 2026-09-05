@@ -2359,21 +2359,13 @@ button { font: inherit; cursor: pointer; }
                 and re-tuned those margins for a more consistent, breathable
                 spacing pattern (name → tagline → price [tightly paired with the
                 billed-as line] → guarantee). */
-  /* Top padding is sized for the "Most Popular" band (see --popular below) and
-     applied to ALL 3 cells, not just Standard Salad's — otherwise its title/
-     tagline/price/button sit visibly lower than Starter's and Premium's, which
-     don't have a band eating into their padding. Keeping this uniform is what
-     keeps all 3 columns' content aligned row-for-row. */
-  padding: 46px 18px 26px;
+  padding: 26px 18px;
   background: var(--bg-topbar);
 }
-/* Standard Salad's "Most Popular" indicator and Premium Salad's accent stripe
-   (.cph-table__pkg--featured, below) are both "this tier is highlighted" signals
-   and now use the SAME treatment — a flush band across the very top of the cell
-   — so they read as one consistent pattern instead of two different ones (a
-   floating pill badge vs. a flush line looked inconsistent side by side). This
-   also sidesteps the earlier clipping problem entirely: a flush band never pokes
-   outside the table's overflow:hidden box the way an overlapping pill did. */
+/* .cph-table__pkg-badge — the old "MOST POPULAR" flush band on Standard Salad,
+   now removed from the markup. Rule kept as dead code in case the band is
+   wanted again; if it comes back, restore the base rule's top padding to ~46px
+   so its title/tagline/price don't sit under the band. */
 .cph-table__pkg-badge {
   position: absolute;
   top: 0;
@@ -2390,7 +2382,7 @@ button { font: inherit; cursor: pointer; }
   text-align: center;
 }
 .cph-table__pkg--featured {
-  background: linear-gradient(180deg, rgba(245, 126, 32, .12), var(--bg-topbar) 140px);
+  background: var(--bg-topbar); /* solid black, same as the other package cells — no orange tint gradient */
   box-shadow: inset 0 3px 0 var(--brand-orange);
 }
 .cph-table__pkg-name {
