@@ -34,7 +34,7 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=212**). **`js/main.js` has its own separate
+  (`css/styles.css?v=N`, currently **v=215**). **`js/main.js` has its own separate
   `?v=N`** (currently **v=7**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
@@ -399,8 +399,8 @@ unless the owner says otherwise — update this list when that happens:
        description text copied verbatim from the matching hero card** (this resolves
        the earlier placeholder-copy gap — see "Open items" for what's still open).
        No "Learn more →" link and no "Most Popular" badge on either card (both
-       removed per owner; `.mega-card__cta`/`.mega-card__badge` CSS rules are unused
-       dead code, kept in case they're wanted again).
+       removed per owner; their `.mega-card__cta`/`.mega-card__badge` CSS rules
+       have since been deleted too).
     4. **"Key Features" / "cPanel Business Hosting Difference" box**
        (`.nav__mega-features`, 260px column, solid black `var(--bg-topbar)` —
        stretches via `align-items:stretch` on the outer 2-column grid to match
@@ -1188,34 +1188,30 @@ unless the owner says otherwise — update this list when that happens:
     portion with 2-Core power, prepped for testing and staging.", **Standard Salad**
     "Hearty main course with 2-Core power, prepped for live blogs and freelancers.",
     **Premium Salad** "Generous banquet platter with 2-Core power, prepped for
-    multi-site creators." **Premium Salad's cell has a visual highlight**
-    (a radial orange tint fading into the black background + a 3px orange top accent
-    via `box-shadow: inset`, `.cph-table__pkg--featured`) — a **pure design accent**,
-    no "Most Popular" text (there's no data on which tier is actually most popular,
-    same reasoning as every other unverified-claim omission — this one stays a
-    visual highlight only). The feature-comparison rows below the header, and the
-    "Order ... Salad" button row at the very bottom, are **not** part of this black
-    treatment — they stay on their original white/light backgrounds.
-  - **Standard Salad has a "MOST POPULAR" indicator** — the owner's own
-    designation for their plan (unlike Premium Salad's plain accent above). It's a
-    **flush band across the entire top of the cell** (`.cph-table__pkg-badge`,
-    `top/left/right: 0`, no border-radius, no overhang) — the same *kind* of
-    treatment as Premium's flush top accent line, just with text and more height,
-    so nothing crosses the table's rounded-corner edge or gets clipped. Room for
-    the band is made via `padding-top: 46px` on the **base** `.cph-table__pkg`
-    rule (applied to all 3 cells uniformly, not just Standard Salad's, so every
-    column's content aligns row-for-row regardless of which cell has the band).
-    The `.cph-table__pkg--popular` class stays on Standard Salad's markup to
-    document *which* cell is the "popular" one, even though it carries no styling
-    of its own.
+    multi-site creators." **Premium Salad's cell has a small visual highlight** —
+    just a 3px orange top accent line (`box-shadow: inset 0 3px 0`,
+    `.cph-table__pkg--featured`); the cell background itself is the same solid
+    black as the other two (an earlier orange-tint gradient was removed per
+    owner). No "Most Popular" text (there's no data on which tier is actually
+    most popular, same reasoning as every other unverified-claim omission — this
+    one stays a visual highlight only). The feature-comparison rows below the
+    header, and the "Order ... Salad" button row at the very bottom, are **not**
+    part of this black treatment — they stay on their original white/light
+    backgrounds.
+  - **No "MOST POPULAR" band.** Standard Salad briefly carried a flush
+    orange-band indicator across the top of its cell; the owner had it removed,
+    so all 3 package cells now read identically apart from Premium's 3px accent
+    line. The base `.cph-table__pkg` top padding was dropped back to `26px`
+    (the extra room only existed to clear that band). `.cph-table__pkg-badge`
+    and the `.cph-table__pkg--popular` marker class were both deleted along with
+    the band.
   - **Pricing — all 3 tiers are LIVE**, fetched from the same
     `cpanel_package_pricing` database table via `api/pricing.php` (see "Pricing
     API" below): each `<strong>` carries `data-price="starter_salad" /
     "standard_salad" / "premium_salad"` plus a `data-monthly` fallback value
     (500 / 1,200 / 2,500 respectively) that only ever displays if the live fetch
-    fails. The `.cph-table__pkg-price--soon` "to be announced" style is kept in
-    the CSS (currently unused) in case a tier ever needs that state again. (The
-    "Order ... Salad" buttons are documented in the CTA row bullet below.)
+    fails. (The "Order ... Salad" buttons are documented in the CTA row bullet
+    below.)
   - **Feature rows**, from the spreadsheet in its original order:
     Websites, Storage (shown as "N GB NVMe" — spreadsheet's separate GB/MB rows
     collapsed into one, since MB is just the same number in different units),
@@ -1248,8 +1244,6 @@ unless the owner says otherwise — update this list when that happens:
     Guarantee") lives outside the table entirely — it's a small line
     (`.cph-table__pkg-guarantee`) under each plan's price block instead (see
     below), positioned per-column near the price rather than as a shared table row.
-    `.cph-table__val--span3` (CSS for a cell spanning all 3 columns) is unused but
-    kept in case a future shared row needs it again.
 - **`.cph-included`** — below the table, a list of what every tier includes (not
   differentiated). **11 items:** cPanel Control Panel, **WordPress Support**,
   **Free SSL**, Softaculous 1-Click App Installer, Python Support, Node.js Support,
@@ -1609,5 +1603,5 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=212**. Always check the live number in both HTML
+  Conventions); currently **v=215**. Always check the live number in both HTML
   files rather than trusting a figure remembered from earlier in a conversation.
