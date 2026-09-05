@@ -271,16 +271,6 @@ button { font: inherit; cursor: pointer; }
   animation: plans-note-travel 4.2s linear infinite,
              plans-note-length 5.6s ease-in-out infinite;
 }
-.nav__mega-apps-label {
-  display: block;
-  margin-bottom: 12px;
-  font-family: "Cairo", var(--font-heading);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-  color: rgb(122, 122, 122);
-}
 .nav__mega-apps-row {
   display: flex;
   align-items: center;
@@ -448,29 +438,6 @@ button { font: inherit; cursor: pointer; }
   transform: translateY(-2px);
 }
 
-/* Reuses the exact "Most Popular" wording already used on the matching hero card
-   and Plans card (see their notes) — same floating-pill treatment, scaled down for
-   this smaller card. Only present on the one mega-card that actually carries it. */
-.mega-card__badge {
-  position: absolute;
-  top: -10px;
-  right: 14px;
-  background: #fff;
-  color: var(--brand-orange);
-  border: 1.5px solid var(--brand-orange);
-  font-family: "Cairo", var(--font-heading);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-  line-height: 10px;
-  text-align: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
-  white-space: nowrap;
-}
-
 /* Icon + title sit inline on one row (reference-inspired layout), rather than
    icon stacked above title. */
 .mega-card__row { display: flex; align-items: center; gap: 10px; }
@@ -520,14 +487,6 @@ button { font: inherit; cursor: pointer; }
   font-weight: 300;
   line-height: 21px;
   color: rgb(122, 122, 122);
-}
-
-.mega-card__cta {
-  margin-top: auto;
-  padding-top: 4px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--brand-orange);
 }
 
 /* ===== Hero ===== */
@@ -1054,9 +1013,7 @@ button { font: inherit; cursor: pointer; }
     background: none;
   }
   .mega-card:hover { background: none; transform: none; }
-  .mega-card__badge { display: none; }
   .mega-card__desc { display: none; }
-  .mega-card__cta { display: none; }
 
   .btn--account { margin: 16px 0 0; align-self: flex-start; }
 }
@@ -2324,11 +2281,6 @@ button { font: inherit; cursor: pointer; }
   color: #3a3a40;
   border-top: 1px solid #ececf0;
 }
-/* Currently unused — the Money-Back Guarantee row that needed this (a single
-   value spanning all 3 plan columns) was moved into each price block instead
-   (.cph-table__pkg-guarantee, below). Kept in case a future shared-across-plans
-   row needs the same treatment. */
-.cph-table__val--span3 { grid-column: 2 / 5; }
 .cph-table__cross { color: #d3382e; }
 
 /* Data Center row: flag has white in it, which would vanish against the table's
@@ -2362,25 +2314,6 @@ button { font: inherit; cursor: pointer; }
   padding: 26px 18px;
   background: var(--bg-topbar);
 }
-/* .cph-table__pkg-badge — the old "MOST POPULAR" flush band on Standard Salad,
-   now removed from the markup. Rule kept as dead code in case the band is
-   wanted again; if it comes back, restore the base rule's top padding to ~46px
-   so its title/tagline/price don't sit under the band. */
-.cph-table__pkg-badge {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 7px 0;
-  background: linear-gradient(135deg, #ffb27a, var(--brand-orange));
-  color: #fff;
-  font-family: var(--font-heading);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-  text-align: center;
-}
 .cph-table__pkg--featured {
   background: var(--bg-topbar); /* solid black, same as the other package cells — no orange tint gradient */
   box-shadow: inset 0 3px 0 var(--brand-orange);
@@ -2411,16 +2344,6 @@ button { font: inherit; cursor: pointer; }
   color: var(--brand-orange);
 }
 .cph-table__pkg-price span { font-size: 12px; }
-/* Currently unused (both tiers show dummy prices instead, see README) — kept
-   because it's the same "not priced yet" state the homepage Plans section uses,
-   and likely to be needed again here the moment real pricing lands for only one
-   of these two tiers. */
-.cph-table__pkg-price--soon {
-  font-size: 14px;
-  font-weight: 700;
-  font-style: normal;
-  color: #fff;
-}
 /* CTA row lives at the bottom of the table now (moved per owner — used to sit
    directly under each price in the header row). Each cell matches the padding/
    border rhythm of an ordinary .cph-table__val row so it reads as one more row,
