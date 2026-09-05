@@ -1,0 +1,3092 @@
+/* ===== Base / tokens ===== */
+:root {
+  /* Official brand colours (from the logo). Not used everywhere by default — reach
+     for these at brand touchpoints; the rest of the UI uses a broader accent palette
+     for visual interest. */
+  --brand-dark: #323d41;
+  --brand-orange: #f57e20;
+
+  --bg-dark: #0a0a0b;
+  --bg-topbar: #000;
+  --text: #f5f5f7;
+  --text-muted: #b5b5bd;
+  --accent: #e5484d;
+  --accent-2: #ff8a5c;
+  --eco-green-light: rgb(95, 227, 154); /* used only in the sustainability section */
+  --radius: 8px;
+  --container: 1240px;   /* max content width — same on every section */
+  --gutter: 24px;        /* left/right page spacing — same on every section */
+
+  /* Type system — 2 families site-wide: Poppins for headings/emphasis (bold, punchy),
+     Inter for body/UI text (readable at small sizes). Both loaded via Google Fonts
+     in index.html <head>. Fall back to the system stack if the webfont fails. */
+  --font-heading: "Poppins", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  font-family: var(--font-body);
+  color: #1b1b1f;
+  background: #fff;
+}
+
+h1, h2, h3, h4,
+.nav__link, .btn,
+.hero-card__badge,
+.mega-card__title {
+  font-family: var(--font-heading);
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+
+/* Every full-width section wraps its content in .container so the left/right
+   gutter is identical site-wide. A full-bleed background = colour the outer
+   section, keep the inner .container. */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+@media (max-width: 600px) {
+  :root { --gutter: 16px; }
+}
+
+/* ===== Top utility bar ===== */
+.topbar {
+  background: var(--bg-topbar);
+  color: var(--text-muted);
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  height: 34px;
+}
+
+.topbar__group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.topbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  transition: color .15s;
+}
+.topbar__link:hover { color: var(--text); }
+
+/* ===== Nav dropdown (simple lists: Discount Programs, Support) ===== */
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  transition: transform .15s;
+}
+.nav__item.is-open .caret { transform: rotate(180deg); }
+
+.nav__item { position: relative; }
+
+.nav__sub {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 200px;
+  background: #17171a;
+  border: 1px solid #26262b;
+  border-radius: var(--radius);
+  padding: 6px;
+  list-style: none;
+  margin: 0;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 60;
+}
+.nav__item.is-open .nav__sub {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav__sub li a {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background .12s, color .12s;
+}
+.nav__sub li a:hover {
+  background: #23232a;
+  color: var(--text);
+}
+
+/* ===== Mega menu (Web Hosting) =====
+   .nav__item.has-mega overrides position back to static so .nav__mega (absolute,
+   left:0; right:0) resolves against .nav (the full-width sticky header) instead of
+   the li — that's what makes the panel span edge-to-edge. The inner .container
+   re-applies the site's standard gutter so card content lines up with everything else. */
+.nav__item.has-mega { position: static; }
+
+.nav__mega {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #e3e3e8;
+  border-bottom: 2px solid var(--brand-orange);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, .12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity .18s, transform .18s, visibility .18s;
+  z-index: 60;
+}
+.nav__item.is-open .nav__mega {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav__mega-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  padding-top: 28px;
+  padding-bottom: 32px;
+}
+/* Web Hosting▾ only (so far — the only one with real existing copy to fill an
+   intro column with, see its comment in header.html): a fixed-width intro column
+   + thin divider + a flexible row of cards, instead of the plain auto-fit grid
+   the other (introless) mega menus use. */
+.nav__mega-inner--intro {
+  grid-template-columns: 1fr 260px;
+  align-items: stretch;
+  gap: 0;
+}
+/* Tops already line up (both start at the grid row's top); stretch makes the
+   Key Features box grow to match .nav__mega-left's height too, so its bottom
+   edge lands level with the apps strip's bottom instead of ending short. */
+.nav__mega-left { display: flex; flex-direction: column; }
+/* Intro + divider + cards, side by side — everything left of the Key
+   Features box. The app-logos strip sits below this as a 2nd row, its width
+   naturally capped to this wrapper's own width (see .nav__mega-apps). */
+.nav__mega-left-top {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  align-items: start;
+  gap: 0;
+}
+.nav__mega-intro { padding: 12px 28px 4px 0; }
+.nav__mega-intro-title {
+  margin: 0 0 10px;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 33px;
+  line-height: 33px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgb(40, 39, 39);
+  white-space: nowrap;
+}
+/* Gradient accent word — same red/orange gradient as .hero__title-accent. */
+.nav__mega-intro-title strong {
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav__mega-intro-desc {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgb(122, 122, 122);
+}
+/* Divider + cards are flex siblings here (not separate grid columns) so the
+   divider stretches to the cards' own content height, not the taller Key
+   Features box's height. */
+.nav__mega-middle { display: flex; align-items: stretch; }
+.nav__mega-intro-divider { width: 1px; flex-shrink: 0; background: #e3e3e8; }
+/* Stacked top-to-bottom (not side-by-side) — matches the reference's product-row
+   layout, where each card runs the full width of its column. */
+.nav__mega-cards { flex: 1 1 auto; display: flex; flex-direction: column; gap: 18px; padding-left: 28px; margin-right: 28px; }
+.nav__mega-cards .mega-card { width: 100%; }
+
+/* App-install logos strip — 2nd row under intro+cards, width-capped to
+   .nav__mega-left (never reaches the Key Features box at any viewport
+   width); wraps to a 2nd line rather than overflowing if it doesn't fit. */
+.nav__mega-apps {
+  position: relative;
+  margin-top: 18px;
+  width: max-content;
+  max-width: calc(100% - 28px);
+  padding: 34px 18px;
+  border-radius: var(--radius);
+  background: #f8f8fa;
+}
+/* Same traveling-bolt effect as .plans__note-beam (see its comment for why
+   an SVG stroke, not a conic-gradient) — reuses its keyframes as-is. */
+/* Single stroke (no separate white core), softened with an actual blur so it
+   reads as a hazy glow rather than a crisp line. */
+.nav__mega-apps-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: blur(1.6px) drop-shadow(0 0 6px rgba(245, 126, 32, .8));
+  animation: plans-note-flicker 4.2s ease-in-out infinite;
+}
+.nav__mega-apps-beam svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.nav__mega-apps-beam-glow {
+  fill: none;
+  stroke-linecap: round;
+  stroke: var(--brand-orange);
+  stroke-width: 3;
+  opacity: .9;
+  animation: plans-note-travel 4.2s linear infinite,
+             plans-note-length 5.6s ease-in-out infinite;
+}
+.nav__mega-apps-label {
+  display: block;
+  margin-bottom: 12px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  color: rgb(122, 122, 122);
+}
+.nav__mega-apps-row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.nav__mega-apps-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+/* The whole link (text + pointer) bounces together as one unit, on top of
+   which the pointer also gets its own press-squash + ripple — so the text
+   isn't just sitting still while only the icon animates. All 4 animations
+   below are scoped to ".nav__item.is-open" (not applied unconditionally) so
+   they restart from 0% the instant the mega menu opens, instead of running
+   continuously in the background the whole time it's closed — where
+   visibility:hidden doesn't pause them — and being caught mid-cycle (often
+   the idle stretch) whenever it's opened. */
+.nav__mega-apps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 14px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 14px;
+  color: var(--brand-orange);
+}
+.nav__item.is-open .nav__mega-apps-link { animation: nav-apps-link-bounce 1.8s ease-in-out infinite; }
+.nav__mega-apps-link-text { max-width: 150px; text-align: right; }
+.nav__item.is-open .nav__mega-apps-link-text { animation: nav-apps-text-glow 1.8s ease-in-out infinite; }
+@keyframes nav-apps-link-bounce {
+  0%, 100% { transform: translateY(0); }
+  18% { transform: translateY(3px); }
+  32% { transform: translateY(0); }
+}
+@keyframes nav-apps-text-glow {
+  0%, 100% { text-shadow: none; }
+  18% { text-shadow: 0 0 10px rgba(245, 126, 32, .6); }
+  32% { text-shadow: none; }
+}
+/* Press-and-ripple loop — the finger dips down like it's pressing, then two
+   rings expand outward from it and fade, like a tap/click ripple. */
+.nav__mega-apps-link-arrow {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--apps-link-icon) center / contain no-repeat;
+  mask: var(--apps-link-icon) center / contain no-repeat;
+}
+.nav__item.is-open .nav__mega-apps-link-arrow { animation: nav-apps-press 1.8s ease-in-out infinite; }
+.nav__mega-apps-link-arrow::before,
+.nav__mega-apps-link-arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  transform: translate(-50%, -50%) scale(.4);
+  opacity: 0;
+  pointer-events: none;
+}
+.nav__item.is-open .nav__mega-apps-link-arrow::before,
+.nav__item.is-open .nav__mega-apps-link-arrow::after { animation: nav-apps-wave 1.8s ease-out infinite; }
+.nav__mega-apps-link-arrow::after { animation-delay: .5s; }
+@keyframes nav-apps-press {
+  0%, 100% { transform: translateY(0) scale(1); }
+  18% { transform: translateY(3px) scale(.88); }
+  32% { transform: translateY(0) scale(1); }
+}
+@keyframes nav-apps-wave {
+  0% { transform: translate(-50%, -50%) scale(.4); opacity: .6; }
+  18% { opacity: .45; }
+  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav__mega-apps-link,
+  .nav__mega-apps-link-text,
+  .nav__mega-apps-link-arrow,
+  .nav__mega-apps-link-arrow::before,
+  .nav__mega-apps-link-arrow::after,
+  .nav__item.is-open .nav__mega-apps-link,
+  .nav__item.is-open .nav__mega-apps-link-text,
+  .nav__item.is-open .nav__mega-apps-link-arrow,
+  .nav__item.is-open .nav__mega-apps-link-arrow::before,
+  .nav__item.is-open .nav__mega-apps-link-arrow::after { animation: none; }
+}
+
+/* "Key Features" / "cPanel Business Hosting Difference" box — owner-supplied
+   real plan-spec copy. Solid black, same token as the footer/topbar, not a
+   new colour; checkmarks use --brand-orange, not the reference's red. */
+.nav__mega-features {
+  padding: 20px 20px 22px;
+  border-radius: var(--radius);
+  background: var(--bg-topbar);
+}
+.nav__mega-features-title {
+  margin: 0 0 12px;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 18px;
+  line-height: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  color: #fff;
+}
+.nav__mega-features-title strong {
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav__mega-features-title--sub { margin-top: 20px; }
+.nav__mega-features-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav__mega-features-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 20px;
+  color: rgb(255, 255, 255);
+}
+.nav__mega-features-list li strong { color: #fff; font-weight: 700; }
+.nav__mega-features-check {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  margin-top: 2px;
+  color: var(--brand-orange);
+}
+
+.mega-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: #f8f8fa;
+  border: 1px solid #e3e3e8;
+  transition: border-color .15s, transform .15s, background .15s;
+}
+.mega-card:hover {
+  border-color: var(--brand-orange, var(--accent-2));
+  background: #f1f1f5;
+  transform: translateY(-2px);
+}
+
+/* Reuses the exact "Most Popular" wording already used on the matching hero card
+   and Plans card (see their notes) — same floating-pill treatment, scaled down for
+   this smaller card. Only present on the one mega-card that actually carries it. */
+.mega-card__badge {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  line-height: 10px;
+  text-align: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+  white-space: nowrap;
+}
+
+/* Icon + title sit inline on one row (reference-inspired layout), rather than
+   icon stacked above title. */
+.mega-card__row { display: flex; align-items: center; gap: 10px; }
+
+/* Solid orange icon on a light orange-tinted tile — same combo as
+   .migration-card__icon — reads with far more contrast at this small size than
+   the previous white-icon-on-gradient treatment, where the thin icon linework
+   washed out against the busy background. */
+.mega-card__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(245, 126, 32, .14);
+  color: var(--brand-orange);
+}
+
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment) —
+   reuses the exact same icon files as the matching hero cards (cPanel Hosting /
+   cPanel Business Hosting) via the --mega-icon custom property, so the icon glyph
+   stays identical between the hero section and this mega-menu card. */
+.mega-card__icon-img {
+  width: 18px;
+  height: 18px;
+  background-color: currentColor;
+  -webkit-mask: var(--mega-icon) center / contain no-repeat;
+  mask: var(--mega-icon) center / contain no-repeat;
+}
+
+.mega-card__title {
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgb(40, 39, 39);
+}
+.mega-card__title strong { font-weight: 500; }
+
+.mega-card__desc {
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 21px;
+  color: rgb(122, 122, 122);
+}
+
+.mega-card__cta {
+  margin-top: auto;
+  padding-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-orange);
+}
+
+/* ===== Hero ===== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  /* Fill the rest of the viewport on load: 100vh minus the fixed header above it
+     (34px topbar + 74px main nav). Content is vertically centred within that. */
+  min-height: calc(100vh - 108px);
+  display: flex;
+  align-items: center;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, .12) 0, transparent 60%),
+    linear-gradient(120deg, #2c1240 0%, #171a2e 45%, #0c2f37 100%);
+}
+.hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .35) 1px, transparent 1px);
+  background-size: 34px 34px;
+  opacity: .12;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%; /* .hero is now a flex container (for vertical centring) — without an
+                  explicit width this flex item would shrink to its content instead
+                  of filling/centring like a normal block .container would. */
+  padding: 64px 0 56px;
+  text-align: center;
+}
+
+.hero__title {
+  margin: 0 0 14px;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: clamp(26px, 3.6vw, 40px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: rgb(255, 255, 255);
+}
+.hero__title-accent {
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+  margin-top: 88px;
+  margin-bottom: 40px;
+}
+
+.hero-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 14px;
+  min-height: 340px;
+  background: #fff;
+  color: #1b1b1f;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 48px 26px;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.hero-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+}
+
+/* Floating pill centred on the card's top edge, half in / half out — replaces the
+   earlier corner-ribbon treatment. */
+.hero-card__badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  line-height: 13px;
+  text-align: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+  white-space: nowrap;
+}
+
+.hero-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-orange);
+  margin-bottom: 4px;
+}
+
+/* Icon graphic itself: same masked-external-SVG technique as the cpanel-hosting
+   page's .cph-feature__icon (see its comment) — painted via CSS `background-color`
+   through a `mask`, so recolouring only ever means changing `color` here, not
+   editing each SVG file. Each card sets its own icon file via the --hero-icon
+   custom property inline on the element. */
+.hero-card__icon-img {
+  display: block;
+  width: 34px;
+  height: 34px;
+  background-color: currentColor;
+  -webkit-mask: var(--hero-icon) center / contain no-repeat;
+  mask: var(--hero-icon) center / contain no-repeat;
+}
+
+.hero-card__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 26px;
+  color: rgb(40, 39, 39);
+}
+
+.hero-card__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 23px;
+  color: rgb(40, 39, 39);
+}
+
+/* "Powered by" partner logo strip — stretches to the same width as .hero__cards
+   above it (both are full-width children of .hero__inner). */
+.hero__strip {
+  margin-top: 72px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  padding-top: 28px;
+}
+
+/* Fixed "window" that only ever shows 4 logo slots; the track inside slides past it.
+   js/main.js sets --logo-slot = this element's width ÷ 4 on load/resize. */
+.hero__logos-viewport {
+  overflow: hidden;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.hero__logos-viewport.is-dragging { cursor: grabbing; }
+
+.hero__logos {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  will-change: transform;
+}
+.hero__logos li {
+  flex: 0 0 auto;
+  width: var(--logo-slot, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero__logos img {
+  display: block;
+  height: 34px;
+  width: auto;
+  max-width: 85%;
+  opacity: .75;
+  filter: brightness(0) invert(1); /* normalise all partner logos to solid white */
+  transition: opacity .15s;
+  -webkit-user-drag: none;
+  pointer-events: none; /* clicks/drags go to the viewport, not individual images */
+}
+
+@media (max-width: 600px) {
+  .hero__inner { padding: 48px 0 40px; }
+  .hero__cards { grid-template-columns: 1fr; }
+}
+
+/* ===== "What Makes Us Different" ===== */
+.features {
+  background: #f7f7f9;
+  padding: 88px 0;
+}
+
+.features__title {
+  margin: 0 0 20px;
+  text-align: center;
+  font-family: "Cairo", var(--font-body);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgb(40, 39, 39);
+}
+
+.features__underline {
+  width: 150px;
+  height: 4px;
+  margin: 0 auto 64px;
+  border-radius: 0;
+  background: var(--brand-orange);
+}
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 40px;
+  row-gap: 56px;
+}
+
+.feature__icon {
+  display: inline-flex;
+  color: var(--brand-orange);
+  margin-bottom: 16px;
+}
+
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment) —
+   background-color painted through a mask, so each card's icon file is just an
+   asset swap via the --why-icon custom property, no colour baked into the file. */
+.feature__icon-img {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: currentColor;
+  -webkit-mask: var(--why-icon) center / contain no-repeat;
+  mask: var(--why-icon) center / contain no-repeat;
+}
+
+.feature__title {
+  margin: 0 0 10px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  color: rgb(40, 39, 39);
+}
+.feature__title-accent {
+  display: block;
+  font-weight: 900;
+}
+
+.feature__desc {
+  margin: 0;
+  max-width: 320px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgb(122, 122, 122);
+}
+
+.features__reviews {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 76px;
+  padding-bottom: 12px;
+}
+.review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e3e3e8;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: rgb(76, 73, 96);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .09);
+  border-color: #d4d4db;
+}
+.review-btn__icon { width: 18px; height: 18px; flex-shrink: 0; }
+.review-btn__arrow {
+  color: var(--brand-orange);
+  font-weight: 700;
+  transition: transform .15s;
+}
+.review-btn:hover .review-btn__arrow { transform: translateX(3px); }
+
+@media (max-width: 860px) {
+  .features__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .features { padding: 64px 0; }
+  .features__grid { grid-template-columns: 1fr; row-gap: 40px; }
+  .feature__desc { max-width: none; }
+  .features__reviews { flex-direction: column; align-items: stretch; }
+  .review-btn { justify-content: center; }
+}
+
+/* ===== Main navigation ===== */
+.nav {
+  background: var(--bg-dark);
+  color: var(--text);
+  border-bottom: 1px solid #1c1c20;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  height: 74px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.brand__logo {
+  display: block;
+  height: 46px;
+  width: auto;
+  border-radius: 9px;
+}
+
+.nav__menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;  /* whole group (links + My Account) flush to the right,
+                                  mirroring the logo's gutter on the left */
+  gap: 30px;
+  flex: 1;
+}
+
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 0;
+  color: rgba(255, 255, 255, .9);
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  padding: 0;
+  transition: color .15s;
+}
+.nav__link:hover { color: var(--brand-orange); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 12px 26px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform .12s, box-shadow .15s, background .15s;
+}
+.btn--account {
+  background: #fff;
+  color: rgb(54, 51, 65);
+  font-family: "Montserrat", var(--font-heading);
+  line-height: 14px;
+}
+.btn--account:hover {
+  background: var(--brand-orange);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(255, 255, 255, .18);
+}
+
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 0;
+  margin-left: auto;
+  padding: 6px;
+}
+.nav__burger span {
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform .2s, opacity .2s;
+}
+.nav__burger.is-active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__burger.is-active span:nth-child(2) { opacity: 0; }
+.nav__burger.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ===== Responsive ===== */
+@media (max-width: 980px) {
+  .topbar__inner { gap: 16px; flex-wrap: wrap; height: auto; padding-top: 8px; padding-bottom: 8px; }
+
+  .nav__burger { display: flex; }
+
+  .nav__inner { gap: 16px; }
+
+  .nav__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    background: var(--bg-dark);
+    border-bottom: 1px solid #1c1c20;
+    padding: 8px 24px 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease;
+  }
+  .nav__menu.is-open { max-height: 90vh; overflow: auto; }
+
+  .nav__list { flex-direction: column; align-items: stretch; gap: 0; }
+  .nav__item { border-bottom: 1px solid #1c1c20; }
+  .nav__link { width: 100%; justify-content: space-between; padding: 16px 0; }
+
+  .nav__sub {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    background: #101013;
+    display: none;
+    margin: 0 0 10px;
+  }
+  .nav__item.is-open .nav__sub { display: block; }
+
+  /* Mega menu collapses to the same stacked-list treatment as a simple dropdown —
+     card grid doesn't make sense on small screens. */
+  .nav__mega {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    background: #101013;
+    display: none;
+  }
+  .nav__item.is-open .nav__mega { display: block; }
+
+  .nav__mega-inner,
+  .nav__mega-inner--intro {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 0 10px;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Intro column (Web Hosting▾ only) stacks above the card list instead of
+     sitting beside it, and its divider (a vertical rule on desktop) is dropped
+     rather than rendered sideways. */
+  .nav__mega-left-top { display: flex; flex-direction: column; gap: 0; }
+  .nav__mega-intro { padding: 12px 0; }
+  .nav__mega-middle { flex-direction: column; }
+  .nav__mega-intro-divider { display: none; }
+  .nav__mega-cards { flex-direction: column; padding-left: 0; margin-right: 0; gap: 0; }
+  .nav__mega-apps { margin: 12px 0 0; width: auto; max-width: 100%; padding: 14px; }
+  .nav__mega-apps-row { flex-wrap: wrap; justify-content: flex-start; }
+  .nav__mega-features { margin: 12px 0 0; }
+
+  .mega-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #1c1c20;
+    background: none;
+  }
+  .mega-card:hover { background: none; transform: none; }
+  .mega-card__badge { display: none; }
+  .mega-card__desc { display: none; }
+  .mega-card__cta { display: none; }
+
+  .btn--account { margin: 16px 0 0; align-self: flex-start; }
+}
+
+/* ===== Sustainability ===== */
+.eco {
+  position: relative;
+  z-index: 0; /* establishes a stacking context so .eco__photo's z-index:-1 stays
+                 contained inside .eco instead of escaping below the page background */
+  overflow: hidden;
+  color: var(--text);
+}
+
+/* Photo sits at full strength as the base layer; .eco__bg on top is a *translucent*
+   (not opaque) dark-green tint, so the photo shows through faintly instead of being
+   fully blocked by a solid colour. (Previously .eco__bg's gradient stops had no
+   alpha at all, so it was 100% opaque and hid the photo completely regardless of
+   z-index/opacity — that was the actual bug, not a caching issue.) */
+.eco__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("../assets/img/photos/eco-forest-canopy.jpg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* parallax: image stays put in the viewport while
+    the page scrolls past it, instead of scrolling with the section. Desktop only —
+    background-attachment:fixed is unreliable on mobile Safari/iOS, which falls back
+    to normal scrolling there regardless of this rule. */
+}
+
+.eco__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, .08) 0, transparent 55%),
+    linear-gradient(120deg, rgba(10, 61, 44, .68) 0%, rgba(6, 42, 32, .74) 55%, rgba(4, 26, 21, .8) 100%);
+}
+
+.eco__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 80px 0;
+}
+
+.eco__content { max-width: 560px; }
+
+.eco__label {
+  display: block;
+  margin-bottom: 10px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--eco-green-light);
+}
+
+.eco__title {
+  margin: 0;
+  font-family: "Cairo", "Manrope", var(--font-heading);
+  font-size: clamp(24px, 3vw, 35px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: rgb(255, 255, 255);
+}
+.eco__title-accent { color: var(--brand-orange); }
+
+.eco__underline {
+  width: 150px;
+  height: 4px;
+  margin: 16px auto 18px;
+  border-radius: 0;
+  background: linear-gradient(90deg, #2f9e44, var(--accent), var(--accent-2));
+}
+
+.eco__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 24px;
+  color: rgba(255, 255, 255, .78);
+}
+
+/* The global `a { color: inherit; text-decoration: none }` reset would make this
+   indistinguishable from the surrounding text, so it needs explicit link styling.
+   Underlined (not colour alone) so it still reads as a link without relying on
+   colour perception. */
+.eco__link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(255, 255, 255, .45);
+  transition: color .15s, text-decoration-color .15s;
+}
+.eco__link:hover,
+.eco__link:focus-visible {
+  color: var(--brand-orange);
+  text-decoration-color: var(--brand-orange);
+}
+
+@media (max-width: 900px) {
+  .eco__inner { padding: 56px 0; }
+}
+
+/* ===== Plans ===== */
+.plans-locations {
+  background: linear-gradient(to bottom, #ffffff 0%, #f5f5f7 35%, #e2e2e8 100%);
+}
+
+.plans {
+  padding: 88px 0 48px;
+}
+
+.plans__inner {
+  text-align: center;
+}
+
+.plans__title {
+  margin: 0 0 10px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: clamp(22px, 3vw, 33px);
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(40, 39, 39);
+}
+.plans__title strong { font-weight: 900; }
+.plans__title-accent { font-weight: 600; }
+
+.plans__subtitle {
+  margin: 18px 0 32px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 14px;
+  color: rgb(122, 122, 122);
+}
+
+.plans__note {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 56px;
+  padding: 18px 30px;
+  border: 1px solid #e3e3e8;
+  border-radius: 14px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: rgb(122, 122, 122);
+  background: #fff;
+}
+
+/* A single bright bar of light travels continuously around the card's border,
+   instead of the whole border blinking/pulsing on and off. This is drawn as an SVG
+   rect stroke (not a conic-gradient) specifically because conic-gradient's angle is
+   measured from the box's *center* — on a wide, short pill like this one, equal
+   angle steps cover very uneven physical distances near the corners, which made the
+   comet visually stretch/tear into two pieces as it crossed them. An SVG stroke
+   with pathLength="200" walks the *actual* rounded-rect perimeter at constant
+   speed, so the bar stays one continuous piece all the way around, on any box size. */
+.plans__note-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: blur(1.6px) drop-shadow(0 0 6px rgba(245, 126, 32, .8));
+  animation: plans-note-flicker 4.2s ease-in-out infinite;
+}
+.plans__note-beam svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* Single stroke (no separate white core) travels the border at one constant
+   speed (plans-note-travel is linear, no dart/stall), softened by the blur
+   on .plans__note-beam above so it reads as a hazy glow, not a crisp line. */
+.plans__note-beam-glow {
+  fill: none;
+  stroke-linecap: round;
+  stroke: var(--brand-orange);
+  stroke-width: 3;
+  opacity: .9;
+  animation: plans-note-travel 4.2s linear infinite,
+             plans-note-length 5.6s ease-in-out infinite;
+}
+/* Constant travel speed — a plain linear loop around the full perimeter, no
+   dart/stall pacing. Paired with a soft brightness flicker on the glow so it
+   still reads as an arc rather than a plain progress bar. */
+@keyframes plans-note-travel {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -200; }
+}
+/* The bolt's length pulses on its own timeline (uneven stops, a duration that
+   doesn't evenly divide the travel loop) so it reads as "sometimes short,
+   sometimes long" rather than a metronomic grow/shrink synced to the travel. */
+@keyframes plans-note-length {
+  0%, 100% { stroke-dasharray: 22 178; }
+  35%      { stroke-dasharray: 55 145; }
+  60%      { stroke-dasharray: 30 170; }
+  85%      { stroke-dasharray: 48 152; }
+}
+@keyframes plans-note-flicker {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(245, 126, 32, .75)); }
+  20%      { filter: drop-shadow(0 0 9px rgba(245, 126, 32, .95)); }
+  38%      { filter: drop-shadow(0 0 2px rgba(245, 126, 32, .4)); }
+  42%      { filter: drop-shadow(0 0 5px rgba(245, 126, 32, .75)); }
+  60%      { filter: drop-shadow(0 0 10px rgba(245, 126, 32, 1)); }
+  80%      { filter: drop-shadow(0 0 2px rgba(245, 126, 32, .4)); }
+  84%      { filter: drop-shadow(0 0 5px rgba(245, 126, 32, .75)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plans__note-beam,
+  .nav__mega-apps-beam { display: none; }
+}
+
+.plans__note-icon { display: flex; color: var(--brand-orange); flex-shrink: 0; }
+.plans__note-icon svg { width: 34px; height: 34px; }
+
+.plans__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 480px));
+  justify-content: center;
+  gap: 26px;
+  text-align: left;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding: 40px 30px 46px;
+  border: 1px solid #c9c9d2;
+  border-radius: 14px;
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.plan-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .08);
+  transform: translateY(-3px);
+}
+
+/* A diagonal corner ribbon (not a centered banner) — sits across the top-right
+   corner at 45deg, overhanging both edges slightly so the card's own
+   `overflow: hidden` clips it flush with the rounded corner, the classic
+   "Sale"/"Most Popular" ribbon treatment. */
+.plan-card__badge {
+  position: absolute;
+  top: 22px;
+  right: -38px;
+  width: 150px;
+  padding: 6px 0;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: rgb(255, 255, 255);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 13px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .18);
+}
+
+.plan-card__icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 20px;
+  background-color: var(--brand-orange);
+  mask: var(--plan-icon) center / contain no-repeat;
+  -webkit-mask: var(--plan-icon) center / contain no-repeat;
+}
+
+.plan-card__title {
+  margin: 0 0 10px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 26px;
+  color: rgb(40, 39, 39);
+}
+
+.plan-card__desc {
+  margin: 0 0 26px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 23px;
+  color: rgb(153, 153, 153);
+}
+
+.plan-card__features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 44px;
+  padding: 0;
+  list-style: none;
+}
+.plan-card__features li {
+  position: relative;
+  padding-left: 24px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 23px;
+  color: rgb(153, 153, 153);
+}
+.plan-card__features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(245, 126, 32, .12);
+}
+.plan-card__features li::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  width: 6px;
+  height: 3px;
+  border-left: 1.6px solid var(--brand-orange);
+  border-bottom: 1.6px solid var(--brand-orange);
+  transform: rotate(-45deg);
+}
+
+.plan-card__price {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 58px;
+  margin: 16px 0 26px;
+}
+.plan-card__price-label {
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 14px;
+  letter-spacing: .08em;
+  color: rgb(122, 122, 122);
+}
+.plan-card__price-value {
+  font-family: "Manrope", var(--font-body);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 36px;
+  color: var(--brand-orange);
+}
+.plan-card__price-period {
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgb(136, 136, 136);
+  margin-left: 2px;
+}
+.plan-card__price--soon {
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: rgb(122, 122, 122);
+}
+
+.plan-card .btn--outline {
+  width: auto;
+  align-self: center;
+  padding: 12px 32px;
+  margin-top: auto;
+}
+
+.btn--outline {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+  background: transparent;
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 15px;
+  color: var(--brand-orange);
+}
+.btn--outline:hover { background: var(--brand-orange); color: #fff; }
+
+@media (max-width: 860px) {
+  .plans__cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .plans { padding: 64px 0 36px; }
+}
+
+/* ===== Locations ===== */
+.locations {
+  padding: 48px 0 88px;
+  text-align: center;
+}
+
+.locations__map {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.locations__map-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Pin coordinates are hand-placed to sit over London, UK on this specific map image. */
+.locations__pin {
+  position: absolute;
+  left: 46.5%;
+  top: 37%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+}
+.locations__pin-dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  box-shadow: 0 0 0 5px rgba(245, 126, 32, .18);
+}
+.locations__pin-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  animation: locations-pulse 2s ease-out infinite;
+}
+@keyframes locations-pulse {
+  0% { transform: scale(1); opacity: .55; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .locations__pin-pulse { animation: none; opacity: 0; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Hover/focus card: hidden by default, revealed when the pin is hovered or
+   focused (keyboard users can tab to it, since .locations__pin has tabindex="0"). */
+.locations__pin { display: block; cursor: pointer; }
+.locations__pin:focus { outline: none; }
+.locations__pin:focus .locations__pin-dot { box-shadow: 0 0 0 5px rgba(245, 126, 32, .32); }
+
+.locations__card {
+  position: absolute;
+  left: calc(100% + 18px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  width: 260px;
+  text-align: left;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, .16);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s, transform .18s, visibility .18s;
+  z-index: 5;
+}
+.locations__pin:hover .locations__card,
+.locations__pin:focus .locations__card,
+.locations__pin:focus-within .locations__card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+.locations__card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 28px;
+  color: rgb(40, 39, 39);
+}
+.locations__card-flag {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.locations__card p {
+  margin: 0 0 10px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgb(40, 39, 39);
+}
+.locations__card p:last-child { margin-bottom: 0; }
+
+@media (max-width: 700px) {
+  .locations__card {
+    left: 50%;
+    top: calc(100% + 16px);
+    transform: translateX(-50%) translateY(-6px);
+    width: min(280px, 80vw);
+  }
+  .locations__pin:hover .locations__card,
+  .locations__pin:focus .locations__card,
+  .locations__pin:focus-within .locations__card {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .locations { padding: 36px 0 64px; }
+}
+
+/* ===== Migration ===== */
+.migration {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(245, 126, 32, .14) 0, transparent 45%),
+    radial-gradient(circle at 88% 88%, rgba(229, 72, 77, .12) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
+}
+
+.migration__inner { padding: 88px 0; }
+
+.migration__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 64px;
+}
+
+.migration__eyebrow {
+  display: block;
+  margin-bottom: 16px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffa45c; /* lighter tint of --brand-orange: the full-saturation orange
+                     visually vibrates against this dark background at small
+                     uppercase sizes */
+}
+
+.migration__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: rgb(255, 255, 255);
+}
+
+.migration__underline {
+  width: 150px;
+  height: 4px;
+  margin: 16px 0 20px;
+  border-radius: 0;
+  background: var(--brand-orange);
+}
+
+.migration__desc {
+  margin: 0;
+  max-width: 620px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 25px;
+  color: rgba(255, 255, 255, .82);
+}
+.migration__desc strong { color: #fff; font-weight: 700; }
+
+/* Illustration: "your current host" box --dashed arrow--> "ServerSalad" box */
+.migration__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.migration__box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 132px;
+  padding: 18px 16px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .04);
+}
+.migration__box--ours {
+  align-items: center;
+  text-align: center;
+  border-color: rgba(245, 126, 32, .45);
+  background: rgba(245, 126, 32, .08);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .28);
+}
+.migration__box-label {
+  font-family: "Cairo", var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .2px;
+  color: rgba(255, 255, 255, .75);
+}
+.migration__box--ours .migration__box-label { color: #fff; }
+.migration__bar {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .22);
+}
+.migration__bar--mid { width: 78%; }
+.migration__bar--short { width: 52%; }
+.migration__tick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 2px 0;
+  border-radius: 50%;
+  border: 2px solid var(--brand-orange);
+  color: var(--brand-orange);
+}
+.migration__tick svg { width: 20px; height: 20px; }
+.migration__box-note {
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: .4px;
+  color: rgba(255, 255, 255, .6);
+}
+.migration__arrow {
+  width: 110px;
+  height: 60px;
+  flex-shrink: 0;
+  overflow: visible;
+  color: rgba(245, 126, 32, .6);
+}
+/* Dashes travel toward the destination. -12 = one full dash+gap cycle (6 + 6), so
+   the loop is seamless. The file packet riding the same path is animated in the
+   markup via <animateMotion> + <mpath>, which references the path itself rather
+   than duplicating its `d` here (so the two can never drift apart). */
+.migration__arrow-path {
+  animation: migration-flow 1s linear infinite;
+}
+@keyframes migration-flow {
+  to { stroke-dashoffset: -12; }
+}
+
+/* Destination box glows as the packet lands (same 2.6s cycle as the packet). */
+.migration__box--ours {
+  animation: migration-arrive 2.6s ease-in-out infinite;
+}
+@keyframes migration-arrive {
+  0%, 62% { box-shadow: 0 16px 34px rgba(0, 0, 0, .28); }
+  80% { box-shadow: 0 16px 34px rgba(0, 0, 0, .28), 0 0 0 4px rgba(245, 126, 32, .18); }
+  100% { box-shadow: 0 16px 34px rgba(0, 0, 0, .28); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .migration__arrow-path,
+  .migration__box--ours { animation: none; }
+  .migration__packet { display: none; }
+}
+
+.migration__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.migration-card {
+  padding: 26px 22px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.migration-card:hover {
+  border-color: rgba(245, 126, 32, .5);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-3px);
+}
+.migration-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 18px;
+  border-radius: 11px;
+  background: rgba(245, 126, 32, .14);
+  color: var(--brand-orange);
+}
+
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment). */
+.migration-card__icon-img {
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  -webkit-mask: var(--migration-icon) center / contain no-repeat;
+  mask: var(--migration-icon) center / contain no-repeat;
+}
+.migration-card__title {
+  margin: 0 0 10px;
+  font-family: "Cairo", "Manrope", var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(255, 255, 255);
+}
+.migration-card__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 20px;
+  color: rgba(255, 255, 255, .76);
+}
+
+@media (max-width: 980px) {
+  .migration__top { grid-template-columns: 1fr; gap: 40px; }
+  .migration__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .migration__inner { padding: 64px 0; }
+  .migration__grid { grid-template-columns: 1fr; }
+  .migration__arrow { width: 62px; }
+}
+
+/* ===== Cloud infrastructure ===== */
+.cloud {
+  padding: 88px 0;
+  /* Airy "sky" wash instead of the reference's stock cloud photo — same reasoning as
+     the Secret Sauce section: no stock image sourced without known licensing. */
+  background: linear-gradient(180deg, #ffffff 0%, #eef3f8 55%, #e7eef6 100%);
+}
+
+/* Sizing/proportions here follow the owner's reference: a large, light-weight
+   heading over a wide underline, then roomy cards with big icons and titles.
+   Deliberately larger than the site's other card sections — don't normalise. */
+.cloud__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: clamp(26px, 3.4vw, 36px);
+  font-weight: 400;
+  line-height: 1;
+  color: rgb(40, 39, 39);
+}
+
+.cloud__underline {
+  width: 150px;
+  height: 4px;
+  margin: 18px 0 46px;
+  border-radius: 0;
+  background: var(--brand-orange);
+}
+
+.cloud__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.cloud-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 30px 32px;
+  border: 1px solid rgba(245, 126, 32, .38);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .82);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.cloud-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+
+.cloud-card__icon {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--brand-orange);
+}
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment). */
+.cloud-card__icon-img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-color: currentColor;
+  -webkit-mask: var(--cloud-icon) center / contain no-repeat;
+  mask: var(--cloud-icon) center / contain no-repeat;
+}
+
+.cloud-card__title {
+  margin: 0 0 16px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: rgb(40, 39, 39);
+}
+.cloud-card__title strong { font-weight: 900; }
+
+.cloud-card__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgb(122, 122, 122);
+}
+
+@media (max-width: 860px) {
+  .cloud__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .cloud { padding: 64px 0; }
+  .cloud-card { padding: 24px 22px; gap: 16px; }
+  .cloud-card__title { font-size: 18px; }
+  .cloud-card__icon-img { width: 28px; height: 28px; }
+  .cloud__underline { width: 140px; }
+}
+
+/* ===== Footer ===== */
+.footer {
+  background: var(--bg-topbar); /* solid black — bookends the equally-black topbar */
+  color: rgba(245, 245, 247, .68);
+}
+
+.footer__inner { padding: 72px 0 0; }
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 52px;
+}
+
+/* This logo (icon square + "SERVER" wordmark) is drawn in --brand-dark (#323D41),
+   designed to sit on a LIGHT background — both the icon's own backdrop and the
+   "SERVER" text are nearly invisible against this footer's pure black. A
+   translucent chip (rgba(255,255,255,.08) ≈ near-black once composited) wasn't
+   bright enough; needs a genuinely light/solid backing, not just "less black". */
+.footer__logo-link {
+  display: inline-flex;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #f5f5f7;
+}
+.footer__logo { display: block; height: 40px; width: auto; }
+
+.footer__tagline-desc {
+  margin: 22px 0 0;
+  max-width: 320px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 21px;
+  color: rgb(247, 251, 250);
+}
+.footer__tagline {
+  margin: 14px 0 22px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 21px;
+  letter-spacing: .3px;
+  color: rgb(247, 251, 250);
+}
+
+.footer__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: rgb(255, 255, 255);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+}
+.footer__cta:hover { background: rgba(255, 255, 255, .1); }
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment). */
+.footer__cta-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--footer-cta-icon) center / contain no-repeat;
+  mask: var(--footer-cta-icon) center / contain no-repeat;
+}
+
+.footer__col-title {
+  display: block;
+  margin-bottom: 22px;
+  padding-top: 12px;
+  border-top: 3px solid var(--brand-orange);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 17px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: rgb(255, 255, 255);
+}
+/* "Follow Us" title: no top border/padding (it's not the column's first item), and
+   no bottom margin either — the flex column's own `gap` already spaces it from the
+   icon row below; without zeroing this out, the margin and the gap stack (22px +
+   14px = 36px), which is why the icons sat too far from the label. */
+.footer__col--touch .footer__col-title:last-of-type {
+  padding-top: 0;
+  border-top: 0;
+  margin-bottom: 0;
+}
+
+.footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.footer__links a {
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 13px;
+  color: rgba(245, 245, 247, .68);
+  transition: color .15s;
+}
+.footer__links a:hover { color: var(--brand-orange); }
+
+.footer__col--touch { display: flex; flex-direction: column; gap: 14px; }
+
+.footer__contact-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 13px;
+  color: rgba(245, 245, 247, .78);
+  transition: color .15s;
+}
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment). */
+.footer__contact-line-icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--footer-icon) center / contain no-repeat;
+  mask: var(--footer-icon) center / contain no-repeat;
+}
+.footer__contact-line:hover { color: #fff; }
+
+.footer__underline {
+  width: 60px;
+  height: 3px;
+  margin: 6px 0 2px;
+  background: var(--brand-orange);
+}
+
+/* Same lesson as the logo backdrop above: a faint translucent circle on pure black
+   barely registers. Brighter fill + a visible border + full-white icon colour
+   (was rgba(245,245,247,.7)) so the circles read clearly at rest, not just on hover. */
+.footer__social { display: flex; gap: 12px; }
+.footer__social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .22);
+  color: #fff;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.footer__social a:hover { background: var(--brand-orange); border-color: var(--brand-orange); color: #fff; }
+/* Same masked-external-SVG technique as .hero-card__icon-img (see its comment) —
+   background-color: currentColor picks up the anchor's own `color: #fff`, so the
+   icon stays white in both the resting and hover state, matching the old inline
+   `fill/stroke="currentColor"` SVGs' behaviour exactly. */
+.footer__social-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: var(--social-icon) center / contain no-repeat;
+  mask: var(--social-icon) center / contain no-repeat;
+}
+
+.footer__bottom {
+  padding: 22px 0;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  text-align: center;
+}
+.footer__bottom p {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 11px;
+  color: rgb(247, 251, 250);
+}
+
+@media (max-width: 980px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; row-gap: 44px; }
+  .footer__brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  .footer__inner { padding: 56px 0 0; }
+  .footer__grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* ===== cPanel Hosting page: hero ===== */
+.cph-hero {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+}
+
+/* Same gradient + dot-grid treatment as the homepage .hero__bg (no stock "person
+   at a laptop" photo was supplied for this page, so a CSS backdrop stands in) —
+   deliberately reused rather than inventing a new palette, so this page still
+   reads as part of the same site. */
+.cph-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, .12) 0, transparent 60%),
+    linear-gradient(120deg, #2c1240 0%, #171a2e 45%, #0c2f37 100%);
+}
+.cph-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .35) 1px, transparent 1px);
+  background-size: 34px 34px;
+  opacity: .12;
+}
+
+.cph-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 620px);
+  align-items: center;
+  gap: 48px;
+  padding: 96px 0;
+}
+
+.cph-hero__title {
+  margin: 0;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 54px;
+  line-height: 59px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.cph-hero__title-accent {
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cph-hero__underline {
+  width: 64px;
+  height: 3px;
+  margin: 20px 0 24px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+}
+
+.cph-hero__desc {
+  margin: 0 0 18px;
+  max-width: 520px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 29px;
+  color: rgba(255, 255, 255, .85);
+}
+.cph-hero__desc:last-of-type { margin-bottom: 0; }
+
+.cph-hero__visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 980px) {
+  .cph-hero__inner { grid-template-columns: 1fr; padding: 72px 0; }
+  .cph-hero__visual { order: -1; }
+}
+
+@media (max-width: 560px) {
+  .cph-hero__inner { padding: 56px 0; gap: 36px; }
+}
+
+/* ===== cPanel Hosting page: Plans & feature comparison ===== */
+.cph-plans {
+  background: #f7f7f9;
+  padding: 88px 0;
+}
+
+/* Billing toggle (Monthly / Annually) — see js/main.js for the switch handler
+   and the monthly↔annual price math, README "Pricing API" for why the annual
+   figures are calculated client-side rather than a 2nd DB column. */
+.cph-billing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.cph-billing-toggle__label {
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgba(40, 39, 39, .55);
+  transition: color .15s;
+}
+.cph-billing-toggle__label.is-active { color: #1b1b1f; }
+.cph-billing-toggle__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(245, 126, 32, .12);
+  color: var(--brand-orange);
+  font-size: 11px;
+  font-weight: 700;
+}
+.cph-billing-toggle__switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: none;
+  background: #d9d9de;
+  cursor: pointer;
+  transition: background .18s;
+  flex-shrink: 0;
+}
+.cph-billing-toggle__switch[aria-checked="true"] { background: var(--brand-orange); }
+.cph-billing-toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+  transition: transform .18s;
+}
+.cph-billing-toggle__switch[aria-checked="true"] .cph-billing-toggle__knob {
+  transform: translateX(20px);
+}
+
+.cph-table__pkg-billed {
+  margin: -10px 0 0; /* pulls in against the wider 16px base gap, so price +
+                         billed-as-line read as one paired unit, not two
+                         separately-spaced lines */
+  min-height: 16px; /* reserves space so toggling Monthly/Annually doesn't
+                        reflow the row (the CTA button lives in its own row at
+                        the bottom of the table now, not directly below this —
+                        but this still keeps the price block's own height
+                        steady between toggle states). */
+  font-size: 11.5px;
+  color: #9a9aa2;
+}
+
+.cph-table__pkg-guarantee {
+  margin: 6px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .6);
+}
+
+.cph-table-wrap { margin-top: 0; overflow-x: auto; }
+
+/* Direct grid children in row-major order (label, val, val, val, repeat…) — CSS
+   Grid auto-placement wraps them into rows on its own, so no wrapping "row" divs
+   are needed. A shared-across-plans row (Support, Money-Back) just supplies one
+   spanning value cell (`--span3`) instead of 3, and auto-placement still lands the
+   next row's label in column 1 correctly. */
+.cph-table {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.2fr) repeat(3, minmax(150px, 1fr));
+  min-width: 680px;
+  background: #fff;
+  border: 1px solid #e3e3e8;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.cph-table__label {
+  display: flex;
+  align-items: center;
+  padding: 13px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a4a52;
+  background: #fafafb;
+  border-top: 1px solid #ececf0;
+  border-right: 1px solid #ececf0;
+}
+.cph-table__label:first-child { border-top: none; background: #fff; }
+
+.cph-table__val {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 14px;
+  font-size: 13.5px;
+  text-align: center;
+  color: #3a3a40;
+  border-top: 1px solid #ececf0;
+}
+/* Currently unused — the Money-Back Guarantee row that needed this (a single
+   value spanning all 3 plan columns) was moved into each price block instead
+   (.cph-table__pkg-guarantee, below). Kept in case a future shared-across-plans
+   row needs the same treatment. */
+.cph-table__val--span3 { grid-column: 2 / 5; }
+.cph-table__cross { color: #d3382e; }
+
+/* Data Center row: flag has white in it, which would vanish against the table's
+   white cells without a border to define its edge. */
+.cph-table__flag {
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #e3e3e8;
+}
+
+/* "Unlimited"/"Unmetered" replaced with ∞ — the visible glyph is aria-hidden and
+   paired with a .sr-only span carrying the real word, so screen readers still
+   announce "Unlimited"/"Unmetered" rather than a bare, ambiguous symbol. */
+.cph-table__val--infinity [aria-hidden] {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--brand-orange);
+}
+
+.cph-table__pkg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px; /* was 8px — the individual elements' own margins below layer on
+                top of this for an uneven, cramped rhythm; widened the base gap
+                and re-tuned those margins for a more consistent, breathable
+                spacing pattern (name → tagline → price [tightly paired with the
+                billed-as line] → guarantee). */
+  /* Top padding is sized for the "Most Popular" band (see --popular below) and
+     applied to ALL 3 cells, not just Standard Salad's — otherwise its title/
+     tagline/price/button sit visibly lower than Starter's and Premium's, which
+     don't have a band eating into their padding. Keeping this uniform is what
+     keeps all 3 columns' content aligned row-for-row. */
+  padding: 46px 18px 26px;
+  background: var(--bg-topbar);
+}
+/* Standard Salad's "Most Popular" indicator and Premium Salad's accent stripe
+   (.cph-table__pkg--featured, below) are both "this tier is highlighted" signals
+   and now use the SAME treatment — a flush band across the very top of the cell
+   — so they read as one consistent pattern instead of two different ones (a
+   floating pill badge vs. a flush line looked inconsistent side by side). This
+   also sidesteps the earlier clipping problem entirely: a flush band never pokes
+   outside the table's overflow:hidden box the way an overlapping pill did. */
+.cph-table__pkg-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 7px 0;
+  background: linear-gradient(135deg, #ffb27a, var(--brand-orange));
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  text-align: center;
+}
+.cph-table__pkg--featured {
+  background: linear-gradient(180deg, rgba(245, 126, 32, .12), var(--bg-topbar) 140px);
+  box-shadow: inset 0 3px 0 var(--brand-orange);
+}
+.cph-table__pkg-name {
+  font-family: "Cairo", var(--font-heading);
+  font-size: 24px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #fff;
+}
+.cph-table__pkg-tagline {
+  margin: 0;
+  min-height: 34px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .6);
+}
+.cph-table__pkg-price {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, .6);
+}
+.cph-table__pkg-price strong {
+  display: block;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--brand-orange);
+}
+.cph-table__pkg-price span { font-size: 12px; }
+/* Currently unused (both tiers show dummy prices instead, see README) — kept
+   because it's the same "not priced yet" state the homepage Plans section uses,
+   and likely to be needed again here the moment real pricing lands for only one
+   of these two tiers. */
+.cph-table__pkg-price--soon {
+  font-size: 14px;
+  font-weight: 700;
+  font-style: normal;
+  color: #fff;
+}
+/* CTA row lives at the bottom of the table now (moved per owner — used to sit
+   directly under each price in the header row). Each cell matches the padding/
+   border rhythm of an ordinary .cph-table__val row so it reads as one more row,
+   not a bolted-on footer. */
+.cph-table__btn-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 16px;
+  border-top: 1px solid #ececf0;
+}
+.cph-table__pkg-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--brand-orange);
+  color: var(--brand-orange);
+  font-size: 13px;
+  padding: 10px 14px;
+}
+.cph-table__pkg-btn:hover { background: var(--brand-orange); color: #fff; }
+
+/* Set off as its own band under the table, with each item as a white pill chip
+   (solid orange check) so the list reads clearly against the grey section
+   instead of as faint grey run-on text. */
+.cph-included {
+  margin-top: 56px;
+  padding-top: 48px;
+  border-top: 1px solid #e3e3e8;
+  text-align: center;
+}
+.cph-included__title {
+  margin: 0 0 28px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1b1b1f;
+}
+.cph-included__list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 900px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+.cph-included__list li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 11px 20px 11px 42px;
+  background: #fff;
+  border: 1px solid #e3e3e8;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+  font-size: 14px;
+  font-weight: 600;
+  color: #1b1b1f;
+}
+.cph-included__list li::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  margin-top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+}
+.cph-included__list li::after {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 50%;
+  margin-top: -3px;
+  width: 7px;
+  height: 4px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 560px) {
+  .cph-plans { padding: 64px 0; }
+}
+
+/* ===== cPanel Hosting page: feature grid ===== */
+.cph-features {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  /* Dark section so the page keeps alternating: dark hero -> light plans table ->
+     dark features. Same --brand-dark-family gradient + soft orange glow as the
+     homepage Migration section, for a consistent "dark content band" look. */
+  background:
+    radial-gradient(circle at 15% 12%, rgba(245, 126, 32, .12) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(245, 126, 32, .08) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
+}
+
+.cph-features__inner { padding: 88px 0; }
+
+/* Header block sizing matches the source template: large light-weight title, a
+   short thin rule set well below the subtitle, then a wide gap before the grid. */
+.cph-features__head { text-align: center; margin-bottom: 64px; }
+
+.cph-features__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.cph-features__subtitle {
+  margin: 14px auto 0;
+  max-width: 560px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(245, 245, 247, .72);
+}
+
+.cph-features__underline {
+  width: 64px;
+  height: 2px;
+  margin: 36px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+}
+
+.cph-features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 28px; /* row / column — template's horizontal gutter is a touch wider */
+}
+
+/* icon (col 1, row 1) | title (col 2, row 1) ; description spans both cols on row 2
+   so its left edge lines up under the icon — matches the reference layout. */
+.cph-feature {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  row-gap: 14px;
+  padding: 30px 28px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.cph-feature:hover {
+  border-color: rgba(245, 126, 32, .5);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-3px);
+}
+
+/* Icons are external single-colour SVGs in assets/img/features/ (each card sets
+   its own file via the --feature-icon custom property). Painted with the brand
+   orange via `mask`, so the colour stays defined once here rather than baked
+   into 12 files — same idea as the partner-logo `filter` recolour. */
+.cph-feature__icon {
+  display: block;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--feature-icon) center / contain no-repeat;
+  mask: var(--feature-icon) center / contain no-repeat;
+}
+
+.cph-feature__title {
+  align-self: center;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.cph-feature__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(245, 245, 247, .72);
+}
+
+@media (max-width: 900px) {
+  .cph-features__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-features__inner { padding: 64px 0; }
+  .cph-features__grid { grid-template-columns: 1fr; }
+  .cph-feature__title { font-size: 19px; }
+  .cph-feature__icon { width: 30px; height: 30px; }
+}
+
+/* ===== cPanel Hosting page: why / infrastructure ===== */
+.cph-why {
+  /* Light section — keeps the page alternating: dark features -> light "why". */
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fb 58%, #eef1f7 100%);
+}
+
+.cph-why__inner { padding: 88px 0; }
+
+.cph-why__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 56px;
+}
+
+.cph-why__eyebrow {
+  display: block;
+  margin-bottom: 18px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+}
+
+/* Type scale matches the source template: large, ~700-weight heading on a tight
+   line-height. */
+.cph-why__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1b1b1f;
+}
+.cph-why__title-accent {
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cph-why__underline {
+  width: 72px;
+  height: 3px;
+  margin: 18px 0 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+}
+
+.cph-why__desc {
+  margin: 0;
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #55555c;
+}
+
+.cph-why__map {
+  border: 1px solid #e6e6ec;
+  border-radius: 14px;
+  background: #fff;
+  padding: 18px;
+  box-shadow: 0 12px 32px rgba(50, 61, 65, .07);
+}
+.cph-why__map-inner { position: relative; }
+.cph-why__map-img { display: block; width: 100%; height: auto; }
+
+/* Single marker over London — same map image and same coordinates as the
+   homepage Locations pin, so the two stay consistent (London is the one data
+   centre stated site-wide; see the homepage Locations section). */
+.cph-why__pin {
+  position: absolute;
+  left: 46.5%;
+  top: 37%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+}
+.cph-why__pin-dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  box-shadow: 0 0 0 4px rgba(245, 126, 32, .18);
+}
+.cph-why__pin-label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
+.cph-why__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start; /* cards size to their own content, like the template */
+  gap: 20px;
+}
+
+/* icon (col 1, row 1) | title (col 2, row 1) ; description spans row 2 under both */
+.cph-why-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 14px;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.cph-why-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+
+/* Brand-orange glyph (masked external SVG in assets/img/why/, set per card via
+   --why-icon) inside a soft orange-tinted tile. */
+.cph-why-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(245, 126, 32, .1);
+}
+.cph-why-card__icon::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--why-icon) center / contain no-repeat;
+  mask: var(--why-icon) center / contain no-repeat;
+}
+
+.cph-why-card__title {
+  align-self: center;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1b1b1f;
+}
+.cph-why-card__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6a6a72;
+}
+
+@media (max-width: 980px) {
+  .cph-why__top { grid-template-columns: 1fr; gap: 36px; }
+  .cph-why__map { width: 100%; max-width: 460px; margin: 0 auto; }
+}
+
+@media (max-width: 900px) {
+  .cph-why__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-why__inner { padding: 64px 0; }
+  .cph-why__grid { grid-template-columns: 1fr; }
+}
+
+/* ===== cPanel Hosting page: business email ===== */
+.cph-email {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  /* Dark section — keeps the page alternating: light "why" -> dark email. Same
+     dark-band treatment as the Features section. */
+  background:
+    radial-gradient(circle at 15% 12%, rgba(245, 126, 32, .12) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(245, 126, 32, .08) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
+}
+
+.cph-email__inner { padding: 88px 0; }
+
+.cph-email__top {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  align-items: center;
+  gap: 72px;
+  margin-bottom: 72px;
+}
+
+.cph-email__visual { display: flex; justify-content: center; }
+.cph-email__art { width: 100%; max-width: 340px; height: auto; }
+.cph-email__art-env { fill: rgba(255, 255, 255, .04); stroke: rgba(255, 255, 255, .32); stroke-width: 2; }
+.cph-email__art-line { fill: none; stroke: rgba(255, 255, 255, .26); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cph-email__art-badge { fill: rgba(245, 126, 32, .14); stroke: var(--brand-orange); stroke-width: 2; }
+.cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
+
+/* Animated send/receive on the envelope illustration. The packets themselves ride
+   their paths via SMIL <animateMotion> in the markup; these rules style them and
+   animate the dashed trails + the @ badge ping ring. */
+.cph-email__art-flow {
+  stroke: var(--brand-orange);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 3 7;
+  opacity: .32;
+  animation: cph-email-flow 1s linear infinite;
+}
+@keyframes cph-email-flow { to { stroke-dashoffset: -10; } } /* 3 + 7 = one dash cycle */
+
+.cph-email__art-packet > rect { fill: var(--brand-orange); }
+.cph-email__art-packet-flap { stroke: rgba(20, 27, 37, .85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+
+.cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
+
+/* SMIL animations can't be halted by CSS `animation: none`, so the animated
+   elements are hidden outright — same approach as the Migration packet. */
+@media (prefers-reduced-motion: reduce) {
+  .cph-email__art-flow { animation: none; opacity: .28; }
+  .cph-email__art-packet,
+  .cph-email__art-ping { display: none; }
+}
+
+/* ===== cPanel Hosting page: backups ===== */
+.cph-backups {
+  /* Light section — keeps the page alternating: dark email -> light backups. */
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fb 58%, #eef1f7 100%);
+}
+
+.cph-backups__inner { padding: 88px 0; }
+
+.cph-backups__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 56px;
+}
+
+/* Type scale matches the source template. */
+.cph-backups__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1b1b1f;
+}
+
+.cph-backups__underline {
+  width: 72px;
+  height: 3px;
+  margin: 18px 0 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+}
+
+.cph-backups__desc {
+  margin: 0;
+  max-width: 540px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #55555c;
+}
+
+/* Light "device" frame around the JetBackup dashboard screenshot, like the
+   source template. */
+.cph-backups__visual { display: flex; justify-content: center; }
+.cph-backups__frame {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(50, 61, 65, .12);
+}
+.cph-backups__shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.cph-backups__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
+}
+
+/* icon (col 1, row 1) | title (col 2, row 1) ; description spans row 2 under both */
+.cph-backups-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 14px;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.cph-backups-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+
+/* Brand-orange glyph (masked external SVG in assets/img/backups/, set per card
+   via --backup-icon) inside a soft orange-tinted tile. */
+.cph-backups-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(245, 126, 32, .1);
+}
+.cph-backups-card__icon::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--backup-icon) center / contain no-repeat;
+  mask: var(--backup-icon) center / contain no-repeat;
+}
+
+.cph-backups-card__title {
+  align-self: center;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1b1b1f;
+}
+.cph-backups-card__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6a6a72;
+}
+
+@media (max-width: 980px) {
+  .cph-backups__top { grid-template-columns: 1fr; gap: 36px; }
+  .cph-backups__frame { max-width: 520px; }
+}
+
+@media (max-width: 900px) {
+  .cph-backups__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-backups__inner { padding: 64px 0; }
+  .cph-backups__grid { grid-template-columns: 1fr; }
+}
+
+/* Type scale matches the source template. */
+.cph-email__title {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.cph-email__underline {
+  width: 72px;
+  height: 3px;
+  margin: 16px 0 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+}
+
+.cph-email__desc {
+  margin: 0;
+  max-width: 600px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(245, 245, 247, .72);
+}
+
+.cph-email__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
+}
+
+/* icon (col 1, row 1) | title (col 2, row 1) ; description spans row 2 under both */
+.cph-email-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 14px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.cph-email-card:hover {
+  border-color: rgba(245, 126, 32, .5);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-3px);
+}
+
+/* Brand-orange glyph (masked external SVG in assets/img/email/, set per card via
+   --email-icon) inside a soft orange-tinted tile. */
+.cph-email-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(245, 126, 32, .14);
+}
+.cph-email-card__icon::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--email-icon) center / contain no-repeat;
+  mask: var(--email-icon) center / contain no-repeat;
+}
+
+.cph-email-card__title {
+  align-self: center;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+}
+.cph-email-card__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(245, 245, 247, .7);
+}
+
+@media (max-width: 980px) {
+  .cph-email__top { grid-template-columns: 1fr; gap: 40px; }
+  .cph-email__art { max-width: 300px; }
+}
+
+@media (max-width: 900px) {
+  .cph-email__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-email__inner { padding: 64px 0; }
+  .cph-email__grid { grid-template-columns: 1fr; }
+}

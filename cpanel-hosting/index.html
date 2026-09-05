@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Salad Cloud Services</title>
+
+  <link rel="icon" type="image/svg+xml" href="/serversalad/assets/img/brand/serversalad-favicon.svg">
+
+  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/serversalad/css/styles.css?v=212">
+</head>
+<body>
+
+  <!-- Topbar + nav are a shared partial (partials/header.html), injected by
+       js/main.js. See README "Footer"/shared-header notes. -->
+  <div id="site-header"></div>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="cph-hero">
+      <div class="cph-hero__bg" aria-hidden="true"></div>
+
+      <div class="container cph-hero__inner">
+        <div class="cph-hero__content">
+          <h1 class="cph-hero__title">cPanel <span class="cph-hero__title-accent">Hosting</span></h1>
+          <div class="cph-hero__underline" aria-hidden="true"></div>
+          <p class="cph-hero__desc">Fast, secure NVMe hosting served hot with full cPanel control. Prepped to perfection for freelancers, startups, SMEs, educational institutions, personal blogs, and growing online stores.</p>
+          <p class="cph-hero__desc">Every recipe is prepped with 2 Cores CPU, 2GB RAM, LiteSpeed Cache, Python, Node.js, free SSL, cPGuard protection, and a 14-day money-back guarantee.</p>
+        </div>
+
+        <div class="cph-hero__visual">
+          <img src="/serversalad/assets/img/graphics/cpanel-dashboard-devices.webp" alt="The cPanel dashboard shown on a desktop monitor, tablet, and phone" width="1950" height="1184">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Plans & feature comparison ===== -->
+    <section class="cph-plans">
+      <div class="container">
+        <!-- Billing toggle: annual figures are calculated client-side from the
+             fetched monthly price (10× monthly = year total, "2 months free" vs.
+             12× monthly; that total ÷ 12 = the equivalent /mo rate shown here) —
+             the DB only stores a monthly price, there's no separate annual price
+             to fetch. See js/main.js and README "Pricing API" / billing toggle. -->
+        <div class="cph-billing-toggle">
+          <span class="cph-billing-toggle__label is-active" data-billing-label="monthly">Monthly</span>
+          <button type="button" class="cph-billing-toggle__switch" id="billingToggle" role="switch" aria-checked="false" aria-label="Switch between monthly and annual billing">
+            <span class="cph-billing-toggle__knob" aria-hidden="true"></span>
+          </button>
+          <span class="cph-billing-toggle__label" data-billing-label="annual">Annually <span class="cph-billing-toggle__badge">2 Months Free</span></span>
+        </div>
+
+        <div class="cph-table-wrap">
+        <div class="cph-table">
+          <!-- Package header row -->
+          <div class="cph-table__label"></div>
+          <div class="cph-table__pkg">
+            <span class="cph-table__pkg-name">Starter Salad</span>
+            <p class="cph-table__pkg-tagline">Light appetizer portion with 2-Core power, prepped for testing and staging.</p>
+            <p class="cph-table__pkg-price"><strong data-price="starter_salad" data-monthly="500">LKR 500</strong><span>/mo</span></p>
+            <p class="cph-table__pkg-billed" data-billed="starter_salad"></p>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
+          <div class="cph-table__pkg cph-table__pkg--popular">
+            <span class="cph-table__pkg-badge">Most Popular</span>
+            <span class="cph-table__pkg-name">Standard Salad</span>
+            <p class="cph-table__pkg-tagline">Hearty main course with 2-Core power, prepped for live blogs and freelancers.</p>
+            <!-- Fallback value shown until/unless the live pricing API responds
+                 (see js/main.js + api/pricing.php) — kept so the page never shows
+                 blank pricing if the API is unreachable. -->
+            <p class="cph-table__pkg-price"><strong data-price="standard_salad" data-monthly="1200">LKR 1,200</strong><span>/mo</span></p>
+            <p class="cph-table__pkg-billed" data-billed="standard_salad"></p>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
+          <div class="cph-table__pkg cph-table__pkg--featured">
+            <span class="cph-table__pkg-name">Premium Salad</span>
+            <p class="cph-table__pkg-tagline">Generous banquet platter with 2-Core power, prepped for multi-site creators.</p>
+            <!-- Fallback value — see Standard Salad's comment above. -->
+            <p class="cph-table__pkg-price"><strong data-price="premium_salad" data-monthly="2500">LKR 2,500</strong><span>/mo</span></p>
+            <p class="cph-table__pkg-billed" data-billed="premium_salad"></p>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
+
+          <!-- Feature rows -->
+          <div class="cph-table__label">Websites</div>
+          <div class="cph-table__val">1</div>
+          <div class="cph-table__val">3</div>
+          <div class="cph-table__val">10</div>
+
+          <div class="cph-table__label">Storage</div>
+          <div class="cph-table__val">1 GB NVMe</div>
+          <div class="cph-table__val">9 GB NVMe</div>
+          <div class="cph-table__val">30 GB NVMe</div>
+
+          <div class="cph-table__label">Bandwidth</div>
+          <div class="cph-table__val">20 GB</div>
+          <div class="cph-table__val">500 GB</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unmetered</span></div>
+
+          <div class="cph-table__label">CPU</div>
+          <div class="cph-table__val">2 Cores</div>
+          <div class="cph-table__val">2 Cores</div>
+          <div class="cph-table__val">2 Cores</div>
+
+          <div class="cph-table__label">RAM</div>
+          <div class="cph-table__val">2 GB</div>
+          <div class="cph-table__val">2 GB</div>
+          <div class="cph-table__val">2 GB</div>
+
+          <div class="cph-table__label">Email Accounts</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">FTP Accounts</div>
+          <div class="cph-table__val">1</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">MySQL Databases</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">Sub Domains</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">Parked Domains</div>
+          <div class="cph-table__val"><svg class="cph-table__cross" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-label="Not included"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">Mailing Lists</div>
+          <div class="cph-table__val"><svg class="cph-table__cross" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-label="Not included"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">Passenger Applications</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val">3</div>
+          <div class="cph-table__val">5</div>
+
+          <div class="cph-table__label">Data Center</div>
+          <div class="cph-table__val"><img src="/serversalad/assets/img/flags/uk-flag.svg" alt="United Kingdom" width="22" height="16" class="cph-table__flag"></div>
+          <div class="cph-table__val"><img src="/serversalad/assets/img/flags/uk-flag.svg" alt="United Kingdom" width="22" height="16" class="cph-table__flag"></div>
+          <div class="cph-table__val"><img src="/serversalad/assets/img/flags/uk-flag.svg" alt="United Kingdom" width="22" height="16" class="cph-table__flag"></div>
+
+          <!-- CTA row — moved here (bottom of the table) per owner; buttons used
+               to sit directly under each price at the top. -->
+          <div class="cph-table__label"></div>
+          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Starter Salad</a></div>
+          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Standard Salad</a></div>
+          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Premium Salad</a></div>
+        </div>
+        </div>
+
+        <div class="cph-included">
+          <h3 class="cph-included__title">Included With Every Plan</h3>
+          <ul class="cph-included__list">
+            <li>cPanel Control Panel</li>
+            <li>WordPress Support</li>
+            <li>Free SSL</li>
+            <li>Softaculous 1-Click App Installer</li>
+            <li>Python Support</li>
+            <li>Node.js Support</li>
+            <li>24/7 Support</li>
+            <li>JetBackup</li>
+            <li>Sitejet Website Builder</li>
+            <li>cPGuard Security</li>
+            <li>LiteSpeed Web Cache Manager</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Features ===== -->
+    <section class="cph-features">
+      <div class="container cph-features__inner">
+        <div class="cph-features__head">
+          <h2 class="cph-features__title">Loaded Web Hosting Features</h2>
+          <p class="cph-features__subtitle">Fast, reliable, and secure web hosting prepped fresh on our high-performance cloud platform.</p>
+          <div class="cph-features__underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="cph-features__grid">
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/simple-intuitive.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Simple and Intuitive</h3>
+            <p class="cph-feature__desc">User-friendly cPanel dashboard makes managing your website as effortless as following a clear step-by-step recipe.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/lightning-fast-hosting.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Lightning Fast Hosting</h3>
+            <p class="cph-feature__desc">LiteSpeed server prepped with built-in caching serves your content fresh and snappy for maximum visitor appetite.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/high-base-resources.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">High Base Resources</h3>
+            <p class="cph-feature__desc">Packed with a generous portion of 2 Cores CPU and 2GB RAM to keep your application running smooth.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/wordpress-optimised.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">WordPress Optimised</h3>
+            <p class="cph-feature__desc">WP Toolkit preps staging, cloning, and smart updates, serving your WordPress site with top tier perfection.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/multiple-php-versions.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Multiple PHP Versions</h3>
+            <p class="cph-feature__desc">Tailor your code stack easily by picking the exact PHP version and flavor modules your site requires.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/email-included.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Email Included</h3>
+            <p class="cph-feature__desc">Dish out custom email addresses for your domain with built-in spam filters keeping bad mail off your menu.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/free-daily-backups.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Free Daily Backups</h3>
+            <p class="cph-feature__desc">JetBackup technology preps daily account snapshots automatically, preserving your site data like a secret recipe.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/free-ssl-certificates.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Free SSL Certificates</h3>
+            <p class="cph-feature__desc">Fresh SSL certificates auto-renew for free across every domain, sealing your web traffic with complete encryption.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/one-click-applications.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">One-Click Applications</h3>
+            <p class="cph-feature__desc">Softaculous app installer lets you serve up over 300 web scripts instantly without any complicated tech prep.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/free-site-builder.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Free Site Builder</h3>
+            <p class="cph-feature__desc">Craft stunning responsive pages visual-first with Sitejet Builder, built right into cPanel with zero coding prepped.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/smooth-migration.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Smooth Migration</h3>
+            <p class="cph-feature__desc">Our migration team handles transferring your cPanel account, serving your site on Server Salad with zero data loss.</p>
+          </div>
+
+          <div class="cph-feature">
+            <span class="cph-feature__icon" style="--feature-icon: url(/serversalad/assets/img/features/responsive-support.svg)" aria-hidden="true"></span>
+            <h3 class="cph-feature__title">Responsive Support</h3>
+            <p class="cph-feature__desc">Our support crew is on standby 24/7 via tickets, email, and WhatsApp to help keep your setup perfectly prepped.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Why Server Salad / infrastructure ===== -->
+    <section class="cph-why">
+      <div class="container cph-why__inner">
+        <div class="cph-why__top">
+          <div class="cph-why__content">
+            <span class="cph-why__eyebrow">Why Server Salad</span>
+            <h2 class="cph-why__title">Enterprise Cloud Hosting, <span class="cph-why__title-accent">Built for Performance</span></h2>
+            <div class="cph-why__underline" aria-hidden="true"></div>
+            <p class="cph-why__desc">We prep our hosting stack from top to bottom with enterprise Samsung NVMe storage, resilient networking, and cPGuard security managed directly by the engineers who handle your support tickets.</p>
+          </div>
+
+          <div class="cph-why__map">
+            <div class="cph-why__map-inner">
+              <img class="cph-why__map-img" src="/serversalad/assets/img/graphics/world-map-dots.png" alt="World map highlighting the Server Salad data center in London, United Kingdom" width="1920" height="1080">
+              <span class="cph-why__pin" aria-hidden="true">
+                <span class="cph-why__pin-dot"></span>
+                <span class="cph-why__pin-label">London, UK</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cph-why__grid">
+          <div class="cph-why-card">
+            <span class="cph-why-card__icon" style="--why-icon: url(/serversalad/assets/img/why/nvme-storage.svg)" aria-hidden="true"></span>
+            <h3 class="cph-why-card__title">100% Samsung NVMe Storage</h3>
+            <p class="cph-why-card__desc">Enterprise-grade Samsung NVMe storage prepped across every server, delivering ultra-fast disk reads and peak application speeds.</p>
+          </div>
+
+          <div class="cph-why-card">
+            <span class="cph-why-card__icon" style="--why-icon: url(/serversalad/assets/img/why/data-centre.svg)" aria-hidden="true"></span>
+            <h3 class="cph-why-card__title">Enterprise UK Datacenter</h3>
+            <p class="cph-why-card__desc">Served fresh from top-tier UK datacenters, providing rock-solid network stability and snappy global delivery for every visitor.</p>
+          </div>
+
+          <div class="cph-why-card">
+            <span class="cph-why-card__icon" style="--why-icon: url(/serversalad/assets/img/why/in-house-support.svg)" aria-hidden="true"></span>
+            <h3 class="cph-why-card__title">Hands-On Tech Experts</h3>
+            <p class="cph-why-card__desc">Support is handled directly in-house by cPanel-certified technicians and system engineers who manage the platform you live on.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Business email ===== -->
+    <section class="cph-email">
+      <div class="container cph-email__inner">
+        <div class="cph-email__top">
+          <div class="cph-email__visual">
+            <svg class="cph-email__art" viewBox="0 0 260 190" fill="none" aria-hidden="true">
+              <rect class="cph-email__art-env" x="10" y="20" width="214" height="150" rx="16"/>
+              <path class="cph-email__art-line" d="M22 36 117 110 212 36"/>
+              <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94"/>
+
+              <!-- Animated send / receive: a packet drops into the envelope (receiving)
+                   and another leaves toward the @ badge (sending), on flowing dashed
+                   trails. mpath references the path by id so the packet can't drift
+                   off it. Disabled under prefers-reduced-motion (see styles.css). -->
+              <path id="cphEmailIn" class="cph-email__art-flow" d="M6 22C40 6 82 18 117 46"/>
+              <path id="cphEmailOut" class="cph-email__art-flow" d="M150 120C190 142 224 150 250 160"/>
+              <g class="cph-email__art-packet">
+                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
+                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
+                <animateMotion dur="2.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
+                  <mpath href="#cphEmailIn" xlink:href="#cphEmailIn"/>
+                </animateMotion>
+                <animate attributeName="opacity" dur="2.8s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.8;1"/>
+              </g>
+              <g class="cph-email__art-packet">
+                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
+                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
+                <animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
+                  <mpath href="#cphEmailOut" xlink:href="#cphEmailOut"/>
+                </animateMotion>
+                <animate attributeName="opacity" dur="2.8s" begin="1.4s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.78;1"/>
+              </g>
+
+              <circle class="cph-email__art-badge" cx="214" cy="146" r="36"/>
+              <circle class="cph-email__art-ping" cx="214" cy="146" r="34">
+                <animate attributeName="r" values="30;52" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
+                <animate attributeName="opacity" values="0.5;0" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
+              </circle>
+              <text class="cph-email__art-at" x="214" y="157" text-anchor="middle">@</text>
+            </svg>
+          </div>
+
+          <div class="cph-email__content">
+            <h2 class="cph-email__title">Business Email Served Fresh</h2>
+            <div class="cph-email__underline" aria-hidden="true"></div>
+            <p class="cph-email__desc">Included across our hosting plans as a full business mail platform, prepped to deliver reliable communication without clutter.</p>
+          </div>
+        </div>
+
+        <div class="cph-email__grid">
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/webmail-anywhere.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Webmail Anywhere</h3>
+            <p class="cph-email-card__desc">Access your webmail inbox fresh from any browser, prepped for working on mobile or desktop.</p>
+          </div>
+
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/desktop-mobile-apps.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Desktop &amp; Mobile Apps</h3>
+            <p class="cph-email-card__desc">Connect Outlook, Apple Mail, and mobile apps easily with auto-discover settings prepped for fast setup.</p>
+          </div>
+
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/spam-abuse-defense.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Spam &amp; Abuse Defense</h3>
+            <p class="cph-email-card__desc">Multi-layered filtering keeps junk off your menu so only legitimate emails reach your main inbox.</p>
+          </div>
+
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/flexible-mailbox-storage.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Flexible Mailbox Storage</h3>
+            <p class="cph-email-card__desc">Create custom mailboxes with ample space, prepped to handle all your daily business mail smoothly.</p>
+          </div>
+
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/sync-across-devices.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Sync Across Devices</h3>
+            <p class="cph-email-card__desc">Keep phones, tablets, and desktops perfectly in sync so your inbox stays updated everywhere.</p>
+          </div>
+
+          <div class="cph-email-card">
+            <span class="cph-email-card__icon" style="--email-icon: url(/serversalad/assets/img/email/forwarders-aliases.svg)" aria-hidden="true"></span>
+            <h3 class="cph-email-card__title">Forwarders &amp; Aliases</h3>
+            <p class="cph-email-card__desc">Set up unlimited aliases, autoresponders, and custom routing rules prepped to fit your exact workflow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Backups ===== -->
+    <section class="cph-backups">
+      <div class="container cph-backups__inner">
+        <div class="cph-backups__top">
+          <div class="cph-backups__content">
+            <h2 class="cph-backups__title">Fresh Backups You Can Rely On</h2>
+            <div class="cph-backups__underline" aria-hidden="true"></div>
+            <p class="cph-backups__desc">Daily snapshots prepped with JetBackup, off-site storage, and granular restores, letting you roll back a single file or an entire account with total ease.</p>
+          </div>
+
+          <div class="cph-backups__visual">
+            <div class="cph-backups__frame">
+              <img class="cph-backups__shot" src="/serversalad/assets/img/graphics/jetbackup-illustration.png" alt="The JetBackup dashboard showing total backups, account usage, and restore options" width="1195" height="614">
+            </div>
+          </div>
+        </div>
+
+        <div class="cph-backups__grid">
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/backed-up-daily.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">Backed Up Daily</h3>
+            <p class="cph-backups-card__desc">Your entire account recipe is backed up automatically every day, keeping your site fresh without extra effort.</p>
+          </div>
+
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/retention-window.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">30-Day Retention Window</h3>
+            <p class="cph-backups-card__desc">Roll back across a rolling 30-day window whenever you need to restore a previous site iteration.</p>
+          </div>
+
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/off-site-storage.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">Off-Site Storage</h3>
+            <p class="cph-backups-card__desc">Backup snapshots stay safely stored in off-site vaults, keeping your data insulated from local server issues.</p>
+          </div>
+
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/granular-restore.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">Granular Restore</h3>
+            <p class="cph-backups-card__desc">Serve precise restores for single files, databases, or mailboxes without disturbing the rest of your site.</p>
+          </div>
+
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/snapshot-backups.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">Snapshot Backups</h3>
+            <p class="cph-backups-card__desc">Prep a manual snapshot of your site at any moment before testing updates or making major changes.</p>
+          </div>
+
+          <div class="cph-backups-card">
+            <span class="cph-backups-card__icon" style="--backup-icon: url(/serversalad/assets/img/backups/powered-by-jetbackup.svg)" aria-hidden="true"></span>
+            <h3 class="cph-backups-card__title">Powered by JetBackup</h3>
+            <p class="cph-backups-card__desc">Driven by JetBackup technology to deliver ultra-fast recovery speeds and rock-solid site recipe restoration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
+  <div id="site-footer"></div>
+
+  <script src="/serversalad/js/main.js?v=7"></script>
+</body>
+</html>

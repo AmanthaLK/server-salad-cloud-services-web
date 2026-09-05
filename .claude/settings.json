@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=189\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=190\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=191\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=192\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=193\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=194\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=195\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=196\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=197\")",
+      "Bash(curl -s \"http://localhost/serversalad/index.html\")",
+      "Bash(curl -s -o /dev/null -w \"icon: %{http_code}\\\\n\" \"http://localhost/serversalad/assets/img/nav/mouse-pointer-icon.svg\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=198\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=199\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=200\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=201\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=202\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=203\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=204\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=205\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=206\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=207\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=208\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=209\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=210\")",
+      "Bash(curl -s -o /dev/null -w \"CSS: %{http_code}\\\\n\" \"http://localhost/serversalad/css/styles.css?v=211\")"
+    ]
+  }
+}

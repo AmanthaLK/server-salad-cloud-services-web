@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Salad Cloud Services</title>
+
+  <link rel="icon" type="image/svg+xml" href="/serversalad/assets/img/brand/serversalad-favicon.svg">
+
+  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/serversalad/css/styles.css?v=212">
+</head>
+<body>
+
+  <!-- Topbar + nav are a shared partial (partials/header.html), injected by
+       js/main.js so every page shares the same markup from one file. -->
+  <div id="site-header"></div>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <h1 class="hero__title">
+          <span class="hero__title-accent">Sri Lankan Support.</span> European Infrastructure.<br>
+          Zero Compromise.
+        </h1>
+
+        <div class="hero__cards">
+          <a class="hero-card" href="/serversalad/cpanel-hosting/">
+            <span class="hero-card__badge">Most Popular</span>
+            <span class="hero-card__icon">
+              <span class="hero-card__icon-img" style="--hero-icon: url(/serversalad/assets/img/hero/cpanel-hosting-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="hero-card__title">cPanel Hosting</h3>
+            <p class="hero-card__desc">High-speed NVMe Web Hosting featuring intuitive cPanel control. Launch blogs, portfolios, or small online stores in seconds with rock-solid reliability and zero technical friction.</p>
+          </a>
+
+          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+            <span class="hero-card__icon">
+              <span class="hero-card__icon-img" style="--hero-icon: url(/serversalad/assets/img/hero/cpanel-business-hosting-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="hero-card__title">cPanel Business Hosting</h3>
+            <p class="hero-card__desc">Engineered for growth with dedicated RAM, extra compute power, and 24/7 priority support. Keep high-traffic sites and e-commerce stores fast, responsive, and online.</p>
+          </a>
+
+          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+            <span class="hero-card__icon">
+              <span class="hero-card__icon-img" style="--hero-icon: url(/serversalad/assets/img/hero/vps-hosting-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="hero-card__title">VPS Hosting</h3>
+            <p class="hero-card__desc">High-performance Cloud VPS Hosting featuring full root access and dedicated NVMe resources. Built for custom applications, complex workloads, and developers.</p>
+          </a>
+
+          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+            <span class="hero-card__icon">
+              <span class="hero-card__icon-img" style="--hero-icon: url(/serversalad/assets/img/hero/domains-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="hero-card__title">Domains</h3>
+            <p class="hero-card__desc">Secure your brand instantly with fast domain name registration, free DNS management tools, and built-in privacy protection from one easy dashboard.</p>
+          </a>
+        </div>
+
+        <div class="hero__strip">
+          <div class="hero__logos-viewport" id="logosViewport">
+            <!-- Shows 4 logos at a time; auto-slides left continuously and loops
+                 seamlessly because the list below is duplicated once. Drag/swipe to
+                 slide manually too (see js/main.js). -->
+            <ul class="hero__logos" id="heroLogos">
+              <li><img src="assets/img/partners/partners-jetbackup.png" alt="JetBackup" draggable="false"></li>
+              <li><img src="assets/img/partners/partners-cloudlinux.png" alt="CloudLinux OS" draggable="false"></li>
+              <li><img src="assets/img/partners/partners-litespeed.png" alt="LiteSpeed" draggable="false"></li>
+              <li><img src="assets/img/partners/partners-softaculous.png" alt="Softaculous" draggable="false"></li>
+              <li><img src="assets/img/partners/partners-cpanel.png" alt="cPanel" draggable="false"></li>
+              <li><img src="assets/img/partners/partners-letsencrypt.png" alt="Let's Encrypt" draggable="false"></li>
+              <!-- duplicate set, hidden from assistive tech, needed for the seamless loop -->
+              <li aria-hidden="true"><img src="assets/img/partners/partners-jetbackup.png" alt="" draggable="false"></li>
+              <li aria-hidden="true"><img src="assets/img/partners/partners-cloudlinux.png" alt="" draggable="false"></li>
+              <li aria-hidden="true"><img src="assets/img/partners/partners-litespeed.png" alt="" draggable="false"></li>
+              <li aria-hidden="true"><img src="assets/img/partners/partners-softaculous.png" alt="" draggable="false"></li>
+              <li aria-hidden="true"><img src="assets/img/partners/partners-cpanel.png" alt="" draggable="false"></li>
+              <li aria-hidden="true"><img src="assets/img/partners/partners-letsencrypt.png" alt="" draggable="false"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== What Makes Us Different ===== -->
+    <section class="features">
+      <div class="container features__inner">
+        <h2 class="features__title">Why Choose Server Salad for High-Performance Hosting?</h2>
+        <div class="features__underline" aria-hidden="true"></div>
+
+        <div class="features__grid">
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/expert-support-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">Free 24/7 Expert <span class="feature__title-accent">Support</span></h3>
+            <p class="feature__desc">Get free 24/7 technical support via ticket, chat, and phone included with every plan. Never pay extra for the guidance you need.</p>
+          </div>
+
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/live-help-sessions-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">Saturday Live Help <span class="feature__title-accent">Sessions</span></h3>
+            <p class="feature__desc">Drop into weekly live virtual sessions for interactive setup assistance and direct, real-time troubleshooting with our senior engineers.</p>
+          </div>
+
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/licensed-software-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">100% Licensed <span class="feature__title-accent">Software</span></h3>
+            <p class="feature__desc">Zero nulled or grey-market tools. Every control panel, security tool, and management utility runs on 100% genuine software licenses.</p>
+          </div>
+
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/community-perks-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">Creator &amp; Community <span class="feature__title-accent">Perks</span></h3>
+            <p class="feature__desc">Unlock exclusive hosting discounts and extra credits tailored for Sri Lankan students, educators, tech startups, and agency freelancers.</p>
+          </div>
+
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/cpguard-security-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">Advanced CPGuard <span class="feature__title-accent">Security</span></h3>
+            <p class="feature__desc">Keep your site safe with automated malware scanning, real-time threat isolation, and proactive 24/7 cleanup at no additional cost.</p>
+          </div>
+
+          <div class="feature">
+            <span class="feature__icon">
+              <span class="feature__icon-img" style="--why-icon: url(/serversalad/assets/img/why-choose/european-power-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="feature__title">Local Care, European <span class="feature__title-accent">Power</span></h3>
+            <p class="feature__desc">Experience dedicated 24/7 local support backed by high-speed European enterprise data centers for unbeatable uptime and performance.</p>
+          </div>
+        </div>
+
+        <div class="features__reviews">
+          <a class="review-btn" href="https://share.google/9Emq2d350s95Vys2X" target="_blank" rel="noopener">
+            <img class="review-btn__icon" src="/serversalad/assets/img/reviews/google-logo.png" alt="" width="18" height="18">
+            <span>Reviews on Google</span>
+            <span class="review-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="review-btn" href="https://www.trustpilot.com/review/serversalad.com" target="_blank" rel="noopener">
+            <img class="review-btn__icon" src="/serversalad/assets/img/reviews/trustpilot-logo.png" alt="" width="18" height="18">
+            <span>Reviews on Trustpilot</span>
+            <span class="review-btn__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Sustainability ===== -->
+    <section class="eco">
+      <div class="eco__photo" aria-hidden="true"></div>
+      <div class="eco__bg" aria-hidden="true"></div>
+      <div class="container eco__inner">
+        <div class="eco__content">
+          <span class="eco__label">100% Renewable Energy</span>
+          <h2 class="eco__title">Sustainable Hosting Powered by <span class="eco__title-accent">100% Green Energy</span></h2>
+          <div class="eco__underline" aria-hidden="true"></div>
+          <p class="eco__desc">Power your website on enterprise European infrastructure running on 100% renewable energy. Our infrastructure partners fund tree planting and climate projects through <a class="eco__link" href="https://ecologi.com/" target="_blank" rel="noopener">Ecologi</a>, ensuring every Server Salad account directly supports global reforestation while delivering maximum speed with zero carbon compromise.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Plans + Locations: one continuous white-to-light-ash section ===== -->
+    <div class="plans-locations">
+    <!-- ===== Plans ===== -->
+    <section class="plans">
+      <div class="container plans__inner">
+        <h2 class="plans__title"><span class="plans__title-accent">High-Performance</span> cPanel Hosting <strong>Starting from LKR <span data-price="starter_salad" data-monthly="458" data-format="number" data-annual-always="true">458</span>/mo</strong></h2>
+        <p class="plans__subtitle">Fast, secure NVMe-powered web hosting with intuitive cPanel control and instant setup.</p>
+
+        <div class="plans__note">
+          <span class="plans__note-beam" aria-hidden="true">
+            <svg>
+              <rect class="plans__note-beam-glow" x="0" y="0" width="100%" height="100%" rx="14" ry="14" pathLength="200"/>
+            </svg>
+          </span>
+          <span class="plans__note-icon">
+            <svg width="18" height="18" viewBox="0 0 512 512" aria-hidden="true">
+              <path fill="#00aec0" d="M256 8C119.3 8 8 119.2 8 256c0 136.7 111.3 248 248 248s248-111.3 248-248C504 119.2 392.7 8 256 8zM33 256c0-32.3 6.9-63 19.3-90.7l106.4 291.4C84.3 420.5 33 344.2 33 256zm223 223c-21.9 0-43-3.2-63-9.1l66.9-194.4 68.5 187.8c.5 1.1 1 2.1 1.6 3.1-23.1 8.1-48 12.6-74 12.6zm30.7-327.5c13.4-.7 25.5-2.1 25.5-2.1 12-1.4 10.6-19.1-1.4-18.4 0 0-36.1 2.8-59.4 2.8-21.9 0-58.7-2.8-58.7-2.8-12-.7-13.4 17.7-1.4 18.4 0 0 11.4 1.4 23.4 2.1l34.7 95.2L200.6 393l-81.2-241.5c13.4-.7 25.5-2.1 25.5-2.1 12-1.4 10.6-19.1-1.4-18.4 0 0-36.1 2.8-59.4 2.8-4.2 0-9.1-.1-14.4-.3C109.6 73 178.1 33 256 33c58 0 110.9 22.2 150.6 58.5-1-.1-1.9-.2-2.9-.2-21.9 0-37.4 19.1-37.4 39.6 0 18.4 10.6 33.9 21.9 52.3 8.5 14.8 18.4 33.9 18.4 61.5 0 19.1-7.3 41.2-17 72.1l-22.2 74.3-80.7-239.6zm81.4 297.2l68.1-196.9c12.7-31.8 17-57.2 17-79.9 0-8.2-.5-15.8-1.5-22.9 17.4 31.8 27.3 68.2 27.3 107 0 82.3-44.6 154.1-110.9 192.7z"/>
+            </svg>
+          </span>
+          <span>All of our hosting plans are fully optimised for WordPress</span>
+        </div>
+
+        <div class="plans__cards">
+          <div class="plan-card">
+            <span class="plan-card__badge">Most Popular</span>
+            <span class="plan-card__icon" style="--plan-icon: url(/serversalad/assets/img/hero/cpanel-hosting-icon.svg)" aria-hidden="true"></span>
+            <h3 class="plan-card__title">cPanel Hosting</h3>
+            <p class="plan-card__price">
+              <span class="plan-card__price-label">Starting from</span>
+              <span class="plan-card__price-value">LKR&nbsp;<span data-price="starter_salad" data-monthly="500" data-format="number" data-annual-always="true">500</span><span class="plan-card__price-period">/ month</span></span>
+            </p>
+            <p class="plan-card__desc">High-speed NVMe hosting built for freelancers, personal sites, startups, and small online stores needing fast performance.</p>
+            <ul class="plan-card__features">
+              <li><strong>1 to 10 Websites</strong> with up to 30 GB NVMe Storage</li>
+              <li><strong>2 Cores CPU &amp; 2 GB RAM</strong> guaranteed allocation per plan</li>
+              <li><strong>LiteSpeed Web Server</strong> for enterprise page caching</li>
+              <li><strong>Node.js &amp; Python Support</strong> via Phusion Passenger</li>
+              <li><strong>cPGuard Malware Shield</strong> for automated 24/7 security</li>
+              <li><strong>Automated JetBackups</strong> with 1-click disaster recovery</li>
+            </ul>
+            <a class="btn btn--outline" href="/serversalad/cpanel-hosting/">View cPanel Hosting Plans</a>
+          </div>
+
+          <div class="plan-card">
+            <span class="plan-card__icon" style="--plan-icon: url(/serversalad/assets/img/hero/cpanel-business-hosting-icon.svg)" aria-hidden="true"></span>
+            <h3 class="plan-card__title">cPanel Business Hosting</h3>
+            <p class="plan-card__price plan-card__price--soon">To be announced</p>
+            <p class="plan-card__desc">Boosted compute power and dedicated RAM paired with priority support for scaling e-commerce stores and high-traffic portals.</p>
+            <ul class="plan-card__features">
+              <li><strong>All cPanel Features</strong> + Enterprise Upgrades</li>
+              <li><strong>Boosted CPU &amp; Dedicated RAM</strong> Allocation</li>
+              <li><strong>Unmetered Bandwidth</strong> for Heavy Traffic</li>
+              <li><strong>High-Traffic Optimization</strong> for E-Commerce</li>
+              <li><strong>24/7 Priority Support</strong> &amp; Express Handling</li>
+              <li><strong>21-Day Money-Back Guarantee</strong> Included</li>
+            </ul>
+            <a class="btn btn--outline" href="#cpanel-business-hosting">View Business Hosting Plans</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="locations">
+      <div class="container">
+        <div class="locations__map">
+          <img src="assets/img/graphics/world-map-dots.png" alt="World map with a marker over London, United Kingdom" class="locations__map-img">
+          <span class="locations__pin" tabindex="0">
+            <span class="locations__pin-pulse" aria-hidden="true"></span>
+            <span class="locations__pin-dot" aria-hidden="true"></span>
+            <span class="sr-only">London, UK — hover or focus for details</span>
+            <div class="locations__card" role="tooltip">
+              <h3 class="locations__card-title">
+                <img src="assets/img/flags/uk-flag-circle.png" alt="" class="locations__card-flag">
+                London, UK
+              </h3>
+              <p>Our primary cPanel infrastructure is hosted in top-tier London data centers.</p>
+              <p>Experience ultra-low latency with direct LINX network connectivity and enterprise-grade performance built on 100% NVMe storage.</p>
+            </div>
+          </span>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <!-- ===== Migration ===== -->
+    <section class="migration">
+      <div class="container migration__inner">
+        <div class="migration__top">
+          <div class="migration__content">
+            <span class="migration__eyebrow">Hassle-Free Migration</span>
+            <h2 class="migration__title">Effortless cPanel Transfer</h2>
+            <div class="migration__underline" aria-hidden="true"></div>
+            <p class="migration__desc">Switching to Server Salad is completely simple. Our technical team securely transfers your full cPanel account via native system APIs, ensuring total data integrity, complete account accuracy, and zero migration fees.</p>
+          </div>
+
+          <div class="migration__visual" aria-hidden="true">
+            <div class="migration__box">
+              <span class="migration__box-label">Your current host</span>
+              <span class="migration__bar"></span>
+              <span class="migration__bar migration__bar--mid"></span>
+              <span class="migration__bar migration__bar--short"></span>
+            </div>
+
+            <svg class="migration__arrow" viewBox="0 0 130 70" fill="none">
+              <path id="migrationPath" class="migration__arrow-path" d="M4 46C30 12 78 8 118 26" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round"/>
+              <path d="M108 17l12 9-13 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <!-- File "packet" that rides the dashed path from the old host to Server Salad -->
+              <g class="migration__packet">
+                <rect x="-5" y="-6.5" width="10" height="13" rx="2" fill="#1b2427" stroke="#f57e20" stroke-width="1.5"/>
+                <path d="M-2.5-3h5M-2.5 0h5M-2.5 3h3" stroke="#f57e20" stroke-width="1.2" stroke-linecap="round"/>
+                <animateMotion dur="2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
+                  <mpath href="#migrationPath" xlink:href="#migrationPath"/>
+                </animateMotion>
+                <animate attributeName="opacity" dur="2.6s" repeatCount="indefinite"
+                         values="0;1;1;1;0" keyTimes="0;0.12;0.5;0.85;1"/>
+              </g>
+            </svg>
+
+            <div class="migration__box migration__box--ours">
+              <span class="migration__box-label">Server Salad</span>
+              <span class="migration__tick">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12.5l4.5 4.5L19 7.5"/>
+                </svg>
+              </span>
+              <span class="migration__box-note">NVMe cloud</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="migration__grid">
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/serversalad/assets/img/migration/cpanel-account-move-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Free &amp; Complete<br>cPanel Account Move</h3>
+            <p class="migration-card__desc">We transfer your entire cPanel account from your previous host at zero additional cost, handling all technical work for you.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/serversalad/assets/img/migration/api-transfers-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Automated &amp; Secure<br>API Transfers</h3>
+            <p class="migration-card__desc">Migrations execute directly through secure system APIs, keeping your website files, databases, and DNS configurations intact.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/serversalad/assets/img/migration/quick-request-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Quick &amp; Simple<br>Request Process</h3>
+            <p class="migration-card__desc">Submit your migration request in seconds without filling out complicated technical forms or dealing with tedious back-and-forth.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/serversalad/assets/img/migration/email-retention-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Complete Data &amp;<br>Email Retention</h3>
+            <p class="migration-card__desc">All mailboxes, saved emails, and account credentials transfer over seamlessly without requiring manual re-configuration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Cloud infrastructure ===== -->
+    <section class="cloud">
+      <div class="container">
+        <h2 class="cloud__title">Our Cloud Infrastructure</h2>
+        <div class="cloud__underline" aria-hidden="true"></div>
+
+        <div class="cloud__grid">
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/enterprise-infrastructure-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">Enterprise Cloud<br><strong>Infrastructure</strong></h3>
+              <p class="cloud-card__desc">We have invested heavily in enterprise-grade infrastructure, allowing us to build out our incredibly powerful cloud platform.</p>
+            </div>
+          </div>
+
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/nvme-storage-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">Samsung Enterprise<br><strong>NVMe Storage</strong></h3>
+              <p class="cloud-card__desc">Our private cloud environment runs on the latest Samsung NVMe storage, providing pure, uncontended NVMe storage across the entire platform.</p>
+            </div>
+          </div>
+
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/cpguard-protection-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">Full Protection<br><strong>With cPGuard</strong></h3>
+              <p class="cloud-card__desc">cPGuard protects you and your clients from malware, brute force, and exploit attacks on autopilot, with one of the industry's lowest false-positive rates.</p>
+            </div>
+          </div>
+
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/amd-epyc-cpu-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">Powered By<br><strong>AMD EPYC&trade; CPUs</strong></h3>
+              <p class="cloud-card__desc">Our cloud infrastructure is entirely powered by enterprise-grade AMD EPYC&trade; CPUs throughout, boasting an unrivalled level of power and performance per core.</p>
+            </div>
+          </div>
+
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/litespeed-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">Lightning Fast<br><strong>With LiteSpeed</strong></h3>
+              <p class="cloud-card__desc">LiteSpeed Enterprise Web Server brings leading-edge performance, powered by our award-winning cloud NVMe infrastructure.</p>
+            </div>
+          </div>
+
+          <div class="cloud-card">
+            <span class="cloud-card__icon">
+              <span class="cloud-card__icon-img" style="--cloud-icon: url(/serversalad/assets/img/cloud/cloudlinux-reliability-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <div class="cloud-card__body">
+              <h3 class="cloud-card__title">CloudLinux OS<br><strong>Reliability</strong></h3>
+              <p class="cloud-card__desc">CloudLinux OS is a proven solution that provides isolated server environments, bringing maximum stability and performance to our cloud hosting platform.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js so
+       every page includes the same markup from one file. See README "Footer" notes. -->
+  <div id="site-footer"></div>
+
+  <script src="/serversalad/js/main.js?v=7"></script>
+</body>
+</html>
