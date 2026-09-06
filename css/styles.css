@@ -2273,12 +2273,16 @@ button { font: inherit; cursor: pointer; }
 /* The otherwise-empty top-left spacer cell carries an intro line instead of
    sitting blank next to the black package headers. */
 .cph-table__intro {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
   line-height: 24px;
   font-weight: 500;
   color: rgb(40, 39, 39);
 }
+.cph-table__intro-flag { width: 34px; height: auto; }
 
 .cph-table__val {
   display: flex;
