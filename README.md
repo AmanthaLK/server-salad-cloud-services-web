@@ -34,7 +34,7 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=215**). **`js/main.js` has its own separate
+  (`css/styles.css?v=N`, currently **v=220**). **`js/main.js` has its own separate
   `?v=N`** (currently **v=7**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
@@ -152,11 +152,14 @@ serversalad/
     pricing.php                    <- the ONE server-side file in the project —
                                        live pricing for the cpanel-hosting Plans
                                        table (see "Pricing API" in Component notes)
-  downloads/                       <- empty staging folder, not part of the live site.
+  downloads/                       <- staging folder, not part of the live site.
                                        Owner drops newly-downloaded image files here;
                                        once asked to use one, it gets renamed and moved
                                        into the right assets/img/ subfolder, and this
-                                       folder is emptied out again.
+                                       folder is emptied out again. Tracked in git via
+                                       downloads/.gitkeep, but its CONTENTS are
+                                       git-ignored (see .gitignore) so raw downloads
+                                       never get committed.
   assets/
     img/
       brand/                        <- serversalad-logo.png (nav logo, icon only),
@@ -169,9 +172,10 @@ serversalad/
                                        screenshot), cpanel-dashboard-devices.webp
                                        (cph Hero device mockup)
       partners/                    <- 6 hero "powered by" carousel logos (partners-*.png)
-      flags/                       <- uk-flag.svg (rect, in the cph comparison table),
-                                      uk-flag-circle.png (round badge, homepage
-                                      Locations card)
+      flags/                       <- uk-flag.svg (rect, used in the cph comparison
+                                      table's Data Center row AND above its top-left
+                                      intro cell), uk-flag-circle.png (round badge,
+                                      homepage Locations card)
       hero/                         <- 4 homepage hero-card icons, reused by the
                                        matching Plans-card and Web Hosting▾ mega-menu
                                        cards (see Hero notes)
@@ -231,10 +235,14 @@ they're recoloured to `--brand-orange` in CSS via `mask` — see Assets.)
   Component notes.
 - **UK flags — `assets/img/flags/`:**
   - `flags/uk-flag.svg` — flat rectangular UK flag, no rounded corners (open-source
-    "flag-icons" library, MIT-licensed, `id="flag-icons-gb"`). **Used** as a 22×16px
-    icon in the cpanel-hosting comparison table's "Data Center" row
-    (`.cph-table__flag`, ×3 — one per column; `box-shadow` outline so the flag's
-    white areas don't vanish against the white cells), replacing plain "UK" text.
+    "flag-icons" library, MIT-licensed, `id="flag-icons-gb"`). **Used** twice on the
+    cpanel-hosting comparison table, both via `.cph-table__flag` (2px radius +
+    `box-shadow` hairline outline so the flag's white areas don't vanish against the
+    white cells):
+    - a 22×16px icon in the "Data Center" row (×3, one per column), replacing plain
+      "UK" text;
+    - a 34px-wide badge above the heading in the table's top-left intro cell (see
+      "Plans & feature comparison" — `.cph-table__intro` / `.cph-table__intro-flag`).
   - `flags/uk-flag-circle.png` — 512×512, ~22KB circular Union Jack with a grey
     ring. **Used** as a 26px round badge left of the "London, UK" heading in the
     homepage Locations hover card (`.locations__card-flag`).
@@ -1178,10 +1186,16 @@ unless the owner says otherwise — update this list when that happens:
   crushing 4 columns illegibly.
   - **Package header row**: **Starter Salad**, **Standard Salad**, **Premium
     Salad** — real product names from the spreadsheet, on a **solid black**
-    background (`.cph-table__pkg`, `var(--bg-topbar)` — was white originally; the
-    empty label-column spacer cell to their left stays white, not black, since it
-    has no content and just read as a large blank block once painted black). Name
-    style (`.cph-table__pkg-name`): Cairo 500, 24px/24px, white. Taglines and the
+    background (`.cph-table__pkg`, `var(--bg-topbar)` — was white originally). The
+    label-column cell to their left stays white, not black, and carries an intro
+    line: a 34px UK flag (`assets/img/flags/uk-flag.svg`, see Assets) stacked above
+    the heading **"Fast, Secure & Reliable Web Hosting"**. `.cph-table__intro` (a
+    modifier alongside `.cph-table__label` on that one cell) makes it a centred
+    column — `flex-direction: column; align-items: center; justify-content: center;
+    text-align: center` — so the flag + wrapped heading sit centred both ways in the
+    tall cell; type is Cairo 500, 24px/24px, `rgb(40,39,39)` (same spec as
+    `.cph-table__pkg-name`). `.cph-table__intro-flag` sets the flag's 34px width.
+    Name style (`.cph-table__pkg-name`): Cairo 500, 24px/24px, white. Taglines and the
     price's "/mo"/"billed as..." text are `rgba(255,255,255,.6)`; the guarantee line
     is the same. The live price itself stays `--brand-orange` (already had enough
     contrast on black). Taglines, food-pun voice: **Starter Salad** "Light appetizer
@@ -1603,5 +1617,5 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=215**. Always check the live number in both HTML
+  Conventions); currently **v=220**. Always check the live number in both HTML
   files rather than trusting a figure remembered from earlier in a conversation.
