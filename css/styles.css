@@ -2270,6 +2270,15 @@ button { font: inherit; cursor: pointer; }
   border-right: 1px solid #ececf0;
 }
 .cph-table__label:first-child { border-top: none; background: #fff; }
+/* The otherwise-empty top-left spacer cell carries an intro line instead of
+   sitting blank next to the black package headers. */
+.cph-table__intro {
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: rgb(40, 39, 39);
+}
 
 .cph-table__val {
   display: flex;
