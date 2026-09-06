@@ -1,1 +1,6 @@
 .claude/settings.local.json
+
+# temp staging area for owner-supplied downloads — contents are moved into
+# assets/img/ (renamed) when used, so keep the folder but ignore what lands in it
+downloads/*
+!downloads/.gitkeep
