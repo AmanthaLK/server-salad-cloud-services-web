@@ -2275,7 +2275,8 @@ button { font: inherit; cursor: pointer; }
 .cph-table__intro {
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  justify-content: center; /* centre the flag + heading block in the tall cell */
+  gap: 14px;
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
   line-height: 24px;
