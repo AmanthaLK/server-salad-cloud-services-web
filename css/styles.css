@@ -2230,8 +2230,12 @@ button { font: inherit; cursor: pointer; }
                         the bottom of the table now, not directly below this —
                         but this still keeps the price block's own height
                         steady between toggle states). */
-  font-size: 11.5px;
-  color: #9a9aa2;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #9a9aa2; /* ref specifies rgb(85,85,85), too dark for this black cell —
+                     typography matched, colour kept readable per the site rule */
 }
 
 .cph-table__pkg-guarantee {
