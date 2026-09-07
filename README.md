@@ -34,8 +34,8 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=220**). **`js/main.js` has its own separate
-  `?v=N`** (currently **v=7**) on its `<script>` tag. **Bump the relevant one any
+  (`css/styles.css?v=N`, currently **v=232**). **`js/main.js` has its own separate
+  `?v=N`** (currently **v=10**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
   Plans section notes below). **Both pages** (`index.html` and
@@ -898,27 +898,32 @@ unless the owner says otherwise — update this list when that happens:
   column — so the annual figures are **calculated client-side**, not fetched:
   - Year total = monthly price × 10 (paying for 10 months covers all 12 — this is
     where the toggle's "2 Months Free" label comes from).
-  - The "/mo" figure shown when Annually is selected = (monthly × 10) ÷ 12,
+  - The per-month figure shown when Annually is selected = (monthly × 10) ÷ 12,
     rounded to the nearest whole LKR — the annual total spread back out per
     month, for comparison against the Monthly view. This is necessarily a bit
     lower than the real monthly price.
   - Each plan card also shows a small line under the price
-    (`.cph-table__pkg-billed`) that changes text depending on the toggle —
-    **only the Monthly-selected wording was owner-requested to change; the
-    Annually-selected wording is untouched**:
-    - Annually selected: "billed as LKR X/year", `X = monthly × 10` (the discounted
-      total).
-    - Monthly selected: **"LKR X/year (switch to Annual to save)"**,
+    (`.cph-table__pkg-billed`, Manrope 400, 14px/21px, `#fff`) that changes text
+    depending on the toggle. Each state's **second clause sits on its own line** —
+    it's wrapped in a block-level `<span class="cph-table__pkg-billed-note">`
+    (`display: block`) that `renderPrices()` writes via `innerHTML` (safe — the
+    only interpolated value is a comma-formatted number):
+    - Annually selected: "billed as LKR X/year" + "(16% Discount)", `X = monthly
+      × 10` (the discounted total). *(Note: 2 months free is really ~16.7% off;
+      "16%" is the rounded-down marketing figure the owner asked for.)*
+    - Monthly selected: "LKR X/year" + "(switch to Annual to save)",
       `X = monthly × 12` (no discount).
   - Below that, a static "14-Day Money Back Guarantee" line
-    (`.cph-table__pkg-guarantee`, 12px/600, muted grey) sits under every plan's
-    price block, always visible regardless of Monthly/Annually.
+    (`.cph-table__pkg-guarantee`, Manrope 400, 11px/13px, `#fff`) sits under
+    every plan's price block, always visible regardless of Monthly/Annually.
   - **Spacing inside each package cell is deliberately uneven, not uniform** —
     `.cph-table__pkg`'s flex `gap` is 16px, with each element's own margin tuned on
     top: tagline→price ≈20px, guarantee-line spacing ≈22px, while price and the
     "billed as..." line stay intentionally tight (≈6px) so they read as one paired
     unit rather than two separately-spaced lines — don't "fix" this to a uniform
-    gap.
+    gap. Both toggle states now render the billed line as 2 lines (the note
+    clause wraps under the "…/year" clause), so switching Monthly/Annually no
+    longer changes the block's height.
   - Implementation (`js/main.js`): every `[data-price]` element also carries a
     `data-monthly` attribute — the current best-known monthly price, starting as
     the HTML fallback value and overwritten with the real fetched value once
@@ -1195,30 +1200,32 @@ unless the owner says otherwise — update this list when that happens:
     text-align: center` — so the flag + wrapped heading sit centred both ways in the
     tall cell; type is Cairo 500, 24px/24px, `rgb(40,39,39)` (same spec as
     `.cph-table__pkg-name`). `.cph-table__intro-flag` sets the flag's 34px width.
-    Name style (`.cph-table__pkg-name`): Cairo 500, 24px/24px, white. Taglines and the
-    price's "/mo"/"billed as..." text are `rgba(255,255,255,.6)`; the guarantee line
-    is the same. The live price itself stays `--brand-orange` (already had enough
-    contrast on black). Taglines, food-pun voice: **Starter Salad** "Light appetizer
-    portion with 2-Core power, prepped for testing and staging.", **Standard Salad**
-    "Hearty main course with 2-Core power, prepped for live blogs and freelancers.",
+    Per-element type in each header cell (all owner-matched to supplied
+    references):
+    - **Name** (`.cph-table__pkg-name`): Cairo 500, 24px/24px, white.
+    - **Tagline** (`.cph-table__pkg-tagline`): Manrope 500, 13px/16px, `#fff`.
+    - **Price** (`.cph-table__pkg-price`): a centred baseline-aligned flex row —
+      the amount (Manrope 700, 24px/36px, `--brand-orange`) and the "/month" unit
+      (Manrope 400, 14px/21px, muted) share one line rather than stacking.
+    - **"billed as..." line** (`.cph-table__pkg-billed`): Manrope 400, 14px/21px,
+      `#fff` — see the billing-toggle notes for its two-line text.
+    - **Guarantee line** (`.cph-table__pkg-guarantee`): Manrope 400, 11px/13px,
+      `#fff`.
+    Taglines, food-pun voice: **Starter Salad** "Light appetizer portion with
+    2-Core power, prepped for testing and staging.", **Standard Salad** "Hearty
+    main course with 2-Core power, prepped for live blogs and freelancers.",
     **Premium Salad** "Generous banquet platter with 2-Core power, prepped for
-    multi-site creators." **Premium Salad's cell has a small visual highlight** —
-    just a 3px orange top accent line (`box-shadow: inset 0 3px 0`,
-    `.cph-table__pkg--featured`); the cell background itself is the same solid
-    black as the other two (an earlier orange-tint gradient was removed per
-    owner). No "Most Popular" text (there's no data on which tier is actually
-    most popular, same reasoning as every other unverified-claim omission — this
-    one stays a visual highlight only). The feature-comparison rows below the
-    header, and the "Order ... Salad" button row at the very bottom, are **not**
-    part of this black treatment — they stay on their original white/light
-    backgrounds.
-  - **No "MOST POPULAR" band.** Standard Salad briefly carried a flush
-    orange-band indicator across the top of its cell; the owner had it removed,
-    so all 3 package cells now read identically apart from Premium's 3px accent
-    line. The base `.cph-table__pkg` top padding was dropped back to `26px`
-    (the extra room only existed to clear that band). `.cph-table__pkg-badge`
-    and the `.cph-table__pkg--popular` marker class were both deleted along with
-    the band.
+    multi-site creators."
+  - **All 3 header cells look identical — no per-tier highlight.** Standard Salad
+    once had a flush "MOST POPULAR" orange band and Premium Salad a 3px orange
+    top accent line; the owner had both removed. `.cph-table__pkg-badge`,
+    `.cph-table__pkg--popular`, and `.cph-table__pkg--featured` (rule + class)
+    are all deleted; the base `.cph-table__pkg` top padding is `26px` (the extra
+    room only existed to clear the band). No "Most Popular" text anywhere — no
+    data on which tier actually is, same reasoning as every other
+    unverified-claim omission. The feature-comparison rows below the header, and
+    the "Order ... Salad" button row at the very bottom, are **not** part of this
+    black treatment — they stay on their original white/light backgrounds.
   - **Pricing — all 3 tiers are LIVE**, fetched from the same
     `cpanel_package_pricing` database table via `api/pricing.php` (see "Pricing
     API" below): each `<strong>` carries `data-price="starter_salad" /
@@ -1617,5 +1624,5 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=220**. Always check the live number in both HTML
+  Conventions); currently **v=232**. Always check the live number in both HTML
   files rather than trusting a figure remembered from earlier in a conversation.
