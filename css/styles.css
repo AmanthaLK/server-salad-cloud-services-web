@@ -210,7 +210,10 @@ button { font: inherit; cursor: pointer; }
   font-weight: 700;
   text-transform: uppercase;
   color: rgb(40, 39, 39);
-  white-space: nowrap;
+  /* Spread "WEB HOSTING" across the full column width so its left/right edges
+     line up with the justified description paragraph below it. */
+  text-align: justify;
+  text-align-last: justify;
 }
 /* Gradient accent word — same red/orange gradient as .hero__title-accent. */
 .nav__mega-intro-title strong {
