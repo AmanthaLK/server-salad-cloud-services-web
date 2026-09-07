@@ -2432,67 +2432,24 @@ button { font: inherit; cursor: pointer; }
 }
 .cph-table__pkg-btn:hover { background: var(--brand-orange); color: #fff; }
 
-/* Set off as its own band under the table, with each item as a white pill chip
-   (solid orange check) so the list reads clearly against the grey section
-   instead of as faint grey run-on text. */
-.cph-included {
-  margin-top: 56px;
-  padding-top: 48px;
-  border-top: 1px solid #e3e3e8;
-  text-align: center;
+/* "Exclusive Benefits:" group heading — a full-width row inside the grid,
+   bold + underlined like the source template. */
+.cph-table__group {
+  grid-column: 1 / -1;
+  padding: 20px 20px 12px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  color: rgb(23, 25, 26);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: #fafafb;
+  border-top: 1px solid #ececf0;
 }
-.cph-included__title {
-  margin: 0 0 28px;
-  font-size: 20px;
-  font-weight: 800;
-  color: #1b1b1f;
-}
-.cph-included__list {
-  list-style: none;
-  margin: 0 auto;
-  padding: 0;
-  max-width: 900px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
-}
-.cph-included__list li {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 11px 20px 11px 42px;
-  background: #fff;
-  border: 1px solid #e3e3e8;
-  border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
-  font-size: 14px;
-  font-weight: 600;
-  color: #1b1b1f;
-}
-.cph-included__list li::before {
-  content: "";
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  margin-top: -9px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--brand-orange);
-}
-.cph-included__list li::after {
-  content: "";
-  position: absolute;
-  left: 21px;
-  top: 50%;
-  margin-top: -3px;
-  width: 7px;
-  height: 4px;
-  border-left: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  transform: rotate(-45deg);
-}
+/* "Yes" value cells under Exclusive Benefits — check glyph + label. */
+.cph-table__val--yes { color: rgb(23, 25, 26); }
+.cph-table__check { color: var(--brand-orange); margin-right: 6px; flex-shrink: 0; }
 
 @media (max-width: 560px) {
   .cph-plans { padding: 64px 0; }
