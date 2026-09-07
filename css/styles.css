@@ -2337,10 +2337,6 @@ button { font: inherit; cursor: pointer; }
   padding: 26px 18px;
   background: var(--bg-topbar);
 }
-.cph-table__pkg--featured {
-  background: var(--bg-topbar); /* solid black, same as the other package cells — no orange tint gradient */
-  box-shadow: inset 0 3px 0 var(--brand-orange);
-}
 .cph-table__pkg-name {
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
