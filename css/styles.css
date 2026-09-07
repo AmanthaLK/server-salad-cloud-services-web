@@ -2422,6 +2422,7 @@ button { font: inherit; cursor: pointer; }
   width: 100%;
   background: transparent;
   border: 1.5px solid var(--brand-orange);
+  border-radius: 8px; /* squared with a small corner — same as .plan-card .btn--outline / .review-btn (overrides the base .btn pill) */
   color: var(--brand-orange);
   font-size: 13px;
   padding: 10px 14px;
