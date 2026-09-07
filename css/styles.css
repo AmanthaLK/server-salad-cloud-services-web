@@ -2240,9 +2240,9 @@ button { font: inherit; cursor: pointer; }
 .cph-table__pkg-guarantee {
   margin: 6px 0 0;
   font-family: "Manrope", var(--font-body);
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 400;
-  line-height: 21px;
+  line-height: 13px;
   color: #fff;
 }
 
