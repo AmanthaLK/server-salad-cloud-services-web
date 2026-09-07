@@ -2328,9 +2328,12 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   justify-content: center;
   padding: 13px 14px;
-  font-size: 13.5px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
   text-align: center;
-  color: #3a3a40;
+  color: rgb(23, 25, 26);
   border-top: 1px solid #ececf0;
 }
 .cph-table__cross { color: #d3382e; }
