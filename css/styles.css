@@ -780,7 +780,7 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   gap: 10px;
   padding: 14px 22px;
-  border-radius: 999px;
+  border-radius: 8px; /* same rounded-corner as .plan-card .btn--outline */
   background: #fff;
   border: 1px solid #e3e3e8;
   box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
