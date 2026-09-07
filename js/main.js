@@ -228,7 +228,9 @@
   var priceEls = document.querySelectorAll("[data-price]");
   if (priceEls.length) {
     var toggle = document.getElementById("billingToggle");
-    var isAnnual = false;
+    // Annually is the default state on load (matches the HTML: toggle starts
+    // aria-checked="true", the "Annually" label starts .is-active).
+    var isAnnual = true;
 
     function renderPrices() {
       priceEls.forEach(function (el) {

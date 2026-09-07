@@ -48,11 +48,11 @@
              the DB only stores a monthly price, there's no separate annual price
              to fetch. See js/main.js and README "Pricing API" / billing toggle. -->
         <div class="cph-billing-toggle">
-          <span class="cph-billing-toggle__label is-active" data-billing-label="monthly">Monthly</span>
-          <button type="button" class="cph-billing-toggle__switch" id="billingToggle" role="switch" aria-checked="false" aria-label="Switch between monthly and annual billing">
+          <span class="cph-billing-toggle__label" data-billing-label="monthly">Monthly</span>
+          <button type="button" class="cph-billing-toggle__switch" id="billingToggle" role="switch" aria-checked="true" aria-label="Switch between monthly and annual billing">
             <span class="cph-billing-toggle__knob" aria-hidden="true"></span>
           </button>
-          <span class="cph-billing-toggle__label" data-billing-label="annual">Annually <span class="cph-billing-toggle__badge">2 Months Free</span></span>
+          <span class="cph-billing-toggle__label is-active" data-billing-label="annual">Annually <span class="cph-billing-toggle__badge">2 Months Free</span></span>
         </div>
 
         <div class="cph-table-wrap">
@@ -461,6 +461,6 @@
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/serversalad/js/main.js?v=11"></script>
+  <script src="/serversalad/js/main.js?v=12"></script>
 </body>
 </html>
