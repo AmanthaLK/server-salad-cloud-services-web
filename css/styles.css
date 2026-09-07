@@ -2237,8 +2237,8 @@ button { font: inherit; cursor: pointer; }
   line-height: 21px;
   color: #fff;
 }
-/* "(switch to Annual to save)" suffix — forced onto its own second line
-   (set as a block-level span by renderPrices() in js/main.js). */
+/* "(switch to Annual to save)" / "(16% Discount)" suffix — forced onto its own
+   second line (set by renderPrices() in js/main.js). */
 .cph-table__pkg-billed-note {
   display: block;
   font-family: "Manrope", var(--font-body);
@@ -2246,6 +2246,25 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
   line-height: 21px;
   /* colour left to inherit from .cph-table__pkg-billed (#fff) — per owner */
+}
+/* The Monthly-state note is a real <button> that flips billing to Annual —
+   strip the UA button chrome, keep it reading as an inline text link. */
+.cph-table__pkg-billed-switch {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.cph-table__pkg-billed-switch:hover { opacity: .8; }
+.cph-table__pkg-billed-switch:focus-visible {
+  outline: 2px solid var(--brand-orange);
+  outline-offset: 2px;
 }
 
 .cph-table__pkg-guarantee {

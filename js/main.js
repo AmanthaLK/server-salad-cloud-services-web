@@ -251,26 +251,39 @@
         } else {
           el.textContent = bareNumber ? String(monthly) : "LKR " + monthly.toLocaleString("en-US");
           var yearIfMonthly = monthly * 12;
-          // "(switch to Annual to save)" goes on its own second line — wrapped in
-          // a block-level span (see .cph-table__pkg-billed-note in styles.css).
+          // "(switch to Annual to save)" goes on its own second line — it's a real
+          // <button> so clicking it flips the billing toggle to Annual (handled by
+          // the delegated listener below, since this markup is rebuilt each render).
           // innerHTML is safe here: the only interpolated value is a formatted
           // number (digits + commas).
-          if (billedEl) billedEl.innerHTML = "LKR " + yearIfMonthly.toLocaleString("en-US") + "/year<span class=\"cph-table__pkg-billed-note\">(switch to Annual to save)</span>";
+          if (billedEl) billedEl.innerHTML = "LKR " + yearIfMonthly.toLocaleString("en-US") + "/year<button type=\"button\" class=\"cph-table__pkg-billed-note cph-table__pkg-billed-switch\">(switch to Annual to save)</button>";
         }
       });
     }
 
-    if (toggle) {
-      toggle.addEventListener("click", function () {
-        isAnnual = !isAnnual;
-        toggle.setAttribute("aria-checked", String(isAnnual));
-        document.querySelectorAll("[data-billing-label]").forEach(function (label) {
-          var isThisOne = label.getAttribute("data-billing-label") === (isAnnual ? "annual" : "monthly");
-          label.classList.toggle("is-active", isThisOne);
-        });
-        renderPrices();
+    // Single source of truth for the Monthly/Annually state — used by the toggle
+    // switch AND the "(switch to Annual to save)" links inside each price cell.
+    function setAnnual(next) {
+      if (next === isAnnual) return;
+      isAnnual = next;
+      if (toggle) toggle.setAttribute("aria-checked", String(isAnnual));
+      document.querySelectorAll("[data-billing-label]").forEach(function (label) {
+        var isThisOne = label.getAttribute("data-billing-label") === (isAnnual ? "annual" : "monthly");
+        label.classList.toggle("is-active", isThisOne);
       });
+      renderPrices();
     }
+
+    if (toggle) {
+      toggle.addEventListener("click", function () { setAnnual(!isAnnual); });
+    }
+
+    // Delegated: the "(switch to Annual to save)" button is re-created by
+    // renderPrices() on every render, so listen on the document instead.
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest(".cph-table__pkg-billed-switch")) setAnnual(true);
+    });
 
     fetch("/serversalad/api/pricing.php", { cache: "no-store" })
       .then(function (res) {
