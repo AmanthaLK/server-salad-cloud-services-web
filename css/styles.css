@@ -2240,9 +2240,12 @@ button { font: inherit; cursor: pointer; }
 
 .cph-table__pkg-guarantee {
   margin: 6px 0 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, .6);
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgba(255, 255, 255, .6); /* ref's rgb(85,85,85) is too dark for the
+                                     black cell — typography matched, colour kept */
 }
 
 .cph-table-wrap { margin-top: 0; overflow-x: auto; }
