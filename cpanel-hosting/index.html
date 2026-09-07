@@ -88,7 +88,9 @@
             <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
           </div>
 
-          <!-- Feature rows -->
+          <!-- Feature rows — ordered by how much weight buyers give each when
+               comparing shared-hosting tiers (site count > space > traffic >
+               DBs > mailboxes > the rest); see git log for the research note. -->
           <div class="cph-table__label">Websites</div>
           <div class="cph-table__val">1</div>
           <div class="cph-table__val">3</div>
@@ -104,7 +106,17 @@
           <div class="cph-table__val">500 GB</div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unmetered</span></div>
 
+          <div class="cph-table__label">MySQL Databases</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
           <div class="cph-table__label">Email Accounts</div>
+          <div class="cph-table__val">2</div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+
+          <div class="cph-table__label">Sub Domains</div>
           <div class="cph-table__val">2</div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
@@ -114,15 +126,10 @@
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
 
-          <div class="cph-table__label">MySQL Databases</div>
+          <div class="cph-table__label">Passenger Applications</div>
           <div class="cph-table__val">2</div>
-          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
-          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
-
-          <div class="cph-table__label">Sub Domains</div>
-          <div class="cph-table__val">2</div>
-          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
-          <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
+          <div class="cph-table__val">3</div>
+          <div class="cph-table__val">5</div>
 
           <div class="cph-table__label">Parked Domains</div>
           <div class="cph-table__val"><svg class="cph-table__cross" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-label="Not included"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
@@ -133,11 +140,6 @@
           <div class="cph-table__val"><svg class="cph-table__cross" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-label="Not included"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
           <div class="cph-table__val cph-table__val--infinity"><span aria-hidden="true">&#8734;</span><span class="sr-only">Unlimited</span></div>
-
-          <div class="cph-table__label">Passenger Applications</div>
-          <div class="cph-table__val">2</div>
-          <div class="cph-table__val">3</div>
-          <div class="cph-table__val">5</div>
 
           <!-- "Included with Every Plan" — rows that don't differ by tier. The
                group heading spans all 4 columns; rows show either a spec value
