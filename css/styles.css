@@ -2424,7 +2424,10 @@ button { font: inherit; cursor: pointer; }
   border: 1.5px solid var(--brand-orange);
   border-radius: 8px; /* squared with a small corner — same as .plan-card .btn--outline / .review-btn (overrides the base .btn pill) */
   color: var(--brand-orange);
-  font-size: 13px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 15px;
   padding: 10px 14px;
 }
 .cph-table__pkg-btn:hover { background: var(--brand-orange); color: #fff; }
