@@ -2343,9 +2343,11 @@ button { font: inherit; cursor: pointer; }
 .cph-table__pkg-tagline {
   margin: 0;
   min-height: 34px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, .6);
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: rgb(255, 255, 255);
 }
 .cph-table__pkg-price {
   margin: 4px 0 0;
