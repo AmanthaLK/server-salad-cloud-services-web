@@ -1400,6 +1400,7 @@ button { font: inherit; cursor: pointer; }
   align-self: center;
   padding: 12px 32px;
   margin-top: auto;
+  border-radius: 0; /* square button (overrides the base .btn pill), per reference */
 }
 
 .btn--outline {
