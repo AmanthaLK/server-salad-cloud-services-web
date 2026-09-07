@@ -2236,6 +2236,9 @@ button { font: inherit; cursor: pointer; }
   line-height: 21px;
   color: #fff;
 }
+/* "(switch to Annual to save)" suffix — forced onto its own second line
+   (set as a block-level span by renderPrices() in js/main.js). */
+.cph-table__pkg-billed-note { display: block; }
 
 .cph-table__pkg-guarantee {
   margin: 6px 0 0;

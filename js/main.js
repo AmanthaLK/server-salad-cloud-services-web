@@ -248,7 +248,11 @@
         } else {
           el.textContent = bareNumber ? String(monthly) : "LKR " + monthly.toLocaleString("en-US");
           var yearIfMonthly = monthly * 12;
-          if (billedEl) billedEl.textContent = "LKR " + yearIfMonthly.toLocaleString("en-US") + "/year (switch to Annual to save)";
+          // "(switch to Annual to save)" goes on its own second line — wrapped in
+          // a block-level span (see .cph-table__pkg-billed-note in styles.css).
+          // innerHTML is safe here: the only interpolated value is a formatted
+          // number (digits + commas).
+          if (billedEl) billedEl.innerHTML = "LKR " + yearIfMonthly.toLocaleString("en-US") + "/year<span class=\"cph-table__pkg-billed-note\">(switch to Annual to save)</span>";
         }
       });
     }
