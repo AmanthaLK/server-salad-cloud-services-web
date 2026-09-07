@@ -210,10 +210,7 @@ button { font: inherit; cursor: pointer; }
   font-weight: 700;
   text-transform: uppercase;
   color: rgb(40, 39, 39);
-  /* Spread "WEB HOSTING" across the full column width so its left/right edges
-     line up with the justified description paragraph below it. */
-  text-align: justify;
-  text-align-last: justify;
+  white-space: nowrap;
 }
 /* Gradient accent word — same red/orange gradient as .hero__title-accent. */
 .nav__mega-intro-title strong {
@@ -230,7 +227,6 @@ button { font: inherit; cursor: pointer; }
   font-weight: 500;
   line-height: 24px;
   color: rgb(122, 122, 122);
-  text-align: justify;
 }
 /* Divider + cards are flex siblings here (not separate grid columns) so the
    divider stretches to the cards' own content height, not the taller Key
