@@ -2350,17 +2350,27 @@ button { font: inherit; cursor: pointer; }
   color: rgb(255, 255, 255);
 }
 .cph-table__pkg-price {
+  /* price + "/mo" share one baseline-aligned row instead of stacking */
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
   margin: 4px 0 0;
-  font-size: 13px;
   color: rgba(255, 255, 255, .6);
 }
 .cph-table__pkg-price strong {
-  display: block;
-  font-size: 21px;
-  font-weight: 800;
+  font-family: "Manrope", var(--font-body);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 36px;
   color: var(--brand-orange);
 }
-.cph-table__pkg-price span { font-size: 12px; }
+.cph-table__pkg-price span {
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+}
 /* CTA row lives at the bottom of the table now (moved per owner — used to sit
    directly under each price in the header row). Each cell matches the padding/
    border rhythm of an ordinary .cph-table__val row so it reads as one more row,
