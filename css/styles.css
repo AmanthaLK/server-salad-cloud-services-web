@@ -227,6 +227,7 @@ button { font: inherit; cursor: pointer; }
   font-weight: 500;
   line-height: 24px;
   color: rgb(122, 122, 122);
+  text-align: justify;
 }
 /* Divider + cards are flex siblings here (not separate grid columns) so the
    divider stretches to the cards' own content height, not the taller Key
