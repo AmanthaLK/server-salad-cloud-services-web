@@ -247,7 +247,7 @@
           // "16% Discount" on its own second line, same block-level span as the
           // Monthly-state note below. innerHTML is safe — the only interpolated
           // value is a formatted number (digits + commas).
-          if (billedEl) billedEl.innerHTML = "billed as LKR " + yearTotal.toLocaleString("en-US") + "/year<span class=\"cph-table__pkg-billed-note\">16% Discount</span>";
+          if (billedEl) billedEl.innerHTML = "billed as LKR " + yearTotal.toLocaleString("en-US") + "/year<span class=\"cph-table__pkg-billed-note\">(16% Discount)</span>";
         } else {
           el.textContent = bareNumber ? String(monthly) : "LKR " + monthly.toLocaleString("en-US");
           var yearIfMonthly = monthly * 12;
