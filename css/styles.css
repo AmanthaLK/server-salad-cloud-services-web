@@ -2234,8 +2234,8 @@ button { font: inherit; cursor: pointer; }
   font-size: 14px;
   font-weight: 400;
   line-height: 21px;
-  color: #9a9aa2; /* ref specifies rgb(85,85,85), too dark for this black cell —
-                     typography matched, colour kept readable per the site rule */
+  color: rgb(85, 85, 85); /* per owner's reference — note: low contrast on the
+                             black .cph-table__pkg cell */
 }
 
 .cph-table__pkg-guarantee {
