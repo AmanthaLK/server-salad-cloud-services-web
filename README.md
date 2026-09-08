@@ -34,8 +34,8 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=232**). **`js/main.js` has its own separate
-  `?v=N`** (currently **v=10**) on its `<script>` tag. **Bump the relevant one any
+  (`css/styles.css?v=N`, currently **v=243**). **`js/main.js` has its own separate
+  `?v=N`** (currently **v=12**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
   Plans section notes below). **Both pages** (`index.html` and
@@ -585,8 +585,10 @@ unless the owner says otherwise — update this list when that happens:
     Google" and "Reviews on Trustpilot", each with the brand's real logo as a plain
     18×18px `<img>` (`assets/img/reviews/google-logo.png` /
     `trustpilot-logo.png`, owner-supplied files — not hand-drawn SVG
-    approximations), and an orange arrow (`→`) that nudges right on hover. White pill background,
-    subtle border/shadow, lifts slightly on hover. Text is `Manrope` 600, 14px/20px,
+    approximations), and an orange arrow (`→`) that nudges right on hover. White
+    background with an **8px corner radius** (was a full pill — squared to match
+    the Plans-card and cph "Order …" buttons), subtle border/shadow, lifts
+    slightly on hover. Text is `Manrope` 600, 14px/20px,
     `rgb(76,73,96)`. Spacing is deliberately roomy
     (`gap: 28px` between the two pills, `margin-top: 76px` under the grid,
     plus a small `padding-bottom` so the hover-lift doesn't crowd the section edge).
@@ -765,9 +767,10 @@ unless the owner says otherwise — update this list when that happens:
     "**High-Traffic Ready** for active portals", "**Priority Support** with express
     handling", "**21-Day Money Back** guarantee included". Button "View Business
     Hosting Plans".
-  - Both buttons (`.btn--outline`) are a compact centred pill (`width: auto;
-    align-self: center`, not full-width) styled in `--brand-orange` (border/text,
-    filling solid orange with white text on hover). **cPanel Hosting's button now
+  - Both buttons (`.btn--outline`) are a compact centred button (`width: auto;
+    align-self: center`, not full-width; **8px corner radius**, overriding the
+    base `.btn` pill) styled in `--brand-orange` (border/text, filling solid
+    orange with white text on hover). **cPanel Hosting's button now
     points at the real page** `/serversalad/cpanel-hosting/`; Business Hosting's
     still points at the `#cpanel-business-hosting` placeholder anchor — not a real
     page yet.
@@ -893,7 +896,10 @@ unless the owner says otherwise — update this list when that happens:
   cache-buster** (separate from the CSS one), added alongside this feature since
   it was the first time `main.js` changed after the multi-page/root-relative-path
   work — bump it whenever `main.js` changes, same discipline as `styles.css`.
-- **Monthly/Annually billing toggle** (`.cph-billing-toggle`, above the table). The database
+- **Monthly/Annually billing toggle** (`.cph-billing-toggle`, above the table).
+  **Annually is the default on load** — the toggle button ships
+  `aria-checked="true"`, the "Annually" label ships `.is-active`, and
+  `js/main.js` initialises `isAnnual = true`. The database
   only stores **one monthly price per plan** — there's no separate annual price
   column — so the annual figures are **calculated client-side**, not fetched:
   - Year total = monthly price × 10 (paying for 10 months covers all 12 — this is
@@ -912,7 +918,12 @@ unless the owner says otherwise — update this list when that happens:
       × 10` (the discounted total). *(Note: 2 months free is really ~16.7% off;
       "16%" is the rounded-down marketing figure the owner asked for.)*
     - Monthly selected: "LKR X/year" + "(switch to Annual to save)",
-      `X = monthly × 12` (no discount).
+      `X = monthly × 12` (no discount). Here the note clause is a real
+      **`<button class="cph-table__pkg-billed-note cph-table__pkg-billed-switch">`**
+      — clicking any of the three flips the whole table to Annually. Because
+      `renderPrices()` rebuilds this markup every render, the click is handled by
+      a **delegated** `document` listener, not a per-button one; both it and the
+      toggle switch call one shared `setAnnual(next)` helper.
   - Below that, a static "14-Day Money Back Guarantee" line
     (`.cph-table__pkg-guarantee`, Manrope 400, 11px/13px, `#fff`) sits under
     every plan's price block, always visible regardless of Monthly/Annually.
@@ -931,7 +942,10 @@ unless the owner says otherwise — update this list when that happens:
     `data-monthly` and redraws based on the current toggle state, so it works
     correctly regardless of whether the fetch has completed yet or which mode is
     selected — called on initial page load, again when the fetch resolves, and
-    again on every toggle click.
+    again on every state change. `setAnnual(next)` is the single place that flips
+    `isAnnual`, updates the toggle's `aria-checked`, swaps the labels' `.is-active`,
+    and re-renders — the toggle click and the in-cell "switch to Annual" buttons
+    both go through it.
   - The toggle itself is a `<button role="switch" aria-checked="...">` (not a
     checkbox) with an inner knob that slides via CSS `transform`, styled in
     `--brand-orange`. The two labels ("Monthly" / "Annually") get an `.is-active`
@@ -939,12 +953,15 @@ unless the owner says otherwise — update this list when that happens:
     selected. Label style: Montserrat 600, 14px/21px, `rgba(40,39,39,.55)` at rest
     (the inactive look), `#1b1b1f` when `.is-active`.
 - **CTA row** — the 3 "Order ... Salad" buttons sit in their own row
-  (`.cph-table__btn-cell`, empty label cell + 3 button cells) after Money-Back
-  Guarantee, the very last row. Each button cell matches the padding/border-top
-  rhythm of an ordinary `.cph-table__val` row, so it reads as one more table row
-  rather than a bolted-on footer. All 3 buttons point at `https://example.com/` in
-  a new tab (`target="_blank" rel="noopener"`) — an explicit temporary placeholder
-  until real order-flow/checkout pages exist.
+  (`.cph-table__btn-cell`, empty label cell + 3 button cells), the very last row
+  (below the "Included with Every Plan" group). Each button cell matches the
+  padding/border-top rhythm of an ordinary `.cph-table__val` row, so it reads as
+  one more table row rather than a bolted-on footer. Buttons (`.cph-table__pkg-btn`)
+  are outlined `--brand-orange`, **8px corner radius** (overriding the base
+  `.btn` pill — the shared squared-button look, also on `.plan-card .btn--outline`
+  and `.review-btn`), label Manrope 400 15px, filling solid orange on hover. All 3 point
+  at `https://example.com/` in a new tab (`target="_blank" rel="noopener"`) — an
+  explicit temporary placeholder until real order-flow/checkout pages exist.
 
 ### Migration (dark section, after Locations)
 - `<section class="migration">`, full-bleed dark background — a `--brand-dark`-family
@@ -1233,19 +1250,23 @@ unless the owner says otherwise — update this list when that happens:
     (500 / 1,200 / 2,500 respectively) that only ever displays if the live fetch
     fails. (The "Order ... Salad" buttons are documented in the CTA row bullet
     below.)
-  - **Feature rows**, from the spreadsheet in its original order:
-    Websites, Storage (shown as "N GB NVMe" — spreadsheet's separate GB/MB rows
-    collapsed into one, since MB is just the same number in different units),
-    Bandwidth, CPU, RAM, Email Accounts, FTP Accounts, MySQL Databases, Sub Domains,
-    Parked Domains, Mailing Lists, Passenger Applications, Data Center — consistent
-    with, not contradicting, the Locations section's "London, UK" data center claim
-    on the homepage. **Shows a small UK flag icon (`assets/img/flags/uk-flag.svg`,
-    `.cph-table__flag`) instead of the text "UK"**, once per column — `alt="United
-    Kingdom"` on each `<img>` carries the meaning for screen readers.
-    - There are no **WordPress** or **SSL** rows in the table — both are identical
-      across all three tiers, so they don't differentiate anything. They live in
-      the `.cph-included` list below instead, as "WordPress Support" and
-      "Free SSL".
+  - **Feature rows are split into two groups inside the same grid:**
+    1. **Differentiating rows** (values differ by tier), ordered by how much
+       weight buyers give each feature when comparing shared-hosting plans (site
+       count > space > traffic > databases > mailboxes > the long-tail), not the
+       spreadsheet's original order:
+       **Websites, Storage** (shown as "N GB NVMe" — the spreadsheet's separate
+       GB/MB rows collapsed into one), **Bandwidth, MySQL Databases, Email
+       Accounts, Sub Domains, FTP Accounts, Passenger Applications, Parked
+       Domains, Mailing Lists**.
+    2. **"Included with Every Plan"** — see the `.cph-table__group` bullet below.
+    - Row **labels** (`.cph-table__label`): Manrope 400, 13px/20px,
+      `rgb(23,25,26)`. Cell **values** (`.cph-table__val`): Manrope 700, 13px/20px,
+      `rgb(23,25,26)` — the ∞ glyph keeps `--brand-orange` and the ✕ cross keeps
+      `#d3382e` via more-specific rules.
+    - There are no **WordPress** or **SSL** rows in the differentiating group —
+      identical across all three tiers, so they sit in the "Included with Every
+      Plan" group instead (as "WordPress Support" and "Free SSL").
   - **Parked Domains and Mailing Lists show a red ✕** (`.cph-table__cross`,
     `#d3382e`) **instead of "0" on Starter Salad** — a plain "0" read ambiguously
     (zero of something you get, vs. a literal count); a cross reads unambiguously
@@ -1259,23 +1280,35 @@ unless the owner says otherwise — update this list when that happens:
     paired with a `.sr-only` span carrying the real word ("Unlimited" or
     "Unmetered", matching what that specific cell actually meant) — so screen
     readers still announce the real word instead of an ambiguous bare symbol.
-  - **No more shared-across-all-3-plans rows in the table.** The spreadsheet's
-    "Support" row (merged, "Tickets/ Emails/ WhatsApp") was removed earlier per
-    owner. The "Money-Back Guarantee" row (merged, "14-Day Money Back
-    Guarantee") lives outside the table entirely — it's a small line
-    (`.cph-table__pkg-guarantee`) under each plan's price block instead (see
-    below), positioned per-column near the price rather than as a shared table row.
-- **`.cph-included`** — below the table, a list of what every tier includes (not
-  differentiated). **11 items:** cPanel Control Panel, **WordPress Support**,
-  **Free SSL**, Softaculous 1-Click App Installer, Python Support, Node.js Support,
-  24/7 Support, JetBackup, Sitejet Website Builder, cPGuard Security, LiteSpeed Web
-  Cache Manager. (The first 9 came from the spreadsheet's shared checkmark column;
-  WordPress Support + Free SSL were moved here from the comparison table — see
-  "Feature rows" above.)
-  - Each `<li>` is a white rounded pill chip with a 1px border + soft shadow, 14px
-    semibold near-black text, and a **solid orange circle + white check**. The
-    block is set off from the table above by a hairline top border + 48px padding;
-    the title is 20px/800. Centred flex-wrap — chips reflow at every width.
+  - The spreadsheet's "Support" row (merged, "Tickets/ Emails/ WhatsApp") was
+    removed earlier per owner. The "Money-Back Guarantee" row (merged, "14-Day
+    Money Back Guarantee") lives outside the table entirely — it's a small line
+    (`.cph-table__pkg-guarantee`) under each plan's price block instead (see the
+    billing-toggle notes), positioned per-column near the price rather than as a
+    shared table row.
+- **`.cph-table__group` — the "Included with Every Plan" group**, a second block
+  of rows inside the same comparison grid (it *replaced* the old `.cph-included`
+  white-pill-chip list that used to sit below the table — that markup and CSS are
+  gone). Modelled on an owner-supplied comparison template.
+  - The heading is one full-width row: `<div class="cph-table__group">Included
+    with Every Plan</div>`, `grid-column: 1 / -1`, Manrope 700 13px/20px,
+    `rgb(23,25,26)`, underlined, on the same `#fafafb` as the label column.
+  - Rows below it are ordered the standard way for a hosting feature list —
+    **platform → guaranteed resources → performance → security → backups →
+    apps/dev stack → site builder → support**:
+    cPanel Control Panel, **Data Center**, **CPU** (2 Cores), **RAM** (2 GB),
+    LiteSpeed Web Cache Manager, Free SSL, cPGuard Security, JetBackup, WordPress
+    Support, Softaculous 1-Click App Installer, Python Support, Node.js Support,
+    Sitejet Website Builder, 24/7 Support.
+  - **Data Center, CPU and RAM moved here from the differentiating group** — all
+    three are the same for every tier (UK / 2 Cores / 2 GB), so they weren't
+    telling the reader anything up top. Data Center still shows the UK flag
+    (`.cph-table__flag`, `alt="United Kingdom"`) ×3 — consistent with, not
+    contradicting, the homepage Locations section's "London, UK" claim; CPU/RAM
+    show their spec text.
+  - Every other row shows a **brand-orange check + "Yes"** in all 3 columns:
+    `.cph-table__val--yes` cells, each with an inline `.cph-table__check` SVG
+    (same build as `.cph-table__cross`, `color: var(--brand-orange)`).
 - Folder-with-`index.html` structure (not `cpanel-hosting.html`) so the URL is
   clean: `/serversalad/cpanel-hosting/` rather than
   `/serversalad/cpanel-hosting.html`. Apache serves `index.html` automatically for
@@ -1360,8 +1393,8 @@ unless the owner says otherwise — update this list when that happens:
 - Heading **"Fresh Backups You Can Rely On"**; description **"Daily snapshots
   prepped with JetBackup, off-site storage, and granular restores, letting you roll
   back a single file or an entire account with total ease."** JetBackup is already
-  established as Server Salad's backup solution (it's in the `.cph-included` list
-  and the homepage).
+  established as Server Salad's backup solution (it's a row in the comparison
+  table's "Included with Every Plan" group and appears on the homepage).
 - 6 cards: Backed Up Daily, **30-Day Retention Window**, Off-Site Storage,
   Granular Restore, Snapshot Backups, Powered by JetBackup — the 30-day retention
   figure is owner-confirmed.
@@ -1624,5 +1657,5 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=232**. Always check the live number in both HTML
+  Conventions); currently **v=243**. Always check the live number in both HTML
   files rather than trusting a figure remembered from earlier in a conversation.
