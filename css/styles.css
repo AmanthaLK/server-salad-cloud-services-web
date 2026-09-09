@@ -2514,7 +2514,9 @@ button { font: inherit; cursor: pointer; }
   height: 2px;
   margin: 36px auto 0;
   border-radius: 2px;
-  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+  /* Brand orange + the site's red accent (same red used in the hero title /
+     Web Hosting mega-menu gradient), not the previous light-orange tint. */
+  background: linear-gradient(90deg, var(--accent), var(--brand-orange));
 }
 
 .cph-features__grid {
