@@ -34,8 +34,8 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=243**). **`js/main.js` has its own separate
-  `?v=N`** (currently **v=12**) on its `<script>` tag. **Bump the relevant one any
+  (`css/styles.css?v=N`, currently **v=244**). **`js/main.js` has its own separate
+  `?v=N`** (currently **v=13**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
   Plans section notes below). **Both pages** (`index.html` and
@@ -745,6 +745,20 @@ unless the owner says otherwise — update this list when that happens:
     annual-equivalent rate (`monthly × 10 ÷ 12`), same as the hero card, so the
     two stay in sync and show the identical number. No new JS was needed;
     `renderPrices()` already finds every `[data-price]` element on the page.
+    - Directly under the price sits a **"billed as LKR X/year" line**
+      (`.plan-card__billed`, `Manrope` 300, 14px/14px, `rgb(122,122,122)`, pulled
+      up tight under the price with a `-18px` top margin) — `X = monthly × 10`,
+      the annual total that backs the per-month figure above it. It's populated by
+      the same `renderPrices()` `[data-billed="starter_salad"]` mechanism as the
+      cpanel-hosting table's billed lines, so the number is live. Because this
+      card has **no Monthly/Annually toggle** (`data-annual-always`), the line
+      shows only "billed as LKR X/year" — `renderPrices()` skips the
+      "(16% Discount)" sub-clause for `data-annual-always` elements (that clause
+      is table-only). **Only the cPanel Hosting card has this line** — the
+      Business Hosting card shows "To be announced" — so that card's
+      description/features now start ~22px lower than the Business card's; the
+      row-for-row alignment between the two cards (via `.plan-card__price`'s shared
+      `min-height`) is slightly off as a result. See "Open items".
     Description: "Fast, secure NVMe hosting served
     hot with full cPanel control. Prepped to perfection for freelancers, startups,
     SMEs, educational institutions, personal blogs, and growing online stores."
@@ -880,6 +894,15 @@ unless the owner says otherwise — update this list when that happens:
   fallback until the fetch resolves, then the real value), and optionally
   `data-annual-always`/`data-format` to customise how it's displayed (see the big
   comment above `renderPrices()` in `js/main.js`).
+  - A `[data-price]` element may be paired with a `[data-billed="<same key>"]`
+    element elsewhere on the page — `renderPrices()` writes the "billed as LKR
+    X/year" text into it. In the **annual** view it appends a block-level
+    `<span class="cph-table__pkg-billed-note">(16% Discount)</span>` sub-clause,
+    **except** when the price element is `data-annual-always="true"` (no toggle to
+    switch back from), where it's just the plain "billed as LKR X/year" — that's
+    the homepage cPanel Hosting plan card's `.plan-card__billed` line; the
+    cpanel-hosting table's three `.cph-table__pkg-billed` lines get the full
+    two-clause treatment (see the billing-toggle notes below).
   **Every price element keeps a fallback value in the HTML** as a safety net — on
   any failure (network error, API down, DB unreachable, unexpected response shape)
   the fetch's `.catch` deliberately leaves that fallback alone rather than showing
@@ -1591,6 +1614,19 @@ unless the owner says otherwise — update this list when that happens:
   Hosting removed from Plans, still on the hero) and largely overlaps the hero cards it
   kept (same products, similar prices/descriptions) in a more detailed layout with CTA
   buttons — worth asking whether both sections should stay as-is.
+- **Plans cards no longer line up row-for-row**: the cPanel Hosting card gained a
+  "billed as LKR X/year" line (`.plan-card__billed`) under its price; the Business
+  Hosting card ("To be announced") has no equivalent, so its
+  description/features/button now sit ~22px higher than the cPanel Hosting card's.
+  The shared `.plan-card__price` `min-height` no longer fully compensates. Even it
+  out (e.g. reserve matching space on the Business card) if the misalignment
+  looks wrong.
+- **Plans section: README's quoted cPanel Hosting card description is stale.** This
+  file quotes it as "Fast, secure NVMe hosting served hot with full cPanel
+  control…"; the actual `index.html` card reads "High-speed NVMe hosting built for
+  freelancers, personal sites, startups, and small online stores needing fast
+  performance." (present since the first commit). Confirm which is intended, then
+  align the other.
 - **cPanel Business Hosting description** now differs slightly between the hero card
   ("full cPanel control" / "high-volume online stores") and the Plans card ("cPanel
   control" / "online stores") — confirm whether the hero card should be trimmed to
@@ -1657,5 +1693,6 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=243**. Always check the live number in both HTML
-  files rather than trusting a figure remembered from earlier in a conversation.
+  Conventions); currently **v=244** (and `js/main.js?v=13`). Always check the live
+  number in both HTML files rather than trusting a figure remembered from earlier
+  in a conversation.
