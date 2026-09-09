@@ -2561,17 +2561,20 @@ button { font: inherit; cursor: pointer; }
 .cph-feature__title {
   align-self: center;
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 25px;
   color: #fff;
 }
 
 .cph-feature__desc {
   grid-column: 1 / -1;
   margin: 0;
+  font-family: "Manrope", var(--font-body);
   font-size: 14px;
-  line-height: 1.65;
+  font-weight: 400;
+  line-height: 21px;
   color: rgba(245, 245, 247, .72);
 }
 
