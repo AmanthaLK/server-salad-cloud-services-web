@@ -2492,8 +2492,10 @@ button { font: inherit; cursor: pointer; }
 
 .cph-features__title {
   margin: 0;
-  font-size: clamp(28px, 4vw, 46px);
-  font-weight: 700;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 40px;
   letter-spacing: .2px;
 }
 
