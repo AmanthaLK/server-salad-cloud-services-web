@@ -246,10 +246,17 @@
           var yearTotal = monthly * 10;
           var equivMonthly = Math.round(yearTotal / 12);
           el.textContent = bareNumber ? String(equivMonthly) : "LKR " + equivMonthly.toLocaleString("en-US");
-          // "16% Discount" on its own second line, same block-level span as the
-          // Monthly-state note below. innerHTML is safe — the only interpolated
-          // value is a formatted number (digits + commas).
-          if (billedEl) billedEl.innerHTML = "billed as LKR " + yearTotal.toLocaleString("en-US") + "/year<span class=\"cph-table__pkg-billed-note\">(16% Discount)</span>";
+          // "(16% Discount)" on its own second line — but only on the
+          // cph-hosting table, where the toggle actually exists. An
+          // always-annual price (data-annual-always, e.g. the homepage plan
+          // card) just gets the plain "billed as .../year" line. innerHTML is
+          // safe — the only interpolated value is a formatted number.
+          if (billedEl) {
+            var discountNote = el.getAttribute("data-annual-always") === "true"
+              ? ""
+              : "<span class=\"cph-table__pkg-billed-note\">(16% Discount)</span>";
+            billedEl.innerHTML = "billed as LKR " + yearTotal.toLocaleString("en-US") + "/year" + discountNote;
+          }
         } else {
           el.textContent = bareNumber ? String(monthly) : "LKR " + monthly.toLocaleString("en-US");
           var yearIfMonthly = monthly * 12;

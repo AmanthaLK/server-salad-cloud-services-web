@@ -1394,6 +1394,16 @@ button { font: inherit; cursor: pointer; }
   letter-spacing: .02em;
   color: rgb(122, 122, 122);
 }
+/* "billed as LKR X/year" line — the annual-equivalent total that backs the
+   per-month figure above it. Populated by renderPrices() via [data-billed]. */
+.plan-card__billed {
+  margin: -18px 0 24px; /* -18 pulls it up close under .plan-card__price's 26px bottom */
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 14px;
+  color: rgb(122, 122, 122);
+}
 
 .plan-card .btn--outline {
   width: auto;
