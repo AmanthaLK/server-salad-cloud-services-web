@@ -2464,7 +2464,7 @@ button { font: inherit; cursor: pointer; }
 }
 /* "Yes" value cells under Exclusive Benefits — check glyph + label. */
 .cph-table__val--yes { color: rgb(23, 25, 26); }
-.cph-table__check { color: var(--brand-orange); margin-right: 6px; flex-shrink: 0; }
+.cph-table__check { color: var(--brand-orange); flex-shrink: 0; }
 
 @media (max-width: 560px) {
   .cph-plans { padding: 64px 0; }
