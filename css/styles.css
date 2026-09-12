@@ -2194,7 +2194,12 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   justify-content: center;
   gap: 14px;
-  margin-bottom: 32px;
+  /* padding, not margin: margin sits OUTSIDE this element's own painted
+     background, so while stuck it would leave a gap that reveals whatever
+     feature row has scrolled to that band underneath — padding keeps the
+     same 32px of breathing room but inside the box, so the opaque
+     background actually covers it. */
+  padding-bottom: 32px;
   position: sticky;
   top: 88px; /* 74px nav + 14px gap */
   z-index: 20;
@@ -2364,7 +2369,7 @@ button { font: inherit; cursor: pointer; }
   color: rgb(40, 39, 39);
   text-align: center;
   position: sticky;
-  top: 146px; /* 88px toggle offset + toggle's own ~26px height + its 32px margin-bottom */
+  top: 146px; /* 88px toggle offset + toggle's own ~26px content height + its 32px padding-bottom */
   z-index: 15;
   border-top-left-radius: 14px; /* .cph-table has no overflow:hidden any more (see comment above it) */
 }
