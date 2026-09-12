@@ -3545,8 +3545,7 @@ button { font: inherit; cursor: pointer; }
   border-radius: 2px;
   /* Same red -> orange gradient used for every other underline on this page
      (owner's "orange and red mixed gradient" colour code) — brand-orange
-     throughout, not the teal used in the supplied mockup (see
-     .cph-overview__check below). */
+     throughout, not the teal used in the supplied mockup. */
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
@@ -3581,29 +3580,12 @@ button { font: inherit; cursor: pointer; }
   list-style: none;
 }
 .cph-overview__list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   font-family: "Manrope", var(--font-body);
   font-size: 16px;
   font-weight: 300;
   line-height: 24px;
   color: rgb(32, 29, 44);
-}
-
-/* Plain stroke checkmark (no chip/background) — same check path as
-   .migration__tick's inner svg, recoloured to brand orange via currentColor
-   rather than the teal used in the supplied mockup. */
-.cph-overview__check {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  fill: none;
-  stroke: var(--brand-orange);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  text-align: center;
 }
 
 @media (max-width: 760px) {
