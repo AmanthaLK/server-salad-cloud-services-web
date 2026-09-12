@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=272">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=273">
 </head>
 <body>
 
@@ -388,60 +388,59 @@
         <div class="cph-email__top">
           <div class="cph-email__visual">
             <svg class="cph-email__art" viewBox="0 0 260 190" fill="none" aria-hidden="true">
-              <!-- Static envelope outline (no reveal/fade cycle) — the motion
-                   now lives entirely in the "sent!" particle burst around the
-                   @ badge below. -->
+              <defs>
+                <!-- Clips the light sweep to exactly the envelope's own rounded
+                     rect, so the shine only ever plays across the envelope. -->
+                <clipPath id="cphEmailEnvClip">
+                  <rect x="10" y="20" width="214" height="150" rx="16"/>
+                </clipPath>
+                <!-- A soft diagonal light band, bright in the middle and fading
+                     to transparent on both sides. Diagonal via the x1/y1->x2/y2
+                     vector rather than a rotation, so it stays simple to reason
+                     about; the rect it's painted on is translated across the
+                     canvas below to create the sweep. -->
+                <linearGradient id="cphEmailSheen" x1="0%" y1="0%" x2="35%" y2="100%">
+                  <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+                  <stop offset="45%" stop-color="#fff" stop-opacity="0"/>
+                  <stop offset="50%" stop-color="#fff" stop-opacity=".45"/>
+                  <stop offset="55%" stop-color="#fff" stop-opacity="0"/>
+                  <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+
               <rect class="cph-email__art-env" x="10" y="20" width="214" height="150" rx="16"/>
               <path class="cph-email__art-line" d="M22 36 117 110 212 36"/>
               <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94"/>
 
+              <!-- Light sweep: a wide gradient-filled rect glides left -> right
+                   across the envelope (clipped to its rounded rect above), then
+                   pauses off-canvas before the next pass — reads as a single
+                   soft glint of light rather than continuous motion. 4s cycle:
+                   0-40% is the ~1.6s sweep itself, 40-100% is the pause. The
+                   badge gets a brief brightness flash at ~1.28s (see
+                   .cph-email__art-badge-flash below), the moment the sweep
+                   crosses it, so the two feel connected. -->
+              <g clip-path="url(#cphEmailEnvClip)">
+                <rect class="cph-email__art-sheen" x="-100" y="-15" width="90" height="220" fill="url(#cphEmailSheen)">
+                  <animate attributeName="x" values="-100;300;300" keyTimes="0;0.4;1" dur="4s" repeatCount="indefinite"/>
+                </rect>
+              </g>
+
               <circle class="cph-email__art-badge" cx="214" cy="146" r="36"/>
+              <!-- Brief brightness flash on the badge's ring, timed to the
+                   moment the sweep above crosses it (~1.28s into the shared
+                   4s cycle) — a separate overlay (rather than animating
+                   .cph-email__art-badge's own stroke-width) so it can be
+                   hidden outright under prefers-reduced-motion the same way
+                   .cph-email__art-ping already is, without touching the
+                   badge's own static styling. -->
+              <circle class="cph-email__art-badge-flash" cx="214" cy="146" r="36" fill="none">
+                <animate attributeName="stroke-width" values="0;0;3;0;0" keyTimes="0;0.27;0.32;0.37;1" dur="4s" repeatCount="indefinite"/>
+              </circle>
               <circle class="cph-email__art-ping" cx="214" cy="146" r="34">
                 <animate attributeName="r" values="30;52" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
                 <animate attributeName="opacity" values="0.5;0" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
               </circle>
-
-              <!-- "Sent!" particle burst: 6 dots launch outward from the badge's
-                   edge (r 38) to r 52 in 6 evenly-spaced directions (every 60°),
-                   fading out as they travel, then pause before the next burst —
-                   values/keyTimes for every dot's cx/cy/opacity share the same
-                   0/0.6/1 timeline so they all fire and fade together, reading
-                   as one discrete "message sent" pulse rather than continuous
-                   motion. Disabled under prefers-reduced-motion (see styles.css
-                   — SMIL can't be halted by CSS animation:none, so it's hidden
-                   outright there, same approach used elsewhere on this page). -->
-              <g class="cph-email__art-burst">
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="252" cy="146">
-                  <animate attributeName="cx" values="252;266;266" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="146;146;146" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="233" cy="178.9">
-                  <animate attributeName="cx" values="233;240;240" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="178.9;191;191" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="195" cy="178.9">
-                  <animate attributeName="cx" values="195;188;188" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="178.9;191;191" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="176" cy="146">
-                  <animate attributeName="cx" values="176;162;162" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="146;146;146" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="195" cy="113.1">
-                  <animate attributeName="cx" values="195;188;188" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="113.1;101;101" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-                <circle class="cph-email__art-burst-dot" r="2.5" cx="233" cy="113.1">
-                  <animate attributeName="cx" values="233;240;240" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="113.1;101;101" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" dur="2.5s" repeatCount="indefinite"/>
-                </circle>
-              </g>
 
               <text class="cph-email__art-at" x="214" y="157" text-anchor="middle">@</text>
             </svg>

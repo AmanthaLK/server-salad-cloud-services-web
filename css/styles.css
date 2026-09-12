@@ -2924,7 +2924,7 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
 
 /* Static envelope outline — no reveal/fade cycle. Motion lives entirely in
-   the "sent!" particle burst (.cph-email__art-burst) further down. */
+   the diagonal light sweep (.cph-email__art-sheen) further down. */
 .cph-email__art-env {
   fill: rgba(255, 255, 255, .04);
   stroke: rgba(255, 255, 255, .32);
@@ -2938,19 +2938,27 @@ button { font: inherit; cursor: pointer; }
   stroke-linejoin: round;
 }
 
+/* The sheen rect itself carries no colour of its own — its gradient fill
+   (#cphEmailSheen) supplies the soft white glint; this class exists only so
+   prefers-reduced-motion (below) has something to hide. */
+.cph-email__art-sheen { pointer-events: none; }
+
 .cph-email__art-badge { fill: rgba(245, 126, 32, .14); stroke: var(--brand-orange); stroke-width: 2; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
+/* Brief brightness flash overlaid on the badge, timed to the sweep passing
+   over it (see the HTML comment above .cph-email__art-badge-flash) — a
+   separate element from .cph-email__art-badge itself so it can be hidden
+   outright under prefers-reduced-motion without touching the badge's own
+   static styling. */
+.cph-email__art-badge-flash { stroke: var(--brand-orange); }
 
-/* "Sent!" particle burst dots — their outward cx/cy travel + fade is driven
-   by SMIL <animate> in the markup (6 dots, one per 60° direction, all firing
-   and fading together on the same timeline). */
-.cph-email__art-burst-dot { fill: var(--brand-orange); }
-
-/* SMIL animations can't be halted by CSS `animation: none`, so the burst
-   dots are hidden outright — same approach as the Migration packet. */
+/* SMIL animations can't be halted by CSS `animation: none`, so the sweep and
+   the badge's flash overlay are hidden outright — same approach as the
+   Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-burst,
+  .cph-email__art-sheen,
+  .cph-email__art-badge-flash,
   .cph-email__art-ping { display: none; }
 }
 
