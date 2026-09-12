@@ -2608,28 +2608,25 @@ button { font: inherit; cursor: pointer; }
 .cph-why__eyebrow {
   display: block;
   margin-bottom: 18px;
-  font-family: var(--font-heading);
+  font-family: "Manrope", var(--font-body);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 18px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--brand-orange);
 }
 
-/* Type scale matches the source template: large, ~700-weight heading on a tight
-   line-height. */
+/* Type scale + colour match the source template's font-inspector spec (Cairo
+   600, 40px/46px) exactly, including its single-colour treatment — no
+   gradient/accent split on this heading. */
 .cph-why__title {
   margin: 0;
-  font-size: clamp(28px, 4vw, 46px);
-  font-weight: 700;
-  line-height: 1.1;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  line-height: 46px;
+  font-weight: 600;
   color: #1b1b1f;
-}
-.cph-why__title-accent {
-  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 .cph-why__underline {

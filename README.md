@@ -34,7 +34,7 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=244**). **`js/main.js` has its own separate
+  (`css/styles.css?v=N`, currently **v=252**). **`js/main.js` has its own separate
   `?v=N`** (currently **v=13**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
@@ -1365,11 +1365,19 @@ unless the owner says otherwise — update this list when that happens:
   `fill="currentColor"`, masked to `--brand-orange` — see Assets).
 
 #### cpanel-hosting: Why Server Salad (`.cph-why`, light)
-- Two-column top — eyebrow "Why Server Salad" + accented `<h2>` + underline +
-  description on the left, a **world-map card with a single London pin** on the
-  right (`assets/img/graphics/world-map-dots.png`, same pin coords as the homepage
+- Two-column top — eyebrow "Why Server Salad" + `<h2>` + underline + description
+  on the left, a **world-map card with a single London pin** on the right
+  (`assets/img/graphics/world-map-dots.png`, same pin coords as the homepage
   Locations pin). Then a **3-card row** (tiled orange icon + title + desc). Light
   gradient wash.
+  - **Eyebrow** (`.cph-why__eyebrow`): Manrope 600, 12px/18px, `--brand-orange`
+    (matched to a font-inspector spec; colour kept per the reference-styling rule
+    below).
+  - **Heading** (`.cph-why__title`): Cairo 600, 40px/46px, single colour
+    `#1b1b1f` — matched to a font-inspector spec including its **single-colour**
+    treatment, so (unlike most homepage/cpanel-hosting headings) this one has
+    **no accent-word gradient split**; the old `.cph-why__title-accent` markup/CSS
+    was removed.
 - **⚠️ Deliberately single-region.** The homepage Locations section states
   London, UK is *the* data centre (one marker, owner-explicit "only London"), and
   this page's own table shows Data Center = UK for every tier. So the heading is
@@ -1692,6 +1700,6 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=244** (and `js/main.js?v=13`). Always check the live
+  Conventions); currently **v=252** (and `js/main.js?v=13`). Always check the live
   number in both HTML files rather than trusting a figure remembered from earlier
   in a conversation.
