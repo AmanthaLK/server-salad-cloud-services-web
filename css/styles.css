@@ -2653,8 +2653,17 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   padding: 18px;
   box-shadow: 0 12px 32px rgba(50, 61, 65, .07);
+  overflow: hidden; /* clips the zoomed map on hover to the card's rounded edge */
 }
-.cph-why__map-inner { position: relative; }
+/* transform-origin matches .cph-why__pin's left/top below, so hovering zooms
+   the whole map (image + pin, scaled together as one unit) in on London
+   specifically rather than on the card's center. */
+.cph-why__map-inner {
+  position: relative;
+  transform-origin: 46.5% 37%;
+  transition: transform .5s ease;
+}
+.cph-why__map:hover .cph-why__map-inner { transform: scale(1.6); }
 .cph-why__map-img { display: block; width: 100%; height: auto; }
 
 /* Single marker over London — same map image and same coordinates as the
@@ -2686,6 +2695,11 @@ button { font: inherit; cursor: pointer; }
   font-weight: 600;
   line-height: 18px;
   color: var(--brand-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cph-why__map-inner { transition: none; }
+  .cph-why__map:hover .cph-why__map-inner { transform: none; }
 }
 
 .cph-why__grid {
