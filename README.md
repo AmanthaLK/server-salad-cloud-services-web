@@ -1384,12 +1384,12 @@ unless the owner says otherwise — update this list when that happens:
   **"Enterprise Cloud Hosting, Built for Performance"**, and the map shows one
   London pin. **If Server Salad genuinely adds USA/Germany regions, this section
   AND the homepage Locations section must both be updated** — see "Open items".
-- 3 cards: **100% Samsung NVMe Storage** ("Enterprise-grade Samsung NVMe storage
-  prepped across every server…"), **Enterprise UK Datacenter** ("Served fresh from
-  top-tier UK datacenters…" — note "datacenters" plural here vs. the homepage's
-  singular "data center"; see "Open items"), **Hands-On Tech Experts** ("…cPanel-
-  certified technicians and system engineers who manage the platform you live
-  on."). Section description: "We prep our hosting stack from top to bottom with
+- 3 cards: **Samsung NVMe Storage** ("Premium **Samsung NVMe SSDs** deployed
+  across every server…"), **UK Datacenter Location** ("Hosted in top-tier **UK
+  facilities**…"), **Hands-On Tech Experts** ("…**cPanel-certified technicians**
+  and system engineers who actively manage the platform."). Each description has
+  one bold-emphasised phrase (`<strong>`), matched to an owner-supplied
+  reference. Section description: "We prep our hosting stack from top to bottom with
   enterprise Samsung NVMe storage, resilient networking, and cPGuard security
   managed directly by the engineers who handle your support tickets."
 - Icons: `assets/img/why/` (3 files). Card classes `.cph-why-card*`; icon custom
@@ -1547,11 +1547,6 @@ unless the owner says otherwise — update this list when that happens:
   now has USA/Germany regions: restore the multi-region framing here (heading, card
   2, description) **and** add USA/Germany pins to both this map and the homepage
   Locations map so the two pages stay consistent.
-- **cpanel-hosting "Enterprise UK Datacenter" card says "datacenters" (plural)** but
-  the homepage Locations card says "our primary cPanel hosting data center… in
-  London, UK" (singular, one site). Still UK-only, so no region contradiction —
-  just a singular/plural wording mismatch between the two pages. Owner-supplied copy
-  on both; align the wording if desired.
 - **cpanel-hosting Backups: JetBackup screenshot.** `assets/img/graphics/jetbackup-illustration.png`
   must be a genuine Server Salad JetBackup panel, not another host's customer
   session. Confirm the file on disk is Server Salad's own.
