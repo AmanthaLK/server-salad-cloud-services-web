@@ -2924,7 +2924,7 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
 
 /* Static envelope outline — no reveal/fade cycle. Motion lives entirely in
-   the diagonal light sweep (.cph-email__art-sheen) further down. */
+   the send/incoming mail glyphs (.cph-email__art-mail-out/-in) further down. */
 .cph-email__art-env {
   fill: rgba(255, 255, 255, .04);
   stroke: rgba(255, 255, 255, .32);
@@ -2938,26 +2938,30 @@ button { font: inherit; cursor: pointer; }
   stroke-linejoin: round;
 }
 
-/* The sheen rect itself carries no colour of its own — its gradient fill
-   (#cphEmailSheen) supplies the soft white glint; this class exists only so
-   prefers-reduced-motion (below) has something to hide. */
-.cph-email__art-sheen { pointer-events: none; }
-
 .cph-email__art-badge { fill: rgba(245, 126, 32, .14); stroke: var(--brand-orange); stroke-width: 2; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
-/* Brief brightness flash overlaid on the badge, timed to the sweep passing
-   over it (see the HTML comment above .cph-email__art-badge-flash) — a
-   separate element from .cph-email__art-badge itself so it can be hidden
-   outright under prefers-reduced-motion without touching the badge's own
-   static styling. */
+/* Brief brightness flash overlaid on the badge, timed to the outgoing mail's
+   departure and the incoming mail's landing (see the HTML comment above
+   .cph-email__art-badge-flash) — a separate element from
+   .cph-email__art-badge itself so it can be hidden outright under
+   prefers-reduced-motion without touching the badge's own static styling. */
 .cph-email__art-badge-flash { stroke: var(--brand-orange); }
 
-/* SMIL animations can't be halted by CSS `animation: none`, so the sweep and
-   the badge's flash overlay are hidden outright — same approach as the
-   Migration packet. */
+/* Small mail glyph shared by the outgoing and incoming groups — a rounded
+   rect body plus a simple V flap, both centred on the group's own local
+   origin so each glyph's animateMotion path doubles as its on-canvas
+   position directly. */
+.cph-email__art-mail rect { fill: rgba(245, 126, 32, .85); stroke: var(--brand-orange); stroke-width: 1.4; }
+.cph-email__art-mail-flap { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.cph-email__art-mail { pointer-events: none; }
+
+/* SMIL animations can't be halted by CSS `animation: none`, so the flying
+   mail glyphs and the badge's flash overlay are hidden outright — same
+   approach as the Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-sheen,
+  .cph-email__art-mail-out,
+  .cph-email__art-mail-in,
   .cph-email__art-badge-flash,
   .cph-email__art-ping { display: none; }
 }
