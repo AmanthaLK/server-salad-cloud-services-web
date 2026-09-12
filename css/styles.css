@@ -3516,3 +3516,99 @@ button { font: inherit; cursor: pointer; }
   .cph-workflow__inner { padding: 64px 0; }
   .cph-workflow__grid { grid-template-columns: 1fr; }
 }
+
+/* ===== cPanel Hosting page: technical overview ===== */
+.cph-overview {
+  /* Light section — keeps the page alternating: dark migration -> light
+     overview, right before the (black) footer. */
+  background: #f7f7fb;
+}
+
+.cph-overview__inner { padding: 88px 0; }
+
+.cph-overview__head { text-align: center; margin-bottom: 56px; }
+
+/* Type scale matches the source template. */
+.cph-overview__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  color: rgb(32, 29, 44);
+}
+
+.cph-overview__underline {
+  width: 64px;
+  height: 3px;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  /* Same red -> orange gradient used for every other underline on this page
+     (owner's "orange and red mixed gradient" colour code) — brand-orange
+     throughout, not the teal used in the supplied mockup (see
+     .cph-overview__check below). */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.cph-overview__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 64px;
+}
+
+.cph-overview__col { display: flex; flex-direction: column; }
+
+.cph-overview__group { margin-bottom: 36px; }
+.cph-overview__group:last-child { margin-bottom: 0; }
+
+.cph-overview__group-title {
+  margin: 0 0 16px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(32, 29, 44);
+}
+
+.cph-overview__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cph-overview__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  color: rgb(32, 29, 44);
+}
+
+/* Plain stroke checkmark (no chip/background) — same check path as
+   .migration__tick's inner svg, recoloured to brand orange via currentColor
+   rather than the teal used in the supplied mockup. */
+.cph-overview__check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  fill: none;
+  stroke: var(--brand-orange);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 760px) {
+  .cph-overview__columns { grid-template-columns: 1fr; gap: 0; }
+  .cph-overview__col:first-child { margin-bottom: 36px; }
+}
+
+@media (max-width: 560px) {
+  .cph-overview__inner { padding: 64px 0; }
+}
