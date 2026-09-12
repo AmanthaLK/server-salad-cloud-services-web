@@ -3568,6 +3568,7 @@ button { font: inherit; cursor: pointer; }
   font-weight: 600;
   line-height: 21px;
   color: rgb(32, 29, 44);
+  text-align: center;
 }
 
 .cph-overview__list {
