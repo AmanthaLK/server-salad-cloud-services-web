@@ -2701,7 +2701,7 @@ button { font: inherit; cursor: pointer; }
 }
 /* Shrinks further once scrolled well past the initial stick — see
    .cph-table__intro's comment above and js/main.js. */
-.cph-table__pkg.is-condensed { padding: 14px 18px; }
+.cph-table__pkg.is-condensed { padding: 8px 18px; }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
    .cph-table's own border-radius used to get for free via overflow:hidden.
    Same ::before approach as .cph-table__intro (see its comment): a plain
@@ -2751,6 +2751,7 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .cph-table__intro-flag,
   .cph-table__pkg-tagline,
+  .cph-table__pkg-price,
   .cph-table__pkg { transition: none; }
 }
 .cph-table__pkg-price {
@@ -2761,7 +2762,11 @@ button { font: inherit; cursor: pointer; }
   gap: 5px;
   margin: 20px 0 0; /* was the parent's 16px gap + this element's own 4px */
   color: rgba(255, 255, 255, .6);
+  transition: margin-top .3s ease;
 }
+/* Pulls closer to the name once the tagline above it is gone — see
+   .cph-table__intro's comment and js/main.js. */
+.cph-table__pkg.is-condensed .cph-table__pkg-price { margin-top: 8px; }
 .cph-table__pkg-price strong {
   font-family: "Manrope", var(--font-body);
   font-size: 24px;
