@@ -3366,9 +3366,9 @@ button { font: inherit; cursor: pointer; }
   align-self: center;
   margin: 0;
   font-family: "Cairo", var(--font-heading);
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 600;
-  line-height: 26px;
+  line-height: 25px;
   color: #fff;
 }
 
