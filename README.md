@@ -49,7 +49,7 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=260**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
+  **v=285**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
   Bump the relevant one any time that file changes, in **every** page's tag,
   so browsers fetch the latest version instead of a stale cached copy.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
@@ -142,12 +142,21 @@ server-salad-cloud-services-web/
     index.html                     <- 2nd page, /server-salad-cloud-services-web/cpanel-hosting/
   api/
     pricing.php                    <- the one server-side file (live pricing)
-  downloads/                       <- staging folder for new images (git-ignored contents)
+  downloads/                       <- TEMPORARY staging only for owner-supplied
+                                       source files (git-ignored contents, kept
+                                       via .gitkeep). Process each file (crop/
+                                       resize as needed), rename to an
+                                       SEO-friendly slug, and move it into the
+                                       matching assets/img/<section>/ folder
+                                       below — then DELETE the original from
+                                       downloads/. Never reference downloads/
+                                       from HTML/CSS.
   assets/
     img/
       brand/       <- nav logo, footer logo, favicon (serversalad-*)
       photos/       <- eco-forest-canopy.jpg
-      graphics/     <- world-map-dots.png, jetbackup-illustration.png, cpanel-dashboard-devices.webp
+      graphics/     <- world-map-dots.png, jetbackup-illustration.png,
+                        jetbackup-logo.png, cpanel-dashboard-devices.webp
       partners/     <- 6 "powered by" carousel logos
       flags/        <- uk-flag.svg, uk-flag-circle.png
       hero/         <- 4 homepage hero-card icons (reused by Plans + mega-menu)
@@ -156,7 +165,9 @@ server-salad-cloud-services-web/
       cloud/        <- 6 homepage "Our Cloud Infrastructure" icons
       reviews/      <- google-logo.png, trustpilot-logo.png
       features/     <- 12 cph "Features" icons
-      why/          <- 3 cph "Why Server Salad" icons
+      why-cpanel/   <- 3 cph "Why Server Salad" icons (named distinctly from
+                        why-choose/ above — same kind of content, but a
+                        separate, page-specific icon set; not interchangeable)
       email/        <- 6 cph "Business Email" icons
       backups/      <- 6 cph "Backups" icons
       apps/         <- 7 one-click-install app logos (real brand colours)
@@ -167,6 +178,18 @@ Every `assets/img/<section>/` icon (except `apps/`, real brand logos) is a
 single-colour SVG saved with `fill="currentColor"`; CSS recolours it to
 `--brand-orange` (or `currentColor`) via `mask` — see the masked-icon pattern
 in Part B's CSS.
+
+**`downloads/` workflow, in full:** the user drops a raw source file (original
+vendor filename, oversized export, arbitrary casing) into `downloads/` for use
+somewhere on the site. Never reference it from there directly. Instead: (1)
+process it — crop to content bounds, resize, optimize — as the specific use
+needs; (2) save the result under whichever existing `assets/img/<section>/`
+folder already matches its role (don't invent a new one if an existing folder
+fits); (3) name it a descriptive, kebab-case, SEO-friendly filename consistent
+with its siblings in that folder (never the original upload name); (4)
+reference only the new `assets/img/...` path from HTML/CSS; (5) delete the
+original from `downloads/` once it's placed — the folder is temporary staging
+only, cleaned after each use, not an asset store.
 
 ---
 
@@ -1767,11 +1790,6 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .locations { padding: 36px 0 64px; }
 }
-```
-*(CSS continues below — .migration, .cloud, .footer, and the cpanel-hosting
-page's .cph-* rules are the second half of this same file, in the next block.)*
-
-```css
 
 /* ===== Migration ===== */
 .migration {
@@ -2283,10 +2301,6 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   .footer__inner { padding: 56px 0 0; }
   .footer__grid { grid-template-columns: 1fr; gap: 40px; }
 }
-```
-*(Continued in B.1b below: the cpanel-hosting page's `.cph-*` rules.)*
-
-```css
 
 /* ===== cPanel Hosting page: hero ===== */
 .cph-hero {
@@ -2385,13 +2399,34 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 
 /* Billing toggle (Monthly / Annually) — see js/main.js for the switch handler
    and the monthly↔annual price math, README "Pricing API" for why the annual
-   figures are calculated client-side rather than a 2nd DB column. */
+   figures are calculated client-side rather than a 2nd DB column.
+
+   Pinned under the sticky nav (74px + a small gap) while scrolling through the
+   feature rows below, with the black package-header row (.cph-table__intro /
+   .cph-table__pkg) pinned right beneath it. This toggle's own stick range is
+   bounded by .cph-plans__sticky-scope (toggle + both table grids), longer than
+   the header's — see .cph-table--main / .cph-table--cta for why the header
+   specifically releases right as the CTA row arrives; it's fine for this
+   toggle to stay stuck a bit past that point, same as any ordinary sticky bar. */
 .cph-billing-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 14px;
-  margin-bottom: 32px;
+  /* Padding, not margin, on both sides, and equal on both — margin sits
+     OUTSIDE this element's own painted background, so while stuck it would
+     leave a gap that reveals whatever feature row has scrolled to that band
+     underneath (the same bug on both the nav-side and table-side of this
+     box). Same 14px on top and bottom so the nav<->switcher gap matches the
+     switcher<->table-header gap once everything is stuck. Sticky top is
+     flush with the nav's own bottom edge (74px content + 1px border) so
+     there's no gap at all between .nav's background and this one. */
+  padding-top: 14px;
+  padding-bottom: 14px;
+  position: sticky;
+  top: 75px; /* nav__inner's 74px + its 1px border-bottom — flush, no reveal */
+  z-index: 20;
+  background: #f7f7f9; /* matches .cph-plans so scrolled-past rows don't show through while stuck */
 }
 .cph-billing-toggle__label {
   font-family: "Montserrat", var(--font-heading);
@@ -2493,13 +2528,28 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   color: #fff;
 }
 
-.cph-table-wrap { margin-top: 0; overflow-x: auto; }
+/* overflow-x only applies below the width the 680px-min-width table actually
+   needs it (~728px of usable space) — kept out of the unconditional rule
+   because ANY non-"visible" overflow on an ancestor (even just one axis; the
+   other axis auto-computes to "auto" too) becomes the nearest scroll container
+   for position:sticky descendants, breaking the sticky package-header row's
+   stick-to-the-real-page-scroll behaviour. Above that width the table already
+   fits, so no horizontal scroll is needed and sticky works normally. */
+.cph-table-wrap { margin-top: 0; }
+@media (max-width: 860px) {
+  .cph-table-wrap { overflow-x: auto; }
+}
 
 /* Direct grid children in row-major order (label, val, val, val, repeat…) — CSS
    Grid auto-placement wraps them into rows on its own, so no wrapping "row" divs
    are needed. A shared-across-plans row (Support, Money-Back) just supplies one
    spanning value cell (`--span3`) instead of 3, and auto-placement still lands the
-   next row's label in column 1 correctly. */
+   next row's label in column 1 correctly.
+
+   No overflow:hidden here (same reason as .cph-table-wrap above — it would
+   block the sticky header row) — the rounded corners are instead carved
+   directly into the 4 corner cells (.cph-table__intro, .cph-table__pkg--last,
+   .cph-table__label--last, .cph-table__btn-cell--last) below. */
 .cph-table {
   display: grid;
   grid-template-columns: minmax(160px, 1.2fr) repeat(3, minmax(150px, 1fr));
@@ -2507,7 +2557,23 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   background: #fff;
   border: 1px solid #e3e3e8;
   border-radius: 14px;
-  overflow: hidden;
+}
+/* The CTA row lives in its own grid, seamlessly stacked right under the main
+   one (see the HTML comment above .cph-table--cta for why: it's what makes
+   the sticky header release exactly when the CTA row arrives instead of
+   after it). Split the outer frame's border/radius between them so together
+   they still read as one continuous rounded box — border-bottom (main) /
+   border-top (cta) are dropped since each row's own per-cell border-top
+   already draws that seam, same as every other internal row boundary. */
+.cph-table--main {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.cph-table--cta {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .cph-table__label {
@@ -2523,9 +2589,14 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   border-top: 1px solid #ececf0;
   border-right: 1px solid #ececf0;
 }
-.cph-table__label:first-child { border-top: none; background: #fff; }
+/* Last row's empty leading cell (under the intro column) — bottom-left corner,
+   same reasoning as .cph-table__pkg--last above. */
+.cph-table__label--last { border-bottom-left-radius: 14px; }
 /* The otherwise-empty top-left spacer cell carries an intro line instead of
-   sitting blank next to the black package headers. */
+   sitting blank next to the black package headers. Pinned (with .cph-table__pkg
+   below) right under .cph-billing-toggle while scrolling the feature rows,
+   releasing exactly when .cph-table--main's own bottom edge (now right before
+   the CTA row — see .cph-table--cta) reaches this offset. */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
@@ -2537,6 +2608,26 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   font-weight: 500;
   color: rgb(40, 39, 39);
   text-align: center;
+  position: sticky;
+  top: 129px; /* 75px toggle offset + its 14px+26px+14px padding-top/content/padding-bottom (equal top/bottom padding), all inside its own painted box so nothing shows through */
+  z-index: 15;
+  background: none; /* the white fill now comes from ::before below, not this box's own background */
+  border-top: none; /* it's the true first cell of .cph-table--main now (moved off :first-child — that selector would've also wrongly matched .cph-table__label--last, the first cell of the separate .cph-table--cta grid) */
+}
+/* The white background + rounded top-left corner live on a ::before instead
+   of directly on this box: some browsers don't reliably keep clipping a
+   position:sticky element's OWN border-radius once it's actually in its
+   "stuck"/offset state (confirmed — overflow:hidden on the element itself
+   wasn't enough), but a plain absolutely-positioned pseudo-element with its
+   own border-radius has no such issue since it isn't itself the thing being
+   stuck. z-index:-1 keeps it behind the real content (flag + text). */
+.cph-table__intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  border-top-left-radius: 14px;
 }
 .cph-table__intro-flag { width: 34px; height: auto; }
 
@@ -2573,7 +2664,11 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 }
 
 .cph-table__pkg {
-  position: relative;
+  /* sticky (not just relative) so this cell pins alongside .cph-table__intro
+     and releases the same way (see .cph-table__intro's comment above). */
+  position: sticky;
+  top: 129px; /* matches .cph-table__intro's offset, so the row pins as one */
+  z-index: 15;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2585,6 +2680,21 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
                 billed-as line] → guarantee). */
   padding: 26px 18px;
   background: var(--bg-topbar);
+}
+/* Last (Premium Salad) header cell only — carries the top-right corner that
+   .cph-table's own border-radius used to get for free via overflow:hidden.
+   Same ::before approach as .cph-table__intro (see its comment): a plain
+   pseudo-element with its own border-radius, instead of border-radius
+   directly on the sticky cell, since that wasn't reliably clipping once
+   the cell was actually stuck. */
+.cph-table__pkg--last { background: none; }
+.cph-table__pkg--last::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-topbar);
+  border-top-right-radius: 14px;
 }
 .cph-table__pkg-name {
   font-family: "Cairo", var(--font-heading);
@@ -2635,6 +2745,9 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   padding: 18px 16px;
   border-top: 1px solid #ececf0;
 }
+/* Last (Premium Salad) button cell — bottom-right corner, same reasoning as
+   .cph-table__pkg--last above. */
+.cph-table__btn-cell--last { border-bottom-right-radius: 14px; }
 .cph-table__pkg-btn {
   width: 100%;
   background: transparent;
@@ -2947,7 +3060,7 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   transform: translateY(-3px);
 }
 
-/* Brand-orange glyph (masked external SVG in assets/img/why/, set per card via
+/* Brand-orange glyph (masked external SVG in assets/img/why-cpanel/, set per card via
    --why-icon) inside a soft orange-tinted tile. */
 .cph-why-card__icon {
   display: flex;
@@ -3025,34 +3138,47 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 
 .cph-email__visual { display: flex; justify-content: center; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
-.cph-email__art-env { fill: rgba(255, 255, 255, .04); stroke: rgba(255, 255, 255, .32); stroke-width: 2; }
-.cph-email__art-line { fill: none; stroke: rgba(255, 255, 255, .26); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Static envelope outline — no reveal/fade cycle. Motion lives entirely in
+   the send/incoming mail glyphs (.cph-email__art-mail-out/-in) further down. */
+.cph-email__art-env {
+  fill: rgba(255, 255, 255, .04);
+  stroke: rgba(255, 255, 255, .32);
+  stroke-width: 2;
+}
+.cph-email__art-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, .26);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .cph-email__art-badge { fill: rgba(245, 126, 32, .14); stroke: var(--brand-orange); stroke-width: 2; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
-
-/* Animated send/receive on the envelope illustration. The packets themselves ride
-   their paths via SMIL <animateMotion> in the markup; these rules style them and
-   animate the dashed trails + the @ badge ping ring. */
-.cph-email__art-flow {
-  stroke: var(--brand-orange);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-dasharray: 3 7;
-  opacity: .32;
-  animation: cph-email-flow 1s linear infinite;
-}
-@keyframes cph-email-flow { to { stroke-dashoffset: -10; } } /* 3 + 7 = one dash cycle */
-
-.cph-email__art-packet > rect { fill: var(--brand-orange); }
-.cph-email__art-packet-flap { stroke: rgba(20, 27, 37, .85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
+/* Brief brightness flash overlaid on the badge, timed to the outgoing mail's
+   departure and the incoming mail's landing (see the HTML comment above
+   .cph-email__art-badge-flash) — a separate element from
+   .cph-email__art-badge itself so it can be hidden outright under
+   prefers-reduced-motion without touching the badge's own static styling. */
+.cph-email__art-badge-flash { stroke: var(--brand-orange); }
 
-/* SMIL animations can't be halted by CSS `animation: none`, so the animated
-   elements are hidden outright — same approach as the Migration packet. */
+/* Small mail glyph shared by the outgoing and incoming groups — a rounded
+   rect body plus a simple V flap, both centred on the group's own local
+   origin so each glyph's animateMotion path doubles as its on-canvas
+   position directly. */
+.cph-email__art-mail rect { fill: rgba(245, 126, 32, .85); stroke: var(--brand-orange); stroke-width: 1.4; }
+.cph-email__art-mail-flap { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.cph-email__art-mail { pointer-events: none; }
+
+/* SMIL animations can't be halted by CSS `animation: none`, so the flying
+   mail glyphs and the badge's flash overlay are hidden outright — same
+   approach as the Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-flow { animation: none; opacity: .28; }
-  .cph-email__art-packet,
+  .cph-email__art-mail-out,
+  .cph-email__art-mail-in,
+  .cph-email__art-badge-flash,
   .cph-email__art-ping { display: none; }
 }
 
@@ -3075,10 +3201,11 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 /* Type scale matches the source template. */
 .cph-backups__title {
   margin: 0;
-  font-size: clamp(28px, 4vw, 46px);
-  font-weight: 700;
-  line-height: 1.1;
-  color: #1b1b1f;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 46px;
+  color: rgb(32, 29, 44);
 }
 
 .cph-backups__underline {
@@ -3086,15 +3213,17 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   height: 3px;
   margin: 18px 0 20px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 .cph-backups__desc {
   margin: 0;
   max-width: 540px;
+  font-family: "Manrope", var(--font-body);
   font-size: 15px;
-  line-height: 1.5;
-  color: #55555c;
+  font-weight: 300;
+  line-height: 25px;
+  color: rgba(32, 29, 44, .82);
 }
 
 /* Light "device" frame around the JetBackup dashboard screenshot, like the
@@ -3107,18 +3236,73 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   border: 1px solid #e6e6ec;
   border-radius: 14px;
   box-shadow: 0 18px 44px rgba(50, 61, 65, .12);
+  transition: box-shadow .4s ease;
+}
+/* Shadow deepens along with the flip below, so the card reads as lifting up
+   and turning over rather than just rotating in place. */
+.cph-backups__frame:hover {
+  box-shadow: 0 28px 64px rgba(50, 61, 65, .2);
+}
+/* Stage holds the screenshot on top of the real JetBackup logo — overflow
+   hidden + the shared border-radius live here so the cross-dissolve below
+   stays clipped to a clean rounded rect. aspect-ratio matches the
+   screenshot's own intrinsic 1195x614 so the box holds its shape now that
+   both images are positioned absolutely rather than sizing the box via a
+   normal in-flow <img>. */
+.cph-backups__stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  aspect-ratio: 1195 / 614;
+}
+/* On hover, the screenshot zooms out slightly and blurs away while the logo
+   underneath zooms in from a touch smaller and sharpens into focus — a soft
+   cross-dissolve (opacity + scale + blur together), no hard wipe edge or
+   flip, both layers transitioning at once. */
+.cph-backups__shot,
+.cph-backups__logo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity .9s ease, transform .9s ease, filter .9s ease;
 }
 .cph-backups__shot {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
+  z-index: 2;
+  object-fit: cover;
+  transform: scale(1);
+  filter: blur(0);
+}
+.cph-backups__logo {
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 15% 16%;
+  object-fit: contain;
+  background: #fff;
+  opacity: 0;
+  transform: scale(.85);
+  filter: blur(6px);
+}
+.cph-backups__frame:hover .cph-backups__shot {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: blur(10px);
+}
+.cph-backups__frame:hover .cph-backups__logo {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cph-backups__shot,
+  .cph-backups__logo { transition: none; }
 }
 
 .cph-backups__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -3164,22 +3348,29 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 .cph-backups-card__title {
   align-self: center;
   margin: 0;
+  font-family: "Cairo", var(--font-heading);
   font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #1b1b1f;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(32, 29, 44);
 }
 .cph-backups-card__desc {
   grid-column: 1 / -1;
   margin: 0;
+  font-family: "Manrope", var(--font-body);
   font-size: 13px;
-  line-height: 1.5;
-  color: #6a6a72;
+  font-weight: 300;
+  line-height: 20px;
+  color: rgba(32, 29, 44, .74);
 }
 
 @media (max-width: 980px) {
   .cph-backups__top { grid-template-columns: 1fr; gap: 36px; }
   .cph-backups__frame { max-width: 520px; }
+}
+
+@media (max-width: 640px) {
+  .cph-backups__title { font-size: 30px; line-height: 1.2; }
 }
 
 @media (max-width: 900px) {
@@ -3194,9 +3385,11 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 /* Type scale matches the source template. */
 .cph-email__title {
   margin: 0;
-  font-size: clamp(26px, 3.4vw, 42px);
-  font-weight: 700;
-  line-height: 1.15;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 46px;
+  color: rgb(255, 255, 255);
 }
 
 .cph-email__underline {
@@ -3210,15 +3403,17 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 .cph-email__desc {
   margin: 0;
   max-width: 600px;
+  font-family: "Manrope", var(--font-body);
   font-size: 15px;
-  line-height: 1.5;
-  color: rgba(245, 245, 247, .72);
+  font-weight: 300;
+  line-height: 25px;
+  color: rgba(255, 255, 255, .82);
 }
 
 .cph-email__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -3263,22 +3458,29 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 .cph-email-card__title {
   align-self: center;
   margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #fff;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(255, 255, 255);
 }
 .cph-email-card__desc {
   grid-column: 1 / -1;
   margin: 0;
+  font-family: "Manrope", var(--font-body);
   font-size: 13px;
-  line-height: 1.5;
-  color: rgba(245, 245, 247, .7);
+  font-weight: 300;
+  line-height: 20px;
+  color: rgba(255, 255, 255, .75);
 }
 
 @media (max-width: 980px) {
   .cph-email__top { grid-template-columns: 1fr; gap: 40px; }
   .cph-email__art { max-width: 300px; }
+}
+
+@media (max-width: 640px) {
+  .cph-email__title { font-size: 30px; line-height: 1.2; }
 }
 
 @media (max-width: 900px) {
@@ -3945,7 +4147,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=260">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=285">
 </head>
 <body>
 
@@ -4379,7 +4581,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=260">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=285">
 </head>
 <body>
 
@@ -4409,6 +4611,16 @@ mounts, folder-with-`index.html` so the URL is
     <!-- ===== Plans & feature comparison ===== -->
     <section class="cph-plans">
       <div class="container">
+        <!-- Sticky scope: bounds the toggle + BOTH table grids below (nothing
+             else), giving the toggle its long stick range through the whole
+             table. The black package-header row inside .cph-table--main has
+             its OWN, separate (shorter) bound — that grid's own box, which now
+             ends right before the CTA row — see the comment above
+             .cph-table--cta for why. So the toggle can stay stuck a little
+             longer than the header once the header releases first: content
+             just keeps scrolling normally underneath the still-pinned toggle,
+             same as any ordinary sticky bar — no gap either way. -->
+        <div class="cph-plans__sticky-scope">
         <!-- Billing toggle: annual figures are calculated client-side from the
              fetched monthly price (10× monthly = year total, "2 months free" vs.
              12× monthly; that total ÷ 12 = the equivalent /mo rate shown here) —
@@ -4423,7 +4635,7 @@ mounts, folder-with-`index.html` so the URL is
         </div>
 
         <div class="cph-table-wrap">
-        <div class="cph-table">
+        <div class="cph-table cph-table--main">
           <!-- Package header row -->
           <div class="cph-table__label cph-table__intro">
             <img src="/server-salad-cloud-services-web/assets/img/flags/uk-flag.svg" alt="United Kingdom" width="34" height="26" class="cph-table__flag cph-table__intro-flag">
@@ -4446,7 +4658,7 @@ mounts, folder-with-`index.html` so the URL is
             <p class="cph-table__pkg-billed" data-billed="standard_salad"></p>
             <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
           </div>
-          <div class="cph-table__pkg">
+          <div class="cph-table__pkg cph-table__pkg--last">
             <span class="cph-table__pkg-name">Premium Salad</span>
             <p class="cph-table__pkg-tagline">Generous banquet platter with 2-Core power, prepped for multi-site creators.</p>
             <!-- Fallback value — see Standard Salad's comment above. -->
@@ -4585,13 +4797,25 @@ mounts, folder-with-`index.html` so the URL is
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
-
-          <!-- CTA row — moved here (bottom of the table) per owner; buttons used
-               to sit directly under each price at the top. -->
-          <div class="cph-table__label"></div>
+        </div>
+        <!-- CTA row lives in its OWN grid, seamlessly stacked right under the one
+             above with the same columns (see .cph-table--main/.cph-table--cta in
+             styles.css), instead of being one more row inside the grid above.
+             The grid a sticky child lives in is what bounds how long it can stay
+             stuck — with the CTA row still inside that same grid, its bottom
+             edge (= the whole grid's bottom edge) was the release point, so the
+             header stayed stuck long enough to fully cover the CTA row first and
+             only let go once the row had already scrolled past — the buttons
+             were never actually visible, just hidden then skipped over. Ending
+             the sticky-bounding grid right BEFORE the CTA row instead means the
+             header releases the moment the CTA row's top arrives, so it scrolls
+             up into view normally like every other row. -->
+        <div class="cph-table cph-table--cta">
+          <div class="cph-table__label cph-table__label--last"></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Starter Salad</a></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Standard Salad</a></div>
-          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Premium Salad</a></div>
+          <div class="cph-table__btn-cell cph-table__btn-cell--last"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Premium Salad</a></div>
+        </div>
         </div>
         </div>
       </div>
@@ -4707,19 +4931,19 @@ mounts, folder-with-`index.html` so the URL is
 
         <div class="cph-why__grid">
           <div class="cph-why-card">
-            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why/samsung-nvme-storage.svg)" aria-hidden="true"></span>
+            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why-cpanel/samsung-nvme-storage.svg)" aria-hidden="true"></span>
             <h3 class="cph-why-card__title">Samsung NVMe Storage</h3>
             <p class="cph-why-card__desc">Premium Samsung NVMe SSDs deployed across every server, delivering ultra-fast disk reads and peak application speeds.</p>
           </div>
 
           <div class="cph-why-card">
-            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why/uk-datacenter-location.svg)" aria-hidden="true"></span>
+            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why-cpanel/uk-datacenter-location.svg)" aria-hidden="true"></span>
             <h3 class="cph-why-card__title">UK Datacenter Location</h3>
             <p class="cph-why-card__desc">Hosted in top-tier UK facilities, providing rock-solid network stability and low-latency global delivery for every visitor.</p>
           </div>
 
           <div class="cph-why-card">
-            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why/hands-on-tech-experts.svg)" aria-hidden="true"></span>
+            <span class="cph-why-card__icon" style="--why-icon: url(/server-salad-cloud-services-web/assets/img/why-cpanel/hands-on-tech-experts.svg)" aria-hidden="true"></span>
             <h3 class="cph-why-card__title">Hands-On Tech Experts</h3>
             <p class="cph-why-card__desc">Support is handled directly in-house by cPanel-certified technicians and system engineers who actively manage the platform.</p>
           </div>
@@ -4737,42 +4961,56 @@ mounts, folder-with-`index.html` so the URL is
               <path class="cph-email__art-line" d="M22 36 117 110 212 36"/>
               <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94"/>
 
-              <!-- Animated send / receive: a packet drops into the envelope (receiving)
-                   and another leaves toward the @ badge (sending), on flowing dashed
-                   trails. mpath references the path by id so the packet can't drift
-                   off it. Disabled under prefers-reduced-motion (see styles.css). -->
-              <path id="cphEmailIn" class="cph-email__art-flow" d="M6 22C40 6 82 18 117 46"/>
-              <path id="cphEmailOut" class="cph-email__art-flow" d="M150 120C190 142 224 150 250 160"/>
-              <g class="cph-email__art-packet">
-                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
-                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
-                <animateMotion dur="2.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
-                  <mpath href="#cphEmailIn" xlink:href="#cphEmailIn"/>
-                </animateMotion>
-                <animate attributeName="opacity" dur="2.8s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.8;1"/>
-              </g>
-              <g class="cph-email__art-packet">
-                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
-                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
-                <animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
-                  <mpath href="#cphEmailOut" xlink:href="#cphEmailOut"/>
-                </animateMotion>
-                <animate attributeName="opacity" dur="2.8s" begin="1.4s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.78;1"/>
-              </g>
-
               <circle class="cph-email__art-badge" cx="214" cy="146" r="36"/>
+              <!-- Brief brightness flash on the badge's ring: one blip right as
+                   the outgoing mail departs (~5% into the shared 6s cycle) and
+                   a second right as the incoming mail lands (~93%) — a separate
+                   overlay (rather than animating .cph-email__art-badge's own
+                   stroke-width) so it can be hidden outright under
+                   prefers-reduced-motion without touching the badge's own
+                   static styling. -->
+              <circle class="cph-email__art-badge-flash" cx="214" cy="146" r="36" fill="none">
+                <animate attributeName="stroke-width" values="0;0;3;0;0;0;3;0" keyTimes="0;0.02;0.05;0.08;0.9;0.93;0.96;1" dur="6s" repeatCount="indefinite"/>
+              </circle>
               <circle class="cph-email__art-ping" cx="214" cy="146" r="34">
                 <animate attributeName="r" values="30;52" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
                 <animate attributeName="opacity" values="0.5;0" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
               </circle>
+
               <text class="cph-email__art-at" x="214" y="157" text-anchor="middle">@</text>
+
+              <!-- Outgoing mail: a small envelope departs from the @ badge and
+                   arcs up and off-canvas, fading out just before it exits —
+                   reads as a message being sent. First half of the shared 6s
+                   cycle (0-45%); the badge's departure flash above lines up
+                   with it leaving. Glyph geometry is centred on its own local
+                   origin so the animateMotion path's coordinates become its
+                   on-canvas position directly. -->
+              <g class="cph-email__art-mail cph-email__art-mail-out">
+                <rect x="-10" y="-7" width="20" height="14" rx="2"/>
+                <path class="cph-email__art-mail-flap" d="M-10,-7 0,2 10,-7"/>
+                <animateMotion path="M214,146 Q256,70 200,-20" keyPoints="0;0;1;1" keyTimes="0;0.03;0.45;1" dur="6s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.05;0.35;0.45;1" dur="6s" repeatCount="indefinite"/>
+              </g>
+
+              <!-- Incoming mail: a second envelope arrives from off-canvas
+                   upper-left and flies into the badge, fading out right as it
+                   "lands" — reads as a new message arriving. Second half of
+                   the cycle (55-95%); the badge's arrival flash above lines up
+                   with the landing moment. -->
+              <g class="cph-email__art-mail cph-email__art-mail-in">
+                <rect x="-10" y="-7" width="20" height="14" rx="2"/>
+                <path class="cph-email__art-mail-flap" d="M-10,-7 0,2 10,-7"/>
+                <animateMotion path="M180,-20 Q140,60 214,146" keyPoints="0;0;1;1" keyTimes="0;0.55;0.95;1" dur="6s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0;0;1;1;1;0;0" keyTimes="0;0.5;0.58;0.85;0.92;0.96;1" dur="6s" repeatCount="indefinite"/>
+              </g>
             </svg>
           </div>
 
           <div class="cph-email__content">
-            <h2 class="cph-email__title">Business Email Served Fresh</h2>
+            <h2 class="cph-email__title">Professional Business Email Hosting</h2>
             <div class="cph-email__underline" aria-hidden="true"></div>
-            <p class="cph-email__desc">Included across our hosting plans as a full business mail platform, prepped to deliver reliable communication without clutter.</p>
+            <p class="cph-email__desc">Included across all hosting plans as a complete mail platform, engineered to deliver reliable, secure communication without clutter.</p>
           </div>
         </div>
 
@@ -4780,37 +5018,37 @@ mounts, folder-with-`index.html` so the URL is
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/webmail-anywhere.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Webmail Anywhere</h3>
-            <p class="cph-email-card__desc">Access your webmail inbox fresh from any browser, prepped for working on mobile or desktop.</p>
+            <p class="cph-email-card__desc">Access your inbox securely from any modern web browser, optimized for seamless work on desktop and mobile devices.</p>
           </div>
 
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/desktop-mobile-apps.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Desktop &amp; Mobile Apps</h3>
-            <p class="cph-email-card__desc">Connect Outlook, Apple Mail, and mobile apps easily with auto-discover settings prepped for fast setup.</p>
+            <p class="cph-email-card__desc">Connect Outlook, Apple Mail, and mobile apps effortlessly using automatic auto-discover settings for instant configuration.</p>
           </div>
 
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/spam-abuse-defense.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Spam &amp; Abuse Defense</h3>
-            <p class="cph-email-card__desc">Multi-layered filtering keeps junk off your menu so only legitimate emails reach your main inbox.</p>
+            <p class="cph-email-card__desc">Advanced multi-layered spam filtering blocks unwanted junk and security threats so only legitimate emails reach your main inbox.</p>
           </div>
 
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/flexible-mailbox-storage.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Flexible Mailbox Storage</h3>
-            <p class="cph-email-card__desc">Create custom mailboxes with ample space, prepped to handle all your daily business mail smoothly.</p>
+            <p class="cph-email-card__desc">Create custom domain mailboxes with generous space allocations designed to handle all your daily business communications.</p>
           </div>
 
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/sync-across-devices.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Sync Across Devices</h3>
-            <p class="cph-email-card__desc">Keep phones, tablets, and desktops perfectly in sync so your inbox stays updated everywhere.</p>
+            <p class="cph-email-card__desc">Full IMAP synchronization keeps smartphones, tablets, and desktop clients updated in real time across every device.</p>
           </div>
 
           <div class="cph-email-card">
             <span class="cph-email-card__icon" style="--email-icon: url(/server-salad-cloud-services-web/assets/img/email/forwarders-aliases.svg)" aria-hidden="true"></span>
             <h3 class="cph-email-card__title">Forwarders &amp; Aliases</h3>
-            <p class="cph-email-card__desc">Set up unlimited aliases, autoresponders, and custom routing rules prepped to fit your exact workflow.</p>
+            <p class="cph-email-card__desc">Set up unlimited email aliases, automated autoresponders, and custom routing rules configured to fit your exact workflow.</p>
           </div>
         </div>
       </div>
@@ -4821,14 +5059,21 @@ mounts, folder-with-`index.html` so the URL is
       <div class="container cph-backups__inner">
         <div class="cph-backups__top">
           <div class="cph-backups__content">
-            <h2 class="cph-backups__title">Fresh Backups You Can Rely On</h2>
+            <h2 class="cph-backups__title">Automated Backups You Can Rely On</h2>
             <div class="cph-backups__underline" aria-hidden="true"></div>
-            <p class="cph-backups__desc">Daily snapshots prepped with JetBackup, off-site storage, and granular restores, letting you roll back a single file or an entire account with total ease.</p>
+            <p class="cph-backups__desc">Daily snapshots managed with JetBackup, off-site storage, and granular recovery, letting you roll back individual files or entire accounts effortlessly.</p>
           </div>
 
           <div class="cph-backups__visual">
+            <!-- Hover the frame: the dashboard screenshot zooms out and blurs
+                 away while the real JetBackup logo zooms in from small and
+                 sharpens into focus underneath it — a soft cross-dissolve,
+                 no hard edges or flip. -->
             <div class="cph-backups__frame">
-              <img class="cph-backups__shot" src="/server-salad-cloud-services-web/assets/img/graphics/jetbackup-illustration.png" alt="The JetBackup dashboard showing total backups, account usage, and restore options" width="1195" height="614">
+              <div class="cph-backups__stage">
+                <img class="cph-backups__shot" src="/server-salad-cloud-services-web/assets/img/graphics/jetbackup-illustration.png" alt="The JetBackup dashboard showing total backups, account usage, and restore options" width="1195" height="614">
+                <img class="cph-backups__logo" src="/server-salad-cloud-services-web/assets/img/graphics/jetbackup-logo.png" alt="" aria-hidden="true">
+              </div>
             </div>
           </div>
         </div>
@@ -4836,38 +5081,38 @@ mounts, folder-with-`index.html` so the URL is
         <div class="cph-backups__grid">
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/backed-up-daily.svg)" aria-hidden="true"></span>
-            <h3 class="cph-backups-card__title">Backed Up Daily</h3>
-            <p class="cph-backups-card__desc">Your entire account recipe is backed up automatically every day, keeping your site fresh without extra effort.</p>
+            <h3 class="cph-backups-card__title">Automated Daily Backups</h3>
+            <p class="cph-backups-card__desc">Your entire account is backed up automatically every day, keeping your site data protected without manual effort.</p>
           </div>
 
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/retention-window.svg)" aria-hidden="true"></span>
             <h3 class="cph-backups-card__title">30-Day Retention Window</h3>
-            <p class="cph-backups-card__desc">Roll back across a rolling 30-day window whenever you need to restore a previous site iteration.</p>
+            <p class="cph-backups-card__desc">Roll back across a rolling 30-day retention window whenever you need to restore a previous site version.</p>
           </div>
 
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/off-site-storage.svg)" aria-hidden="true"></span>
-            <h3 class="cph-backups-card__title">Off-Site Storage</h3>
-            <p class="cph-backups-card__desc">Backup snapshots stay safely stored in off-site vaults, keeping your data insulated from local server issues.</p>
+            <h3 class="cph-backups-card__title">Secure Off-Site Storage</h3>
+            <p class="cph-backups-card__desc">Backup snapshots are safely stored in off-site cloud vaults, keeping your data isolated from local server issues.</p>
           </div>
 
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/granular-restore.svg)" aria-hidden="true"></span>
-            <h3 class="cph-backups-card__title">Granular Restore</h3>
-            <p class="cph-backups-card__desc">Serve precise restores for single files, databases, or mailboxes without disturbing the rest of your site.</p>
+            <h3 class="cph-backups-card__title">Granular File Restores</h3>
+            <p class="cph-backups-card__desc">Perform precise restores for individual files, databases, or mailboxes without disturbing the rest of your site.</p>
           </div>
 
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/snapshot-backups.svg)" aria-hidden="true"></span>
-            <h3 class="cph-backups-card__title">Snapshot Backups</h3>
-            <p class="cph-backups-card__desc">Prep a manual snapshot of your site at any moment before testing updates or making major changes.</p>
+            <h3 class="cph-backups-card__title">On-Demand Snapshots</h3>
+            <p class="cph-backups-card__desc">Create an instant manual snapshot of your site at any moment before testing updates or making major changes.</p>
           </div>
 
           <div class="cph-backups-card">
             <span class="cph-backups-card__icon" style="--backup-icon: url(/server-salad-cloud-services-web/assets/img/backups/powered-by-jetbackup.svg)" aria-hidden="true"></span>
             <h3 class="cph-backups-card__title">Powered by JetBackup</h3>
-            <p class="cph-backups-card__desc">Driven by JetBackup technology to deliver ultra-fast recovery speeds and rock-solid site recipe restoration.</p>
+            <p class="cph-backups-card__desc">Driven by industry-standard JetBackup technology to deliver ultra-fast recovery speeds and reliable site restoration.</p>
           </div>
         </div>
       </div>
@@ -5004,6 +5249,7 @@ SVG file to change colour, change the CSS custom property or the class's
 | `photos/eco-forest-canopy.jpg` | Sustainability section background photo (~8MB, unoptimised — worth compressing before launch) |
 | `graphics/world-map-dots.png` | 1920×1080 dotted world map — homepage Locations (full) + cph Why Server Salad (smaller, same London pin coords `left:46.5%; top:37%`) |
 | `graphics/jetbackup-illustration.png` | JetBackup dashboard screenshot, cph Backups section — **must be Server Salad's own panel**, confirm before launch |
+| `graphics/jetbackup-logo.png` | The real JetBackup wordmark (orange, transparent bg) — cropped/downscaled from an owner-supplied source via `downloads/` (see A.5). Revealed on hover of the dashboard screenshot in cph Backups (see C.14) |
 | `graphics/cpanel-dashboard-devices.webp` | Real cPanel screenshot on desktop/tablet/phone frames, cph hero |
 | `partners/partners-{jetbackup,cloudlinux,litespeed,softaculous,cpanel,letsencrypt}.png` | Hero "powered by" carousel, forced white via CSS `filter: brightness(0) invert(1)` |
 | `flags/uk-flag.svg` | Flat rect UK flag — cph comparison table (Data Center row ×3, intro-cell badge) |
@@ -5046,20 +5292,20 @@ SVG file to change colour, change the CSS custom property or the class's
 | `features/free-site-builder.svg` | "Free Site Builder" |
 | `features/seamless-migration.svg` | "Seamless Migration" |
 | `features/expert-support.svg` | "24/7 Expert Support" |
-| `why/samsung-nvme-storage.svg` | "Samsung NVMe Storage" (cph Why Server Salad) |
-| `why/uk-datacenter-location.svg` | "UK Datacenter Location" |
-| `why/hands-on-tech-experts.svg` | "Hands-On Tech Experts" |
+| `why-cpanel/samsung-nvme-storage.svg` | "Samsung NVMe Storage" (cph Why Server Salad — folder named distinctly from the homepage's `why-choose/`, see A.5) |
+| `why-cpanel/uk-datacenter-location.svg` | "UK Datacenter Location" |
+| `why-cpanel/hands-on-tech-experts.svg` | "Hands-On Tech Experts" |
 | `email/webmail-anywhere.svg` | "Webmail Anywhere" |
 | `email/desktop-mobile-apps.svg` | "Desktop & Mobile Apps" |
 | `email/spam-abuse-defense.svg` | "Spam & Abuse Defense" |
 | `email/flexible-mailbox-storage.svg` | "Flexible Mailbox Storage" |
 | `email/sync-across-devices.svg` | "Sync Across Devices" |
 | `email/forwarders-aliases.svg` | "Forwarders & Aliases" |
-| `backups/backed-up-daily.svg` | "Backed Up Daily" |
+| `backups/backed-up-daily.svg` | "Automated Daily Backups" |
 | `backups/retention-window.svg` | "30-Day Retention Window" |
-| `backups/off-site-storage.svg` | "Off-Site Storage" |
-| `backups/granular-restore.svg` | "Granular Restore" |
-| `backups/snapshot-backups.svg` | "Snapshot Backups" |
+| `backups/off-site-storage.svg` | "Secure Off-Site Storage" |
+| `backups/granular-restore.svg` | "Granular File Restores" |
+| `backups/snapshot-backups.svg` | "On-Demand Snapshots" |
 | `backups/powered-by-jetbackup.svg` | "Powered by JetBackup" |
 
 ### B.9 Verification checklist
@@ -5075,7 +5321,7 @@ After building from Parts A/B, confirm:
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
 - [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **both**
-      HTML pages (currently v=260 / v=13) — bump both on every future change to
+      HTML pages (currently v=285 / v=13) — bump both on every future change to
       that file, in every page's tag.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows
@@ -5092,7 +5338,8 @@ After building from Parts A/B, confirm:
       loops seamlessly (duplicated logo set).
 - [ ] All `prefers-reduced-motion: reduce` rules actually disable their
       animation (plans note beam, nav apps-link bounce, locations pin pulse,
-      migration packet/arrow, email send/receive packets).
+      migration packet/arrow, email send/incoming mail glyphs + badge flash,
+      why-map hover-zoom, backups screenshot hover cross-dissolve).
 - [ ] Every icon in Part B.8's manifest renders in `--brand-orange` (or its
       section's specified colour) via the masked-SVG technique — not as a raw
       `<img>` with baked-in colour.
@@ -5356,6 +5603,36 @@ first thing worth reconsidering.
 - The spreadsheet's merged "Support" row was removed earlier per owner; the
   merged "Money-Back Guarantee" row lives outside the table as a small line
   under each plan's price block instead.
+- **Sticky billing toggle + sticky package header**, owner-requested so the
+  toggle and the black package-header row track the same way down the page as
+  you scroll the feature rows, until the CTA row comes into view. Three
+  non-obvious CSS fixes were needed to get here, all now baked into the
+  structure — see B.1's `.cph-plans__sticky-scope`/`.cph-table--main`/
+  `.cph-table--cta` comments for the full "why":
+  1. Any ancestor with a non-`visible` `overflow` that never itself scrolls
+     silently becomes the "nearest scroll container" for a `position: sticky`
+     descendant and prevents it from ever engaging — `.cph-table` lost its
+     `overflow: hidden` (corner-rounding moved to explicit per-cell
+     `border-radius` instead) and `.cph-table-wrap`'s `overflow-x: auto` is
+     now gated behind a `max-width: 860px` media query (mobile-only
+     horizontal scroll, kept out of the unconditional rule specifically so it
+     doesn't break sticky at desktop widths).
+  2. A sticky element's stuck-and-released range is bounded by its own
+     containing block, not by any specific child row — the table is split
+     into two adjacent grids sharing the same `grid-template-columns`,
+     `.cph-table--main` (header + feature rows) and `.cph-table--cta` (just
+     the CTA row), so the sticky header's containing block ends right before
+     the CTA row and releases there instead of scrolling the CTA row out of
+     view underneath it.
+  3. `border-radius` is not reliably clipped on a `position: sticky` element
+     while it's actively in its stuck/offset state in some browsers — the
+     background + radius for the intro cell and the last package cell live on
+     `::before` pseudo-elements (plain `position: absolute`, not themselves
+     sticky) instead of on the sticky elements directly.
+  4. Spacing between the nav, the toggle, and the header had to be `padding`
+     (inside each sticky element's own painted background), not `margin`
+     (outside it) — a margin gap let scrolled content show through underneath
+     once stuck.
 
 ### C.11 cpanel-hosting: Features
 - Heading is "Loaded Web Hosting Features" — deliberately **not**
@@ -5389,12 +5666,42 @@ first thing worth reconsidering.
   to an owner-supplied reference table.
 - The `.cph-why__grid` uses `align-items: stretch` so all 3 cards match the
   tallest one's height, regardless of description length.
+- The map card's "London, UK" pin label typography also matches the
+  font-inspector spec (Manrope 600 12px/18px). Hovering the map card zooms
+  `.cph-why__map-inner` in on London (`transform-origin: 46.5% 37%`, the same
+  coordinates as the pin itself, `transform: scale(2.6)`), and the pin's
+  plain orange dot cross-fades into `flags/uk-flag-circle.png` (the same
+  circular UK flag image used on the homepage's Locations hover card) —
+  `opacity` swap between `.cph-why__pin-dot` and `.cph-why__pin-flag`, not a
+  second image loaded on hover. `.cph-why__map` needs `overflow: hidden` for
+  the zoom to stay clipped to the card. All of it is disabled under
+  `prefers-reduced-motion: reduce` (the `transition`s are removed, not just
+  the trigger, since the `:hover` scale rule would otherwise still jump
+  instantly).
 
 ### C.13 cpanel-hosting: Business Email
-- Two-column top: a pure CSS/SVG envelope illustration (animated send/
-  receive via SMIL `<animateMotion>` + `<mpath>`, same technique as the
-  Migration packet) on the left, heading+description on the right, then a
-  3×2 grid of 6 cards.
+- Two-column top: a pure CSS/SVG envelope + `@` badge illustration on the
+  left (heading+description on the right), then a 3×2 grid of 6 cards.
+  Heading/description type match a supplied font-inspector spec exactly
+  (Cairo 600 40px/46px heading; Manrope 300 15px/25px description — colour
+  kept at the site's own white/orange per the reference-styling rule), same
+  for the 6 card titles/descriptions (Cairo 600 17px/21px; Manrope 300
+  13px/20px).
+- The illustration went through several concepts (packet-flight, a
+  sketch-style draw-in reveal, an orbiting icon, a typing indicator, a
+  particle burst, a diagonal light sweep) before landing on the current one:
+  a small envelope departs the `@` badge and arcs off-canvas (send), then a
+  second arrives from off-canvas into the badge (incoming) — one 6s loop,
+  via two `<g>` groups each with an inline-path `<animateMotion>` + an
+  `opacity` `<animate>` for fade in/out. The badge's `.cph-email__art-badge-
+  flash` ring brightens twice per cycle, timed to the departure (~5%) and the
+  landing (~93%), so the badge visually reacts to both moments. A separate,
+  independent `<animate>` on `.cph-email__art-ping` gives it a continuous
+  ambient pulse unrelated to the send/receive cycle. All of this is SMIL
+  (`<animate>`/`<animateMotion>`), which can't be halted by CSS
+  `animation: none` — `prefers-reduced-motion: reduce` hides the animated
+  elements outright (`display: none`) instead, same pattern as the Migration
+  packet.
 - All 6 card titles/descriptions are real copy. "Flexible Mailbox Storage"
   deliberately gives no size/number ("ample space" instead) — no confirmed
   figure to state. "Forwarders & Aliases" states "unlimited" aliases/
@@ -5402,13 +5709,35 @@ first thing worth reconsidering.
 
 ### C.14 cpanel-hosting: Backups
 - Two-column top: heading+description on the left, the JetBackup dashboard
-  screenshot in a light "device" frame on the right, then a 3×2 grid of 6 cards.
+  screenshot in a light "device" frame on the right, then a 3×2 grid of 6
+  cards. Heading/description and the 6 card titles/descriptions are type-
+  matched to the same font-inspector spec as C.13 (headings dark `rgb(32, 29,
+  44)` instead of white, since this section sits on a light background).
+  `.cph-backups__underline` deliberately uses the site's red→orange
+  `--accent`/`--accent-2` gradient (not a flat `--brand-orange` bar like the
+  homepage underlines, see A.3) — owner-requested "our colour code orange and
+  red mixed gradient" for this one underline specifically.
 - JetBackup is already established as Server Salad's real backup solution
   (appears in the comparison table's "Included with Every Plan" group and on
-  the homepage) — the 30-day retention figure is owner-confirmed.
+  the homepage) — the 30-day retention figure is owner-confirmed. Card
+  copy: 4 of the 6 titles/bodies were later updated to more formal wording
+  ("Automated Daily Backups", "Secure Off-Site Storage", "Granular File
+  Restores", "On-Demand Snapshots" — see B.8 for the current title mapping);
+  "30-Day Retention Window" and "Powered by JetBackup" kept their titles.
 - ⚠️ The screenshot (`graphics/jetbackup-illustration.png`) **must be a
   genuine Server Salad JetBackup panel**, not another host's customer
   session — confirm the file on disk is Server Salad's own before launch.
+- **Hover reveal:** hovering `.cph-backups__frame` cross-dissolves the
+  screenshot into `graphics/jetbackup-logo.png` — the real JetBackup wordmark
+  (owner-supplied via `downloads/`, cropped to its bounding box and
+  downscaled; see A.5's `downloads/` workflow). The screenshot zooms out
+  slightly and blurs away (`opacity`/`transform: scale()`/`filter: blur()`
+  transitioning together) while the logo, stacked underneath at all times,
+  zooms in from a touch smaller and sharpens into focus — a soft cross-
+  dissolve, not a hard wipe edge. Two earlier attempts (a `clip-path` wipe, a
+  3D `rotateY` card flip) were tried and replaced before this landed. The
+  frame's box-shadow also deepens on hover, so it reads as lifting up
+  slightly while the dissolve plays.
 
 ### C.15 Footer (shared partial)
 - Solid black (`--bg-topbar`), bookending the equally-black topbar rather
