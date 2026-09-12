@@ -2519,7 +2519,7 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
   line-height: 13px;
   text-align: center;
-  color: rgba(23, 25, 26, .6);
+  color: rgb(127, 133, 136);
 }
 
 /* overflow-x only applies below the width the 680px-min-width table actually
