@@ -1351,17 +1351,16 @@ unless the owner says otherwise — update this list when that happens:
   the homepage Migration section. Responsive 3→2 (≤900) →1 (≤560).
 - **Heading: "Loaded Web Hosting Features"** — deliberately not "Unlimited…",
   since the plans shown in the table right above are capped, not unlimited.
-  Subtitle: "Fast, reliable, and secure web hosting prepped fresh on our
-  high-performance cloud platform."
+  Subtitle: "High-performance, reliable, and secure web hosting built on
+  enterprise cloud infrastructure."
 - **All 12 card titles + descriptions are owner-supplied real copy.** Titles:
-  Simple and Intuitive, Lightning Fast Hosting, High Base Resources, WordPress
-  Optimised, Multiple PHP Versions, Email Included, Free Daily Backups, Free SSL
-  Certificates, One-Click Applications, Free Site Builder, Smooth Migration,
-  Responsive Support. This copy states concrete specifics that don't appear
-  elsewhere on the site (WP Toolkit, "over 300" scripts, daily backups, WhatsApp
-  support, "zero data loss", "cPanel-certified") — owner-asserted, keep accurate.
-  "flavor" (US spelling) in the PHP card is verbatim owner copy, like "neighbor"
-  elsewhere.
+  Simple and Intuitive, Lightning-Fast Hosting, High Base Resources, WordPress
+  Optimized, Multiple PHP Versions, Professional Email Included, Free Daily
+  Backups, Free SSL Certificates, One-Click Applications, Free Site Builder,
+  Seamless Migration, 24/7 Expert Support. This copy states concrete specifics
+  that don't appear elsewhere on the site (WP Toolkit, "300+" web applications,
+  daily backups, WhatsApp support, "zero downtime or data loss") —
+  owner-asserted, keep accurate.
 - Icons: `assets/img/features/` (12 files, owner-supplied Noun Project SVGs,
   `fill="currentColor"`, masked to `--brand-orange` — see Assets).
 
@@ -1549,8 +1548,8 @@ unless the owner says otherwise — update this list when that happens:
   must be a genuine Server Salad JetBackup panel, not another host's customer
   session. Confirm the file on disk is Server Salad's own.
 - **cpanel-hosting card copy now asserts several specifics not stated elsewhere** —
-  WP Toolkit, "over 300" 1-click scripts, daily backup frequency, WhatsApp support,
-  "zero data loss", "cPanel-certified technicians", "unlimited" aliases/autoresponders.
+  WP Toolkit, "300+" web applications, daily backup frequency, WhatsApp support,
+  "zero downtime or data loss", "cPanel-certified technicians", "unlimited" aliases/autoresponders.
   All owner-supplied, so implemented verbatim; keep them accurate to what Server
   Salad actually offers.
 - **`discount` and `edu_support_discount` columns exist in `cpanel_package_pricing`
