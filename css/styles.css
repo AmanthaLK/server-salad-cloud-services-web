@@ -2844,7 +2844,7 @@ button { font: inherit; cursor: pointer; }
   transform: translateY(-3px);
 }
 
-/* Brand-orange glyph (masked external SVG in assets/img/why/, set per card via
+/* Brand-orange glyph (masked external SVG in assets/img/why-cpanel/, set per card via
    --why-icon) inside a soft orange-tinted tile. */
 .cph-why-card__icon {
   display: flex;
