@@ -49,7 +49,7 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=285**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
+  **v=319**); `js/main.js` has its own separate `?v=N` (currently **v=17**).
   Bump the relevant one any time that file changes, in **every** page's tag,
   so browsers fetch the latest version instead of a stale cached copy.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
@@ -170,6 +170,8 @@ server-salad-cloud-services-web/
                         separate, page-specific icon set; not interchangeable)
       email/        <- 6 cph "Business Email" icons
       backups/      <- 6 cph "Backups" icons
+      security/     <- 6 cph "Security in Depth" icons
+      workflow/     <- 6 cph "Works With Your Workflow" icons
       apps/         <- 7 one-click-install app logos (real brand colours)
       nav/          <- mega-menu mouse-pointer icon
       footer/       <- footer icons (phone/email/socials/CTA)
@@ -395,10 +397,10 @@ button { font: inherit; cursor: pointer; }
   padding-top: 28px;
   padding-bottom: 32px;
 }
-/* Web Hosting▾ only (so far — the only one with real existing copy to fill an
-   intro column with, see its comment in header.html): a fixed-width intro column
-   + thin divider + a flexible row of cards, instead of the plain auto-fit grid
-   the other (introless) mega menus use. */
+/* Used by the Web Hosting▾ and Discount Programs▾ menus (see their comments
+   in header.html): a fixed-width intro column + thin divider + a flexible row
+   of cards, instead of the plain auto-fit grid the other (introless) mega
+   menus use. */
 .nav__mega-inner--intro {
   grid-template-columns: 1fr 260px;
   align-items: stretch;
@@ -428,6 +430,10 @@ button { font: inherit; cursor: pointer; }
   color: rgb(40, 39, 39);
   white-space: nowrap;
 }
+/* Discount Programs▾'s title ("Discount Programs") is longer than Web
+   Hosting's ("Web Hosting") and doesn't fit the 300px intro column on one
+   line — let it wrap to two instead of overflowing into the cards column. */
+.nav__mega-intro-title--wrap { white-space: normal; }
 /* Gradient accent word — same red/orange gradient as .hero__title-accent. */
 .nav__mega-intro-title strong {
   font-weight: 700;
@@ -654,6 +660,29 @@ button { font: inherit; cursor: pointer; }
   transform: translateY(-2px);
 }
 
+/* Not-yet-launched service (cPanel Business Hosting): plain <div> now, not a
+   link — same "Launching Soon" hover overlay as .hero-card__soon. */
+.mega-card--soon { cursor: default; }
+.mega-card__soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, .96);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.mega-card--soon:hover .mega-card__soon { opacity: 1; }
+
 /* Icon + title sit inline on one row (reference-inspired layout), rather than
    icon stacked above title. */
 .mega-card__row { display: flex; align-items: center; gap: 10px; }
@@ -792,6 +821,30 @@ button { font: inherit; cursor: pointer; }
   border-color: var(--accent);
   box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
 }
+
+/* Not-yet-launched services (cPanel Business Hosting, VPS Hosting, Domains):
+   plain <div> now, not a link — hovering reveals a "Launching Soon" overlay
+   instead of navigating anywhere. */
+.hero-card--soon { cursor: default; }
+.hero-card__soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.hero-card--soon:hover .hero-card__soon { opacity: 1; }
 
 /* Floating pill centred on the card's top edge, half in / half out — replaces the
    earlier corner-ribbon treatment. */
@@ -1096,6 +1149,60 @@ button { font: inherit; cursor: pointer; }
   transition: color .15s;
 }
 .nav__link:hover { color: var(--brand-orange); }
+
+/* Not-yet-launched top-level nav items (Servers, Domains): plain <span>, not a
+   link — hovering/focusing shows a small "Launching Soon" tooltip below it.
+   Same white-pill/orange-border look as .hero-card__badge, for visual
+   consistency with the other "coming soon" treatments on the site. */
+.nav__link--soon { cursor: default; }
+.nav__link--soon:hover { color: rgba(255, 255, 255, .9); }
+
+.nav__tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  margin-top: 14px;
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 20;
+}
+.nav__tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: var(--brand-orange);
+}
+.nav__tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(1.5px);
+  border: 5px solid transparent;
+  border-bottom-color: #fff;
+}
+.nav__item--soon:hover .nav__tooltip,
+.nav__link--soon:focus-visible + .nav__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 .btn {
   display: inline-flex;
@@ -1648,6 +1755,27 @@ button { font: inherit; cursor: pointer; }
 }
 .btn--outline:hover { background: var(--brand-orange); color: #fff; }
 
+/* Not-yet-launched plan (cPanel Business Hosting): plain <span> now, not a
+   link — hovering/focusing swaps the label for "Launching Soon" instead of
+   navigating anywhere. */
+.btn--soon { position: relative; overflow: hidden; cursor: default; }
+.btn--soon-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-orange);
+  color: #fff;
+  opacity: 0;
+  transition: opacity .18s ease;
+  pointer-events: none;
+}
+.btn--soon:hover .btn--soon-overlay,
+.btn--soon:focus-visible .btn--soon-overlay {
+  opacity: 1;
+}
+
 @media (max-width: 860px) {
   .plans__cards { grid-template-columns: 1fr; }
 }
@@ -2115,6 +2243,7 @@ button { font: inherit; cursor: pointer; }
 .footer {
   background: var(--bg-topbar); /* solid black — bookends the equally-black topbar */
   color: rgba(245, 245, 247, .68);
+  border-top: 1px solid #fff;
 }
 
 .footer__inner { padding: 72px 0 0; }
@@ -2205,8 +2334,13 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 0;
 }
 
-.footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-.footer__links a {
+/* align-items: flex-start so each <li> shrinks to its own text width instead
+   of stretching to the column's full width — otherwise .footer__tooltip's
+   left:50% below centers on that full-width box instead of the short label
+   text sitting inside it, landing the tooltip far off to the side. */
+.footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.footer__links a,
+.footer__links-link--soon {
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 300;
@@ -2215,6 +2349,63 @@ button { font: inherit; cursor: pointer; }
   transition: color .15s;
 }
 .footer__links a:hover { color: var(--brand-orange); }
+
+/* Not-yet-launched products (cPanel Business Hosting, VPS Hosting, Domains):
+   plain <span>, not a link — hovering/focusing shows a small "Launching
+   Soon" tooltip, same idea as the nav's .nav__tooltip (Servers/Domains) but
+   positioned ABOVE the item instead of below, since these sit at the very
+   bottom of the page and a below-item tooltip could run off past the
+   viewport/page edge. */
+.footer__links-item--soon { position: relative; }
+.footer__links-link--soon { display: inline-block; cursor: default; }
+.footer__links-link--soon:hover { color: rgba(245, 245, 247, .68); }
+
+.footer__tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  margin-bottom: 10px;
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 20;
+}
+.footer__tooltip::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--brand-orange);
+}
+.footer__tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-1.5px);
+  border: 5px solid transparent;
+  border-top-color: #fff;
+}
+.footer__links-item--soon:hover .footer__tooltip,
+.footer__links-link--soon:focus-visible + .footer__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 .footer__col--touch { display: flex; flex-direction: column; gap: 14px; }
 
@@ -2397,6 +2588,18 @@ button { font: inherit; cursor: pointer; }
   padding: 88px 0;
 }
 
+/* Sits immediately before the toggle, invisible — purely an
+   IntersectionObserver target (see js/main.js) marking where the toggle's own
+   top edge is in normal flow, so JS can tell exactly when it locks into its
+   sticky position (see .cph-billing-toggle.is-stuck below). 1px, not 0 —
+   some browsers handle intersection ratios unreliably for a truly zero-area
+   target. */
+.cph-billing-toggle__sentinel { height: 1px; }
+/* Same idea, marking where the package header row (.cph-table__intro /
+   .cph-table__pkg below) sits in normal flow, so js/main.js can tell when
+   IT locks into its own (later, lower) sticky spot. */
+.cph-table__pkg-sentinel { height: 1px; }
+
 /* Billing toggle (Monthly / Annually) — see js/main.js for the switch handler
    and the monthly↔annual price math, README "Pricing API" for why the annual
    figures are calculated client-side rather than a 2nd DB column.
@@ -2413,21 +2616,30 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   justify-content: center;
   gap: 14px;
-  /* Padding, not margin, on both sides, and equal on both — margin sits
-     OUTSIDE this element's own painted background, so while stuck it would
-     leave a gap that reveals whatever feature row has scrolled to that band
-     underneath (the same bug on both the nav-side and table-side of this
-     box). Same 14px on top and bottom so the nav<->switcher gap matches the
-     switcher<->table-header gap once everything is stuck. Sticky top is
-     flush with the nav's own bottom edge (74px content + 1px border) so
-     there's no gap at all between .nav's background and this one. */
+  /* Padding, not margin, on both sides — margin sits OUTSIDE this element's
+     own painted background, so while stuck it would leave a gap that reveals
+     whatever feature row has scrolled to that band underneath (the same bug
+     on both the nav-side and table-side of this box). Equal 14px top/bottom
+     once stuck (see .is-stuck below) so the nav<->switcher gap matches the
+     switcher<->table-header gap, same as before — that stuck-state look was
+     fine as-is. Sticky top is flush with the nav's own bottom edge (74px
+     content + 1px border) so there's no gap at all between .nav's background
+     and this one. */
   padding-top: 14px;
-  padding-bottom: 14px;
+  padding-bottom: 28px;
   position: sticky;
   top: 75px; /* nav__inner's 74px + its 1px border-bottom — flush, no reveal */
   z-index: 20;
   background: #f7f7f9; /* matches .cph-plans so scrolled-past rows don't show through while stuck */
 }
+/* Only the pre-stick (normal document-flow) switcher<->table gap needed
+   widening — the already-stuck gap was fine and had to stay exactly as it
+   was. Padding can't differ between those two states on its own (it's part
+   of the box regardless of scroll position), so js/main.js watches the
+   sentinel just above this element with an IntersectionObserver and adds
+   .is-stuck the instant this toggle actually locks into its sticky spot,
+   which is exactly when this override should kick in. */
+.cph-billing-toggle.is-stuck { padding-bottom: 14px; }
 .cph-billing-toggle__label {
   font-family: "Montserrat", var(--font-heading);
   font-size: 14px;
@@ -2475,9 +2687,9 @@ button { font: inherit; cursor: pointer; }
 }
 
 .cph-table__pkg-billed {
-  margin: -10px 0 0; /* pulls in against the wider 16px base gap, so price +
-                         billed-as-line read as one paired unit, not two
-                         separately-spaced lines */
+  margin: 6px 0 0; /* was the parent's 16px gap + this element's own -10px —
+                       kept net-tight so price + billed-as-line still read as
+                       one paired unit, not two separately-spaced lines */
   min-height: 16px; /* reserves space so toggling Monthly/Annually doesn't
                         reflow the row (the CTA button lives in its own row at
                         the bottom of the table now, not directly below this —
@@ -2519,13 +2731,17 @@ button { font: inherit; cursor: pointer; }
   outline-offset: 2px;
 }
 
+/* Now lives under the Order button in the CTA row (moved off the black
+   package header, see .cph-table__btn-cell) — colour changed from white to a
+   muted dark tone to read as fine print on that row's white background. */
 .cph-table__pkg-guarantee {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   font-family: "Manrope", var(--font-body);
   font-size: 11px;
   font-weight: 400;
   line-height: 13px;
-  color: #fff;
+  text-align: center;
+  color: rgb(127, 133, 136);
 }
 
 /* overflow-x only applies below the width the 680px-min-width table actually
@@ -2563,8 +2779,8 @@ button { font: inherit; cursor: pointer; }
    the sticky header release exactly when the CTA row arrives instead of
    after it). Split the outer frame's border/radius between them so together
    they still read as one continuous rounded box — border-bottom (main) /
-   border-top (cta) are dropped since each row's own per-cell border-top
-   already draws that seam, same as every other internal row boundary. */
+   border-top (cta) are dropped so no line shows at that seam, same as the
+   (now border-free) boundary between every other row inside the table. */
 .cph-table--main {
   border-bottom: none;
   border-bottom-left-radius: 0;
@@ -2579,14 +2795,16 @@ button { font: inherit; cursor: pointer; }
 .cph-table__label {
   display: flex;
   align-items: center;
-  padding: 13px 20px;
+  /* Vertical padding tightened from 13px — with the row-separator lines gone
+     (see .cph-table__val's comment), that much padding read as too loose a
+     gap between rows. */
+  padding: 8px 20px;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 400;
   line-height: 20px;
   color: rgb(23, 25, 26);
   background: #fafafb;
-  border-top: 1px solid #ececf0;
   border-right: 1px solid #ececf0;
 }
 /* Last row's empty leading cell (under the intro column) — bottom-left corner,
@@ -2596,12 +2814,28 @@ button { font: inherit; cursor: pointer; }
    sitting blank next to the black package headers. Pinned (with .cph-table__pkg
    below) right under .cph-billing-toggle while scrolling the feature rows,
    releasing exactly when .cph-table--main's own bottom edge (now right before
-   the CTA row — see .cph-table--cta) reaches this offset. */
+   the CTA row — see .cph-table--cta) reaches this offset. Per owner: this
+   whole header row should shrink further once it's scrolled into its sticky
+   spot — see .cph-table__intro.is-condensed / .cph-table__pkg.is-condensed
+   below, toggled by js/main.js.
+
+   That toggle fires once, right as it locks into place (an
+   IntersectionObserver watching a sentinel, same technique as the billing
+   toggle's own is-stuck detector above), and the shrink itself is a plain
+   CSS transition — NOT continuously scrubbed off live scroll position via a
+   scroll-event handler. An earlier version did that (recomputing padding/
+   margin/max-height on every scroll frame): forcing a full layout reflow on
+   every single scroll pixel is a textbook jank source, and it showed —
+   stuttery, dropped frames, unreadable mid-scroll. A one-time CSS transition
+   triggered by a single class flip costs one short, browser-optimized
+   transition instead of dozens of forced reflows per scroll gesture. */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
   justify-content: center; /* centre the flag + heading block in the tall cell */
-  gap: 14px;
+  /* No `gap` here (moved to .cph-table__intro-flag's own margin-bottom) — a
+     flex `gap` can't be transitioned away when the flag collapses on
+     .is-condensed below, since it isn't owned by either child. */
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
   line-height: 24px;
@@ -2609,10 +2843,9 @@ button { font: inherit; cursor: pointer; }
   color: rgb(40, 39, 39);
   text-align: center;
   position: sticky;
-  top: 129px; /* 75px toggle offset + its 14px+26px+14px padding-top/content/padding-bottom (equal top/bottom padding), all inside its own painted box so nothing shows through */
+  top: 129px; /* 75px toggle offset + its stuck-state 14px+26px+14px padding-top/content/padding-bottom (.is-stuck — see that class's comment), all inside its own painted box so nothing shows through */
   z-index: 15;
   background: none; /* the white fill now comes from ::before below, not this box's own background */
-  border-top: none; /* it's the true first cell of .cph-table--main now (moved off :first-child — that selector would've also wrongly matched .cph-table__label--last, the first cell of the separate .cph-table--cta grid) */
 }
 /* The white background + rounded top-left corner live on a ::before instead
    of directly on this box: some browsers don't reliably keep clipping a
@@ -2629,20 +2862,40 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   border-top-left-radius: 14px;
 }
-.cph-table__intro-flag { width: 34px; height: auto; }
+.cph-table__intro-flag {
+  width: 34px;
+  height: auto;
+  margin-bottom: 14px;
+  opacity: 1;
+  transition: opacity .2s ease, margin-bottom .2s ease;
+}
+/* Fades away once it locks into its sticky spot — see .cph-table__intro's
+   comment above and js/main.js. No max-height/overflow:hidden collapse on
+   the flag itself (tried first, reverted): animating a raster image's
+   height that way clips it frame-by-frame instead of scaling it, which
+   read as a glitchy little sliver mid-shrink. Its own un-collapsed height
+   barely matters anyway, since the row's total height is set by the taller
+   .cph-table__pkg cells regardless. */
+.cph-table__intro.is-condensed .cph-table__intro-flag {
+  opacity: 0;
+  margin-bottom: 0;
+}
 
 .cph-table__val {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 13px 14px;
+  /* Vertical padding tightened from 13px to 8px, matching .cph-table__label —
+     the border-top row separators used to mark each row's edge, so once
+     those were removed this much padding left the rows looking too loosely
+     spaced. */
+  padding: 8px 14px;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 700;
   line-height: 20px;
   text-align: center;
   color: rgb(23, 25, 26);
-  border-top: 1px solid #ececf0;
 }
 .cph-table__cross { color: #d3382e; }
 
@@ -2673,14 +2926,17 @@ button { font: inherit; cursor: pointer; }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 16px; /* was 8px — the individual elements' own margins below layer on
-                top of this for an uneven, cramped rhythm; widened the base gap
-                and re-tuned those margins for a more consistent, breathable
-                spacing pattern (name → tagline → price [tightly paired with the
-                billed-as line] → guarantee). */
+  /* Inter-child spacing lives on each child's own margin-top now, not a flex
+     `gap` — a `gap` can't be transitioned away when the tagline collapses on
+     .is-condensed below, since it isn't owned by either neighbouring child.
+     Values match the old 16px gap (see each child's own margin comment). */
   padding: 26px 18px;
   background: var(--bg-topbar);
+  transition: padding .2s ease;
 }
+/* Shrinks once it locks into its sticky spot — see .cph-table__intro's
+   comment above and js/main.js. */
+.cph-table__pkg.is-condensed { padding: 8px 18px; }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
    .cph-table's own border-radius used to get for free via overflow:hidden.
    Same ::before approach as .cph-table__intro (see its comment): a plain
@@ -2704,13 +2960,49 @@ button { font: inherit; cursor: pointer; }
   color: #fff;
 }
 .cph-table__pkg-tagline {
-  margin: 0;
+  margin: 16px 0 0; /* was the parent's 16px gap, now owned here so it can
+                        collapse away below */
   min-height: 34px;
+  max-height: 60px;
+  overflow: hidden;
+  opacity: 1;
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: max-height .2s ease, opacity .15s ease, margin-top .2s ease, transform .2s ease;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 500;
   line-height: 16px;
   color: rgb(255, 255, 255);
+}
+/* Collapses away once it locks into its sticky spot, bringing the package
+   name and price closer together — see .cph-table__intro's comment above
+   and js/main.js. No min-height here: an earlier version kept the base
+   min-height in this override and it silently won over max-height (min-
+   height always wins when the two conflict), so the tagline's box stayed
+   full-height, just invisible — that was the actual bug behind the
+   name<->price gap not visibly shrinking that time. transform: scaleY(0)
+   is paired with the max-height collapse for a separate reason: max-height
+   alone clips this multi-line text at a flat horizontal line as it shrinks,
+   which can slice straight through a line of text mid-transition, reading
+   as garbled rather than a clean shrink — scaling the block down in sync
+   keeps its visible content's own proportions matching the shrinking box
+   instead, so it reads as one whole (if compressed) block, never a
+   cut-off one. */
+.cph-table__pkg.is-condensed .cph-table__pkg-tagline {
+  margin-top: 0;
+  min-height: 0;
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0);
+}
+/* Condensing still happens (js/main.js still toggles the class), just as an
+   instant cut instead of an animated shrink. */
+@media (prefers-reduced-motion: reduce) {
+  .cph-table__intro-flag,
+  .cph-table__pkg-tagline,
+  .cph-table__pkg-price,
+  .cph-table__pkg { transition: none; }
 }
 .cph-table__pkg-price {
   /* price + "/mo" share one baseline-aligned row instead of stacking */
@@ -2718,9 +3010,13 @@ button { font: inherit; cursor: pointer; }
   align-items: baseline;
   justify-content: center;
   gap: 5px;
-  margin: 4px 0 0;
+  margin: 20px 0 0; /* was the parent's 16px gap + this element's own 4px */
   color: rgba(255, 255, 255, .6);
+  transition: margin-top .2s ease;
 }
+/* Pulls closer to the name once the tagline above it is gone — see
+   .cph-table__intro's comment and js/main.js. */
+.cph-table__pkg.is-condensed .cph-table__pkg-price { margin-top: 2px; }
 .cph-table__pkg-price strong {
   font-family: "Manrope", var(--font-body);
   font-size: 24px;
@@ -2740,10 +3036,10 @@ button { font: inherit; cursor: pointer; }
    not a bolted-on footer. */
 .cph-table__btn-cell {
   display: flex;
+  flex-direction: column; /* stacks the Order button + .cph-table__pkg-guarantee under it */
   align-items: center;
   justify-content: center;
   padding: 18px 16px;
-  border-top: 1px solid #ececf0;
 }
 /* Last (Premium Salad) button cell — bottom-right corner, same reasoning as
    .cph-table__pkg--last above. */
@@ -2775,7 +3071,6 @@ button { font: inherit; cursor: pointer; }
   text-decoration: underline;
   text-underline-offset: 3px;
   background: #fafafb;
-  border-top: 1px solid #ececf0;
 }
 /* "Yes" value cells under Exclusive Benefits — check glyph + label. */
 .cph-table__val--yes { color: rgb(23, 25, 26); }
@@ -3491,6 +3786,327 @@ button { font: inherit; cursor: pointer; }
   .cph-email__inner { padding: 64px 0; }
   .cph-email__grid { grid-template-columns: 1fr; }
 }
+
+/* ===== cPanel Hosting page: security ===== */
+.cph-security {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  /* Dark section so the page keeps alternating: light backups -> dark
+     security. Same brand-orange-tinted dark gradient as every other dark
+     band on this page (.cph-features, .cph-email) — kept consistent with
+     the rest of the cpanel-hosting page rather than a one-off accent. */
+  background:
+    radial-gradient(circle at 15% 12%, rgba(245, 126, 32, .12) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(245, 126, 32, .08) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
+}
+
+.cph-security__inner { padding: 88px 0; }
+
+.cph-security__head { text-align: center; margin-bottom: 64px; }
+
+.cph-security__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: .2px;
+}
+
+.cph-security__subtitle {
+  margin: 14px auto 0;
+  max-width: 620px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(245, 245, 247, .72);
+}
+
+.cph-security__underline {
+  width: 64px;
+  height: 3px;
+  margin: 36px auto 0;
+  border-radius: 2px;
+  /* Same red -> orange gradient as .cph-backups__underline (owner's "orange
+     and red mixed gradient" colour code) — reads more clearly as a mix than
+     the previous accent -> brand-orange pairing, which sat too close in hue
+     to show at this bar's width. */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.cph-security__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 28px;
+}
+
+/* Same icon (col 1, row 1) | title (col 2, row 1); description spans both
+   cols on row 2 layout as .cph-feature/.cph-backups-card/.cph-email-card. */
+.cph-security-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  row-gap: 14px;
+  padding: 30px 28px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.cph-security-card:hover {
+  border-color: rgba(245, 126, 32, .5);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-3px);
+}
+
+/* Icons are external single-colour SVGs in assets/img/security/ (each card
+   sets its own file via the --security-icon custom property), masked with
+   --brand-orange — same masked-icon technique used throughout the site. */
+.cph-security-card__icon {
+  display: block;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--security-icon) center / contain no-repeat;
+  mask: var(--security-icon) center / contain no-repeat;
+}
+
+.cph-security-card__title {
+  align-self: center;
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 25px;
+  color: #fff;
+}
+
+.cph-security-card__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgba(245, 245, 247, .72);
+}
+
+@media (max-width: 900px) {
+  .cph-security__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-security__inner { padding: 64px 0; }
+  .cph-security__grid { grid-template-columns: 1fr; }
+  .cph-security-card__title { font-size: 19px; }
+  .cph-security-card__icon { width: 30px; height: 30px; }
+}
+
+/* ===== cPanel Hosting page: workflow ===== */
+.cph-workflow {
+  position: relative;
+  /* Light section — keeps the page alternating: dark security -> light
+     workflow. Same light gradient treatment as .cph-backups. */
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fb 58%, #eef1f7 100%);
+}
+
+.cph-workflow__inner { padding: 88px 0; }
+
+.cph-workflow__head { text-align: center; margin-bottom: 56px; }
+
+/* Type scale matches the source template. */
+.cph-workflow__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  color: rgb(45, 42, 53);
+}
+
+.cph-workflow__subtitle {
+  margin: 14px auto 0;
+  max-width: 600px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 24px;
+  color: rgb(92, 88, 104);
+}
+
+.cph-workflow__underline {
+  width: 64px;
+  height: 3px;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  /* Same red -> orange gradient as .cph-backups__underline /
+     .cph-security__underline (owner's "orange and red mixed gradient"
+     colour code) — brand-orange throughout this page, not the teal used in
+     the supplied mockup (see .cph-workflow-card__icon below). */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.cph-workflow__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 28px;
+}
+
+/* Centred icon-chip -> title -> description stack (unlike the paired
+   icon+title row layout used elsewhere on this page — matches the source
+   template's centred card treatment for this section specifically). */
+.cph-workflow-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 40px 30px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.cph-workflow-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+
+/* Icon chip: a soft orange-tinted rounded square housing the masked icon —
+   same recolour technique as every other section's icons (external
+   single-colour SVG in assets/img/workflow/, set per card via
+   --workflow-icon, painted with --brand-orange), just larger and centred to
+   match this section's own card layout. */
+.cph-workflow-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(245, 126, 32, .1);
+}
+.cph-workflow-card__icon::before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--workflow-icon) center / contain no-repeat;
+  mask: var(--workflow-icon) center / contain no-repeat;
+}
+
+.cph-workflow-card__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 24px;
+  color: rgb(45, 42, 53);
+}
+
+.cph-workflow-card__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 22px;
+  color: rgb(92, 88, 104);
+}
+
+@media (max-width: 900px) {
+  .cph-workflow__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-workflow__inner { padding: 64px 0; }
+  .cph-workflow__grid { grid-template-columns: 1fr; }
+}
+
+/* ===== cPanel Hosting page: technical overview ===== */
+.cph-overview {
+  /* Light section — keeps the page alternating: dark migration -> light
+     overview, right before the (black) footer. */
+  background: #f7f7fb;
+}
+
+.cph-overview__inner { padding: 88px 0; }
+
+.cph-overview__head { text-align: center; margin-bottom: 56px; }
+
+/* Type scale matches the source template. */
+.cph-overview__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  color: rgb(32, 29, 44);
+}
+
+.cph-overview__underline {
+  width: 64px;
+  height: 3px;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  /* Same red -> orange gradient used for every other underline on this page
+     (owner's "orange and red mixed gradient" colour code) — brand-orange
+     throughout, not the teal used in the supplied mockup. */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.cph-overview__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 64px;
+}
+
+.cph-overview__col { display: flex; flex-direction: column; }
+
+.cph-overview__group { margin-bottom: 36px; }
+.cph-overview__group:last-child { margin-bottom: 0; }
+
+.cph-overview__group-title {
+  margin: 0 0 16px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(32, 29, 44);
+  text-align: center;
+}
+
+.cph-overview__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cph-overview__list li {
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  color: rgb(32, 29, 44);
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .cph-overview__columns { grid-template-columns: 1fr; gap: 0; }
+  .cph-overview__col:first-child { margin-bottom: 36px; }
+}
+
+@media (max-width: 560px) {
+  .cph-overview__inner { padding: 64px 0; }
+}
 ```
 
 ### B.2 `js/main.js`
@@ -3812,6 +4428,77 @@ button { font: inherit; cursor: pointer; }
 
     renderPrices(); // initial paint from the HTML fallback data-monthly values
   }
+
+  /* ===== Billing toggle: detect its own "stuck" sticky state =====
+     .cph-billing-toggle (see css/styles.css) has a wider padding-bottom by
+     default — the gap to the table below it looked cramped in normal
+     document flow — but that same wider gap wasn't wanted once the toggle
+     locks into its sticky spot under the nav (that stuck-state gap was
+     already fine). CSS alone can't tell those two states apart (padding is
+     part of the box regardless of scroll position), so: watch a 1px
+     sentinel placed immediately above the toggle in the markup, and compare
+     its own live viewport position against the toggle's sticky `top` (75px)
+     on every observer callback. Below that line (sentinel not yet reached
+     it, e.g. still off-screen further down the page on first load) -> not
+     stuck yet. At or above it (scrolled past, whether entering from below or
+     already passed) -> stuck. Using the position directly (not just
+     `entry.isIntersecting`) is what makes this work correctly on load, when
+     the sentinel starts out below the fold and so isn't "intersecting"
+     either way — that alone can't tell the two not-stuck/stuck cases apart. */
+  var billingSentinel = document.querySelector(".cph-billing-toggle__sentinel");
+  var billingToggleEl = document.querySelector(".cph-billing-toggle");
+  if (billingSentinel && billingToggleEl && "IntersectionObserver" in window) {
+    var STICKY_TOP = 75; // matches .cph-billing-toggle's own sticky `top`
+    var stickyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          billingToggleEl.classList.toggle("is-stuck", entry.boundingClientRect.top < STICKY_TOP);
+        });
+      },
+      { rootMargin: "-" + STICKY_TOP + "px 0px 0px 0px", threshold: [0, 1] }
+    );
+    stickyObserver.observe(billingSentinel);
+  }
+
+  /* ===== Package header row: condense once it locks into its sticky spot =====
+     .cph-table__intro / .cph-table__pkg (css/styles.css) pin under the
+     billing toggle at top:129px while scrolling the feature rows. Per owner:
+     it should shrink further right as that happens — the tagline fades out
+     and the package name and price pull closer together — so it takes up
+     less of the viewport while browsing the long feature list below.
+
+     Same technique as the billing toggle's own is-stuck detector above: an
+     IntersectionObserver watches a 1px sentinel placed immediately before
+     this row in the markup and toggles .is-condensed the instant the row's
+     own position crosses its 129px sticky offset — see that detector's
+     comment for why boundingClientRect.top (not just entry.isIntersecting)
+     is what makes this correct on load, when the row can start out below
+     the fold.
+
+     An EARLIER version tried to scrub this continuously off live scroll
+     position instead (a scroll-event handler recomputing padding/margin/
+     max-height every frame via a CSS custom property). That thrashed
+     layout on every scroll pixel — a textbook jank source — and it showed:
+     stuttery, dropped frames, unreadable mid-scroll. Firing an
+     IntersectionObserver callback once and letting a plain CSS transition
+     (see .is-condensed in css/styles.css) handle the shrink costs one
+     short, browser-optimized transition instead of dozens of forced
+     reflows per scroll gesture. */
+  var pkgSentinel = document.querySelector(".cph-table__pkg-sentinel");
+  var pkgHeaderEls = document.querySelectorAll(".cph-table__intro, .cph-table__pkg");
+  if (pkgSentinel && pkgHeaderEls.length && "IntersectionObserver" in window) {
+    var PKG_STICKY_TOP = 129; // matches .cph-table__intro / .cph-table__pkg's own sticky `top`
+    var pkgStickyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          var condensed = entry.boundingClientRect.top < PKG_STICKY_TOP;
+          pkgHeaderEls.forEach(function (el) { el.classList.toggle("is-condensed", condensed); });
+        });
+      },
+      { rootMargin: "-" + PKG_STICKY_TOP + "px 0px 0px 0px", threshold: [0, 1] }
+    );
+    pkgStickyObserver.observe(pkgSentinel);
+  }
 })();
 ```
 
@@ -3841,6 +4528,7 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
     <div class="topbar__group">
       <a class="topbar__link" href="#about">About</a>
       <a class="topbar__link" href="#contact">Contact</a>
+      <a class="topbar__link" href="#blog">Blog</a>
     </div>
   </div>
 </div>
@@ -3893,7 +4581,7 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                         </span>
                         <span class="mega-card__desc">High-speed NVMe Web Hosting featuring intuitive cPanel control. Launch blogs, portfolios, or small online stores in seconds with rock-solid reliability and zero technical friction.</span>
                       </a>
-                      <a class="mega-card" href="#cpanel-business-hosting">
+                      <div class="mega-card mega-card--soon">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <span class="mega-card__icon-img" style="--mega-icon: url(/server-salad-cloud-services-web/assets/img/hero/cpanel-business-hosting-icon.svg)" aria-hidden="true"></span>
@@ -3901,7 +4589,8 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                           <span class="mega-card__title">cPanel <strong>Business Hosting</strong></span>
                         </span>
                         <span class="mega-card__desc">Engineered for growth with dedicated RAM, extra compute power, and 24/7 priority support. Keep high-traffic sites and e-commerce stores fast, responsive, and online.</span>
-                      </a>
+                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3986,67 +4675,117 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
             </div>
           </div>
         </li>
-        <li class="nav__item">
-          <a class="nav__link" href="#servers">Servers</a>
+        <li class="nav__item nav__item--soon">
+          <span class="nav__link nav__link--soon" tabindex="0">Servers</span>
+          <span class="nav__tooltip" role="tooltip">Launching Soon</span>
         </li>
-        <li class="nav__item">
-          <a class="nav__link" href="#domains">Domains</a>
+        <li class="nav__item nav__item--soon">
+          <span class="nav__link nav__link--soon" tabindex="0">Domains</span>
+          <span class="nav__tooltip" role="tooltip">Launching Soon</span>
         </li>
         <li class="nav__item has-mega" data-dropdown>
           <button class="nav__link" type="button">Discount Programs <span class="caret"></span></button>
           <div class="nav__mega">
-            <div class="nav__mega-inner container">
-              <a class="mega-card" href="#student-academic-programs">
-                <span class="mega-card__row">
-                  <span class="mega-card__icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M12 3 1 8l11 5 9-4.1V17h2V8z"/>
-                      <path d="M5 10.5V15c0 1.7 3.1 3 7 3s7-1.3 7-3v-4.5l-7 3.2z"/>
-                    </svg>
-                  </span>
-                  <span class="mega-card__title">Student &amp; Academic <strong>Programs</strong></span>
-                </span>
-                <span class="mega-card__desc">Discounted hosting for students, teachers, and academic institutions.</span>
-              </a>
-              <a class="mega-card" href="#startup-business-programs">
-                <span class="mega-card__row">
-                  <span class="mega-card__icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M13 2c3 1 6 4 6 9 0 2-1 4-2 5l-1-3-3 3-2-2 3-3-3-1c1-1 3-2 5-2-1-3-2-5-3-6z"/>
-                      <path d="M9 15l-4 4-2-1 4-4zM8 13l3 3-1 3-4-2z"/>
-                    </svg>
-                  </span>
-                  <span class="mega-card__title">Startup &amp; Business <strong>Programs</strong></span>
-                </span>
-                <span class="mega-card__desc">Extra credit and perks to help new businesses launch and scale.</span>
-              </a>
-              <a class="mega-card" href="#agency-freelancer-programs">
-                <span class="mega-card__row">
-                  <span class="mega-card__icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <rect x="3" y="7" width="18" height="12" rx="1.5"/>
-                      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                  </span>
-                  <span class="mega-card__title">Agency &amp; Freelancer <strong>Programs</strong></span>
-                </span>
-                <span class="mega-card__desc">Reseller-friendly pricing and tools for agencies managing client sites.</span>
-              </a>
+            <!-- Same intro-column + divider + cards + Key Features box layout as the
+                 Web Hosting▾ menu above (see its comment). Unlike that menu, there's
+                 no owner-supplied intro/benefits copy for Discount Programs yet, so
+                 the text below is short placeholder filler (kept deliberately small
+                 and generic) pending real copy from the owner. -->
+            <div class="nav__mega-inner nav__mega-inner--intro container">
+              <div class="nav__mega-left">
+                <div class="nav__mega-left-top">
+                  <div class="nav__mega-intro">
+                    <h3 class="nav__mega-intro-title nav__mega-intro-title--wrap">Discount <strong>Programs</strong></h3>
+                    <p class="nav__mega-intro-desc">Exclusive hosting discounts on select plans for verified students, student organizations, new business launches, and client developers.</p>
+                  </div>
+                  <div class="nav__mega-middle">
+                    <div class="nav__mega-intro-divider" aria-hidden="true"></div>
+                    <div class="nav__mega-cards">
+                      <div class="mega-card mega-card--soon">
+                        <span class="mega-card__row">
+                          <span class="mega-card__icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                              <path d="M12 3 1 8l11 5 9-4.1V17h2V8z"/>
+                              <path d="M5 10.5V15c0 1.7 3.1 3 7 3s7-1.3 7-3v-4.5l-7 3.2z"/>
+                            </svg>
+                          </span>
+                          <span class="mega-card__title">Student &amp; Academic <strong>Programs</strong></span>
+                        </span>
+                        <span class="mega-card__desc">Discounted hosting on select plans for recognized students and university or school clubs.</span>
+                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
+                      </div>
+                      <div class="mega-card mega-card--soon">
+                        <span class="mega-card__row">
+                          <span class="mega-card__icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                              <path d="M13 2c3 1 6 4 6 9 0 2-1 4-2 5l-1-3-3 3-2-2 3-3-3-1c1-1 3-2 5-2-1-3-2-5-3-6z"/>
+                              <path d="M9 15l-4 4-2-1 4-4zM8 13l3 3-1 3-4-2z"/>
+                            </svg>
+                          </span>
+                          <span class="mega-card__title">Startup <strong>Program</strong></span>
+                        </span>
+                        <span class="mega-card__desc">Reduced rates on select hosting plans designed to help newly established businesses launch their web presence.</span>
+                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
+                      </div>
+                      <div class="mega-card mega-card--soon">
+                        <span class="mega-card__row">
+                          <span class="mega-card__icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                              <rect x="3" y="7" width="18" height="12" rx="1.5"/>
+                              <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                          </span>
+                          <span class="mega-card__title">Agency &amp; Freelancer <strong>Program</strong></span>
+                        </span>
+                        <span class="mega-card__desc">Discounted cPanel hosting plans for developers and agencies hosting websites on behalf of their clients.</span>
+                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="nav__mega-features">
+                <h4 class="nav__mega-features-title">Why We Built <strong>This:</strong></h4>
+                <ul class="nav__mega-features-list">
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Fueling Big Ambitions
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Removing Financial Friction
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Believing in Every Builder
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Backing Student Innovators
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Championing Early Ventures
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Growing Alongside You
+                  </li>
+                  <li>
+                    <svg class="nav__mega-features-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+                    Keeping Great Ideas Online
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </li>
-        <li class="nav__item has-sub" data-dropdown>
-          <button class="nav__link" type="button">Support <span class="caret"></span></button>
-          <ul class="nav__sub">
-            <li><a href="#knowledgebase">Knowledgebase</a></li>
-            <li><a href="#ticket">Submit a Ticket</a></li>
-            <li><a href="#status">System Status</a></li>
-            <li><a href="#contact-support">Contact Support</a></li>
-          </ul>
+        <li class="nav__item">
+          <a class="nav__link" href="https://hub.serversalad.com" target="_blank" rel="noopener">Open a Ticket</a>
         </li>
       </ul>
 
-      <a class="btn btn--account" href="#account">My Account</a>
+      <a class="btn btn--account" href="https://hub.serversalad.com" target="_blank" rel="noopener">My Account</a>
     </nav>
   </div>
 </header>
@@ -4089,9 +4828,18 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
         <span class="footer__col-title">Products</span>
         <ul class="footer__links">
           <li><a href="/server-salad-cloud-services-web/cpanel-hosting/">cPanel Hosting</a></li>
-          <li><a href="#cpanel-business-hosting">cPanel Business Hosting</a></li>
-          <li><a href="#servers">VPS Hosting</a></li>
-          <li><a href="#domains">Domains</a></li>
+          <li class="footer__links-item--soon">
+            <span class="footer__links-link--soon" tabindex="0">cPanel Business Hosting</span>
+            <span class="footer__tooltip" role="tooltip">Launching Soon</span>
+          </li>
+          <li class="footer__links-item--soon">
+            <span class="footer__links-link--soon" tabindex="0">VPS Hosting</span>
+            <span class="footer__tooltip" role="tooltip">Launching Soon</span>
+          </li>
+          <li class="footer__links-item--soon">
+            <span class="footer__links-link--soon" tabindex="0">Domains</span>
+            <span class="footer__tooltip" role="tooltip">Launching Soon</span>
+          </li>
         </ul>
       </nav>
 
@@ -4147,7 +4895,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=285">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=319">
 </head>
 <body>
 
@@ -4176,29 +4924,32 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
             <p class="hero-card__desc">High-speed NVMe Web Hosting featuring intuitive cPanel control. Launch blogs, portfolios, or small online stores in seconds with rock-solid reliability and zero technical friction.</p>
           </a>
 
-          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+          <div class="hero-card hero-card--soon">
             <span class="hero-card__icon">
               <span class="hero-card__icon-img" style="--hero-icon: url(/server-salad-cloud-services-web/assets/img/hero/cpanel-business-hosting-icon.svg)" aria-hidden="true"></span>
             </span>
             <h3 class="hero-card__title">cPanel Business Hosting</h3>
             <p class="hero-card__desc">Engineered for growth with dedicated RAM, extra compute power, and 24/7 priority support. Keep high-traffic sites and e-commerce stores fast, responsive, and online.</p>
-          </a>
+            <span class="hero-card__soon" aria-hidden="true">Launching Soon</span>
+          </div>
 
-          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+          <div class="hero-card hero-card--soon">
             <span class="hero-card__icon">
               <span class="hero-card__icon-img" style="--hero-icon: url(/server-salad-cloud-services-web/assets/img/hero/vps-hosting-icon.svg)" aria-hidden="true"></span>
             </span>
             <h3 class="hero-card__title">VPS Hosting</h3>
             <p class="hero-card__desc">High-performance Cloud VPS Hosting featuring full root access and dedicated NVMe resources. Built for custom applications, complex workloads, and developers.</p>
-          </a>
+            <span class="hero-card__soon" aria-hidden="true">Launching Soon</span>
+          </div>
 
-          <a class="hero-card" href="https://example.com/" target="_blank" rel="noopener">
+          <div class="hero-card hero-card--soon">
             <span class="hero-card__icon">
               <span class="hero-card__icon-img" style="--hero-icon: url(/server-salad-cloud-services-web/assets/img/hero/domains-icon.svg)" aria-hidden="true"></span>
             </span>
             <h3 class="hero-card__title">Domains</h3>
             <p class="hero-card__desc">Secure your brand instantly with fast domain name registration, free DNS management tools, and built-in privacy protection from one easy dashboard.</p>
-          </a>
+            <span class="hero-card__soon" aria-hidden="true">Launching Soon</span>
+          </div>
         </div>
 
         <div class="hero__strip">
@@ -4369,7 +5120,10 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
               <li><strong>24/7 Priority Support</strong> &amp; Express Handling</li>
               <li><strong>21-Day Money-Back Guarantee</strong> Included</li>
             </ul>
-            <a class="btn btn--outline" href="#cpanel-business-hosting">View Business Hosting Plans</a>
+            <span class="btn btn--outline btn--soon" tabindex="0">
+              <span class="btn--soon-label">View Business Hosting Plans</span>
+              <span class="btn--soon-overlay" aria-hidden="true">Launching Soon</span>
+            </span>
           </div>
         </div>
       </div>
@@ -4555,7 +5309,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=13"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=17"></script>
 </body>
 </html>
 ```
@@ -4581,7 +5335,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=285">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=319">
 </head>
 <body>
 
@@ -4621,6 +5375,11 @@ mounts, folder-with-`index.html` so the URL is
              just keeps scrolling normally underneath the still-pinned toggle,
              same as any ordinary sticky bar — no gap either way. -->
         <div class="cph-plans__sticky-scope">
+        <!-- Sentinel js/main.js watches (IntersectionObserver) to detect the exact
+             moment the toggle below locks into its sticky position, so its wider
+             pre-stick padding-bottom can drop back to the original, already-fine
+             stuck-state value — see .cph-billing-toggle.is-stuck. -->
+        <div class="cph-billing-toggle__sentinel" aria-hidden="true"></div>
         <!-- Billing toggle: annual figures are calculated client-side from the
              fetched monthly price (10× monthly = year total, "2 months free" vs.
              12× monthly; that total ÷ 12 = the equivalent /mo rate shown here) —
@@ -4634,6 +5393,11 @@ mounts, folder-with-`index.html` so the URL is
           <span class="cph-billing-toggle__label is-active" data-billing-label="annual">Annually <span class="cph-billing-toggle__badge">2 Months Free</span></span>
         </div>
 
+        <!-- Sentinel js/main.js watches (IntersectionObserver) to detect the exact
+             moment the package header row below locks into its own sticky
+             position, toggling .is-condensed on it right then — see
+             .cph-table__pkg.is-condensed in css/styles.css. -->
+        <div class="cph-table__pkg-sentinel" aria-hidden="true"></div>
         <div class="cph-table-wrap">
         <div class="cph-table cph-table--main">
           <!-- Package header row -->
@@ -4646,7 +5410,6 @@ mounts, folder-with-`index.html` so the URL is
             <p class="cph-table__pkg-tagline">Light appetizer portion with 2-Core power, prepped for testing and staging.</p>
             <p class="cph-table__pkg-price"><strong data-price="starter_salad" data-monthly="10000">LKR 10,000</strong><span>/month</span></p>
             <p class="cph-table__pkg-billed" data-billed="starter_salad"></p>
-            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
           </div>
           <div class="cph-table__pkg">
             <span class="cph-table__pkg-name">Standard Salad</span>
@@ -4656,7 +5419,6 @@ mounts, folder-with-`index.html` so the URL is
                  blank pricing if the API is unreachable. -->
             <p class="cph-table__pkg-price"><strong data-price="standard_salad" data-monthly="10000">LKR 10,000</strong><span>/month</span></p>
             <p class="cph-table__pkg-billed" data-billed="standard_salad"></p>
-            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
           </div>
           <div class="cph-table__pkg cph-table__pkg--last">
             <span class="cph-table__pkg-name">Premium Salad</span>
@@ -4664,7 +5426,6 @@ mounts, folder-with-`index.html` so the URL is
             <!-- Fallback value — see Standard Salad's comment above. -->
             <p class="cph-table__pkg-price"><strong data-price="premium_salad" data-monthly="10000">LKR 10,000</strong><span>/month</span></p>
             <p class="cph-table__pkg-billed" data-billed="premium_salad"></p>
-            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
           </div>
 
           <!-- Feature rows — ordered by how much weight buyers give each when
@@ -4812,9 +5573,18 @@ mounts, folder-with-`index.html` so the URL is
              up into view normally like every other row. -->
         <div class="cph-table cph-table--cta">
           <div class="cph-table__label cph-table__label--last"></div>
-          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Starter Salad</a></div>
-          <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Standard Salad</a></div>
-          <div class="cph-table__btn-cell cph-table__btn-cell--last"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Premium Salad</a></div>
+          <div class="cph-table__btn-cell">
+            <a class="btn cph-table__pkg-btn" href="https://hub.serversalad.com" target="_blank" rel="noopener">Order Starter Salad</a>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
+          <div class="cph-table__btn-cell">
+            <a class="btn cph-table__pkg-btn" href="https://hub.serversalad.com" target="_blank" rel="noopener">Order Standard Salad</a>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
+          <div class="cph-table__btn-cell cph-table__btn-cell--last">
+            <a class="btn cph-table__pkg-btn" href="https://hub.serversalad.com" target="_blank" rel="noopener">Order Premium Salad</a>
+            <p class="cph-table__pkg-guarantee">14-Day Money Back Guarantee</p>
+          </div>
         </div>
         </div>
         </div>
@@ -5117,12 +5887,374 @@ mounts, folder-with-`index.html` so the URL is
         </div>
       </div>
     </section>
+
+    <!-- ===== Security in depth ===== -->
+    <section class="cph-security">
+      <div class="container cph-security__inner">
+        <div class="cph-security__head">
+          <h2 class="cph-security__title">Security in Depth</h2>
+          <p class="cph-security__subtitle">Layered defense from the network edge to the application layer, protecting your infrastructure at every level.</p>
+          <div class="cph-security__underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="cph-security__grid">
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/network-level-ddos-mitigation.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">Network-Level DDoS Mitigation</h3>
+            <p class="cph-security-card__desc">Incoming traffic is scrubbed at the network edge to mitigate DDoS attacks before they reach your site.</p>
+          </div>
+
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/cpguard-malware-defence.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">cPGuard &amp; Malware Defense</h3>
+            <p class="cph-security-card__desc">Real-time malware scanning and automated cleanup protect your file system from malicious security threats.</p>
+          </div>
+
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/waf-application-firewall.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">Web Application Firewall (WAF)</h3>
+            <p class="cph-security-card__desc">Layered WAF rules block malicious traffic and common web exploits before they reach your application code.</p>
+          </div>
+
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/cloudlinux-isolation.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">CloudLinux Account Isolation</h3>
+            <p class="cph-security-card__desc">CageFS environment isolation prevents resource contention and insulates your account from adjacent user activity.</p>
+          </div>
+
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/encryption-access-control.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">Encryption &amp; Access Control</h3>
+            <p class="cph-security-card__desc">Features free Let&rsquo;s Encrypt SSL, encrypted cPanel and mail protocols, two-factor authentication (2FA), and IP allowlisting.</p>
+          </div>
+
+          <div class="cph-security-card">
+            <span class="cph-security-card__icon" style="--security-icon: url(/server-salad-cloud-services-web/assets/img/security/iso-grade-datacentres.svg)" aria-hidden="true"></span>
+            <h3 class="cph-security-card__title">ISO-Certified Datacenters</h3>
+            <p class="cph-security-card__desc">Hosted in facilities with biometric security, CCTV surveillance, and N+1 power and cooling redundancy.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Works with your workflow ===== -->
+    <section class="cph-workflow">
+      <div class="container cph-workflow__inner">
+        <div class="cph-workflow__head">
+          <h2 class="cph-workflow__title">Works With Your Workflow</h2>
+          <p class="cph-workflow__subtitle">Connect existing domains, deploy via FTP or Git, and install hundreds of web applications in one click.</p>
+          <div class="cph-workflow__underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="cph-workflow__grid">
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/use-any-domain.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">Flexible Domain Management</h3>
+            <p class="cph-workflow-card__desc">Point DNS records from any domain registrar, transfer your domain seamlessly, or keep your registration elsewhere.</p>
+          </div>
+
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/ftp-sftp-git.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">FTP, SFTP &amp; Git Access</h3>
+            <p class="cph-workflow-card__desc">Upload files via SFTP or FTP, utilize SSH command-line access, and deploy code directly using cPanel Git Version Control.</p>
+          </div>
+
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/one-click-apps.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">300+ One-Click Applications</h3>
+            <p class="cph-workflow-card__desc">Deploy WordPress, Joomla, OpenCart, and hundreds of scripts instantly using the Softaculous installer.</p>
+          </div>
+
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/sitepro-ai-builder.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">Site.pro AI Builder</h3>
+            <p class="cph-workflow-card__desc">Build custom websites, landing pages, or online stores effortlessly using Site.pro AI tools, included as standard.</p>
+          </div>
+
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/sitejet-ai-builder.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">Sitejet Builder Suite</h3>
+            <p class="cph-workflow-card__desc">Create fully responsive, high-performance web pages visually using Sitejet Builder, integrated directly into cPanel.</p>
+          </div>
+
+          <div class="cph-workflow-card">
+            <span class="cph-workflow-card__icon" style="--workflow-icon: url(/server-salad-cloud-services-web/assets/img/workflow/temporary-preview-url.svg)" aria-hidden="true"></span>
+            <h3 class="cph-workflow-card__title">Temporary Preview URLs</h3>
+            <p class="cph-workflow-card__desc">Develop and preview your site live on target servers using temporary preview URLs before updating production DNS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Migration (same section as the homepage's — shared .migration*
+         classes in css/styles.css, no page-specific CSS needed) ===== -->
+    <section class="migration">
+      <div class="container migration__inner">
+        <div class="migration__top">
+          <div class="migration__content">
+            <span class="migration__eyebrow">Hassle-Free Migration</span>
+            <h2 class="migration__title">Effortless cPanel Transfer</h2>
+            <div class="migration__underline" aria-hidden="true"></div>
+            <p class="migration__desc">Switching to Server Salad is completely simple. Our technical team securely transfers your full cPanel account via native system APIs, ensuring total data integrity, complete account accuracy, and zero migration fees.</p>
+          </div>
+
+          <div class="migration__visual" aria-hidden="true">
+            <div class="migration__box">
+              <span class="migration__box-label">Your current host</span>
+              <span class="migration__bar"></span>
+              <span class="migration__bar migration__bar--mid"></span>
+              <span class="migration__bar migration__bar--short"></span>
+            </div>
+
+            <svg class="migration__arrow" viewBox="0 0 130 70" fill="none">
+              <path id="migrationPathCph" class="migration__arrow-path" d="M4 46C30 12 78 8 118 26" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round"/>
+              <path d="M108 17l12 9-13 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <!-- File "packet" that rides the dashed path from the old host to Server Salad -->
+              <g class="migration__packet">
+                <rect x="-5" y="-6.5" width="10" height="13" rx="2" fill="#1b2427" stroke="#f57e20" stroke-width="1.5"/>
+                <path d="M-2.5-3h5M-2.5 0h5M-2.5 3h3" stroke="#f57e20" stroke-width="1.2" stroke-linecap="round"/>
+                <animateMotion dur="2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
+                  <mpath href="#migrationPathCph" xlink:href="#migrationPathCph"/>
+                </animateMotion>
+                <animate attributeName="opacity" dur="2.6s" repeatCount="indefinite"
+                         values="0;1;1;1;0" keyTimes="0;0.12;0.5;0.85;1"/>
+              </g>
+            </svg>
+
+            <div class="migration__box migration__box--ours">
+              <span class="migration__box-label">Server Salad</span>
+              <span class="migration__tick">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12.5l4.5 4.5L19 7.5"/>
+                </svg>
+              </span>
+              <span class="migration__box-note">NVMe cloud</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="migration__grid">
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/cpanel-account-move-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Free &amp; Complete<br>cPanel Account Move</h3>
+            <p class="migration-card__desc">We transfer your entire cPanel account from your previous host at zero additional cost, handling all technical work for you.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/api-transfers-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Automated &amp; Secure<br>API Transfers</h3>
+            <p class="migration-card__desc">Migrations execute directly through secure system APIs, keeping your website files, databases, and DNS configurations intact.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/quick-request-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Quick &amp; Simple<br>Request Process</h3>
+            <p class="migration-card__desc">Submit your migration request in seconds without filling out complicated technical forms or dealing with tedious back-and-forth.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/email-retention-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Complete Data &amp;<br>Email Retention</h3>
+            <p class="migration-card__desc">All mailboxes, saved emails, and account credentials transfer over seamlessly without requiring manual re-configuration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Technical Overview ===== -->
+    <section class="cph-overview">
+      <div class="container cph-overview__inner">
+        <div class="cph-overview__head">
+          <h2 class="cph-overview__title">Technical Overview</h2>
+          <div class="cph-overview__underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="cph-overview__columns">
+          <div class="cph-overview__col">
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Key Features:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Samsung NVMe Cloud Storage</span></li>
+                <li><span>Free SSL certificates</span></li>
+                <li><span>Litespeed with LSCache</span></li>
+                <li><span>Free hourly backups for 90 days</span></li>
+                <li><span>Cloudflare CDN Integration</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">File Management:</h3>
+              <ul class="cph-overview__list">
+                <li><span>File Manager</span></li>
+                <li><span>FTP / SFTP Access</span></li>
+                <li><span>SSH Access</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Domain Management:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Addon Domains</span></li>
+                <li><span>Alias / Reference Domains</span></li>
+                <li><span>Redirection Management</span></li>
+                <li><span>DNS Zone Editor</span></li>
+                <li><span>Temporary Preview URL</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Database Management:</h3>
+              <ul class="cph-overview__list">
+                <li><span>MySQL / MariaDB 10.3+</span></li>
+                <li><span>PHPMyAdmin</span></li>
+                <li><span>Remote MySQL Connectivity</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Security and Protection:</h3>
+              <ul class="cph-overview__list">
+                <li><span>DDoS Protection</span></li>
+                <li><span>cpGuard Security / Firewall</span></li>
+                <li><span>Whitelist from our Client Area</span></li>
+                <li><span>Greylist-first technology</span></li>
+                <li><span>Web Application Firewall</span></li>
+                <li><span>Free 256-bit SSL Certificates</span></li>
+                <li><span>Real-time malware removal</span></li>
+                <li><span>Encrypted cPanel and Email Access</span></li>
+                <li><span>Cloudlinux OS Isolation / Caging</span></li>
+                <li><span>Password Protected Directories</span></li>
+                <li><span>Restrict Access by IP Address</span></li>
+                <li><span>Two-Factor Authentication</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Server Specification:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Enterprise-Grade CPUs</span></li>
+                <li><span>Cloud Redundant Storage</span></li>
+                <li><span>Samsung NVMe Storage</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Technical Support:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Fully-managed infrastructure</span></li>
+                <li><span>Ticket and Email Support - 24/7/365</span></li>
+                <li><span>Chat Support (Sri Lankan Working Hours)</span></li>
+                <li><span>Extensive Knowledgebase</span></li>
+                <li><span>cPanel Certified Engineers</span></li>
+                <li><span>WordPress Experts</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cph-overview__col">
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Unlimited Features:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Unlimited 100% NVMe Storage</span></li>
+                <li><span>Unlimited Bandwidth</span></li>
+                <li><span>Unlimited Free SSL Certificates</span></li>
+                <li><span>Unlimited Hosting Packages</span></li>
+                <li><span>Unlimited MySQL Databases</span></li>
+                <li><span>Unlimited Email Accounts</span></li>
+                <li><span>Unlimited Addon and Subdomains</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Email Features:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Unlimited Mailboxes</span></li>
+                <li><span>Multiple Webmail Interfaces</span></li>
+                <li><span>Auto-Discover Support</span></li>
+                <li><span>Adjustable Mailbox Quota</span></li>
+                <li><span>Email Forwarding</span></li>
+                <li><span>Remote Email Routing</span></li>
+                <li><span>Auto Responders</span></li>
+                <li><span>Default Email Addresses / Catch-all</span></li>
+                <li><span>Delivery Diagnostics Interface</span></li>
+                <li><span>Email Filters (Global and Per-Mailbox)</span></li>
+                <li><span>POP3 / IMAP Compatible</span></li>
+                <li><span>Optional Mail Encryption</span></li>
+                <li><span>Mailbox Disk Usage Management</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Software:</h3>
+              <ul class="cph-overview__list">
+                <li><span>Free Website Builder (Site.Pro)</span></li>
+                <li><span>Softaculous Auto-Installer (300+ Apps)</span></li>
+                <li><span>Website Preview / Temporary URL</span></li>
+                <li><span>PHP X-Ray for Bottleneck Diagnosis</span></li>
+                <li><span>Latest Stable cPanel</span></li>
+                <li><span>PHP Version Selector (5.6 - 8.5)</span></li>
+                <li><span>Git Integration</span></li>
+                <li><span>Ruby, Perl and Python Selector</span></li>
+                <li><span>Litespeed and LSCache</span></li>
+                <li><span>Scheduled Tasks / Crons</span></li>
+                <li><span>Full mod_rewrite Support</span></li>
+                <li><span>AWStats Analytics / Visitor Tracking</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Datacentre:</h3>
+              <ul class="cph-overview__list">
+                <li><span>24/7 CCTV Security</span></li>
+                <li><span>Biometric access control</span></li>
+                <li><span>N+1 power and cooling</span></li>
+              </ul>
+            </div>
+
+            <div class="cph-overview__group">
+              <h3 class="cph-overview__group-title">Web Applications:</h3>
+              <ul class="cph-overview__list">
+                <li><span>WordPress</span></li>
+                <li><span>Drupal</span></li>
+                <li><span>OpenCart</span></li>
+                <li><span>Joomla</span></li>
+                <li><span>WHMCS</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Sustainability (same section as the homepage's — shared .eco*
+         classes in css/styles.css, no page-specific CSS needed) ===== -->
+    <section class="eco">
+      <div class="eco__photo" aria-hidden="true"></div>
+      <div class="eco__bg" aria-hidden="true"></div>
+      <div class="container eco__inner">
+        <div class="eco__content">
+          <span class="eco__label">100% Renewable Energy</span>
+          <h2 class="eco__title">Sustainable Hosting Powered by <span class="eco__title-accent">100% Green Energy</span></h2>
+          <div class="eco__underline" aria-hidden="true"></div>
+          <p class="eco__desc">Power your website on enterprise European infrastructure running on 100% renewable energy. Our infrastructure partners fund tree planting and climate projects through <a class="eco__link" href="https://ecologi.com/" target="_blank" rel="noopener">Ecologi</a>, ensuring every Server Salad account directly supports global reforestation while delivering maximum speed with zero carbon compromise.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=13"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=17"></script>
 </body>
 </html>
 ```
@@ -5307,6 +6439,18 @@ SVG file to change colour, change the CSS custom property or the class's
 | `backups/granular-restore.svg` | "Granular File Restores" |
 | `backups/snapshot-backups.svg` | "On-Demand Snapshots" |
 | `backups/powered-by-jetbackup.svg` | "Powered by JetBackup" |
+| `security/network-level-ddos-mitigation.svg` | "Network-Level DDoS Mitigation" (cph Security) |
+| `security/cpguard-malware-defence.svg` | "cPGuard & Malware Defense" |
+| `security/waf-application-firewall.svg` | "Web Application Firewall (WAF)" |
+| `security/cloudlinux-isolation.svg` | "CloudLinux Account Isolation" |
+| `security/encryption-access-control.svg` | "Encryption & Access Control" |
+| `security/iso-grade-datacentres.svg` | "ISO-Certified Datacenters" |
+| `workflow/use-any-domain.svg` | "Flexible Domain Management" (cph Workflow) |
+| `workflow/ftp-sftp-git.svg` | "FTP, SFTP & Git Access" |
+| `workflow/one-click-apps.svg` | "300+ One-Click Applications" |
+| `workflow/sitepro-ai-builder.svg` | "Site.pro AI Builder" |
+| `workflow/sitejet-ai-builder.svg` | "Sitejet Builder Suite" |
+| `workflow/temporary-preview-url.svg` | "Temporary Preview URLs" |
 
 ### B.9 Verification checklist
 After building from Parts A/B, confirm:
@@ -5316,12 +6460,14 @@ After building from Parts A/B, confirm:
       Sustainability → Plans+Locations (one gradient wrapper) → Migration →
       Cloud Infrastructure → Footer.
 - [ ] cpanel-hosting page section order: Hero → Plans & comparison table →
-      Features → Why Server Salad → Business Email → Backups → Footer.
+      Features → Why Server Salad → Business Email → Backups → Security →
+      Workflow → Technical Overview → Sustainability (shared `.eco*` markup,
+      same as the homepage's) → Footer.
 - [ ] Light/dark alternation holds on both pages (each band contrasts the one above it).
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
 - [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **both**
-      HTML pages (currently v=285 / v=13) — bump both on every future change to
+      HTML pages (currently v=319 / v=17) — bump both on every future change to
       that file, in every page's tag.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows
@@ -5355,40 +6501,74 @@ consistent with intent rather than just matching pixels.
 ### C.1 Navigation
 - Two rows: black topbar + dark sticky main nav. Topbar splits two groups to
   opposite edges (`justify-content: space-between`): email/phone on the left,
-  About/Contact on the right (aligned under My Account below). No VAT toggle,
-  currency switch, status indicator, or live-chat — deliberately not present.
+  About / Contact / **Blog** on the right (Blog was moved here from the main
+  nav — see below). No VAT toggle, currency switch, status indicator, or
+  live-chat — deliberately not present.
 - Main nav's whole link group is right-aligned as one unit
   (`justify-content: flex-end`), so the screen-edge→logo gap on the left
   equals the My-Account→screen-edge gap on the right (owner-specified symmetry).
-- All submenu links are placeholder `#anchor` hrefs — swap for real pages later.
+- Main nav items, left to right: **Web Hosting▾** (mega menu) → **Servers**
+  (Launching Soon) → **Domains** (Launching Soon) → **Discount Programs▾**
+  (mega menu) → **Open a Ticket** (plain link) → **My Account** button.
 - Dropdowns open on **click** always, and additionally on **hover** only when
   `matchMedia("(hover: hover) and (pointer: fine)")` matches — touchscreens
   report CSS `:hover` unreliably (can get "stuck" with no `mouseleave` to
   clear it), so they stay click-only, unchanged from before hover was added.
   A ~180ms close delay on `mouseleave` covers the small gap between the link
   and the panel below it so crossing it doesn't close the menu early.
-- **Web Hosting▾** is the only mega menu with a 3-column intro+cards+divider
-  layout, built from an owner-supplied reference design: intro copy is real
-  (same copy as the matching hero cards, not invented for this spot); the two
-  product cards (cPanel Hosting / cPanel Business Hosting) reuse the exact
-  same icon files as the matching hero cards so the glyph stays identical
-  everywhere that product appears; the "Key Features" / "cPanel Business
-  Hosting Difference" checklists are real owner-supplied plan-spec copy. The
-  app-logos strip's "See 300+ apps..." link and its "300+" figure are
-  **placeholders** — no real apps-catalogue page exists yet, swap both once
-  one does. Four of its animations (link bounce, text glow, pointer press,
-  ripple wave) are scoped to `.nav__item.is-open` specifically because an
-  earlier unconditional version kept running in the background while the
-  menu was closed (`visibility:hidden` doesn't pause CSS animations) and got
-  caught mid-cycle on open — now they restart fresh at 0% every time it opens.
-- **Discount Programs▾** is the plain kind (auto-fit grid, no intro column):
-  real card titles (Student & Academic / Startup & Business / Agency &
-  Freelancer Programs) but **placeholder descriptions** — owner only supplied
-  the 3 names so far.
-- **Support▾** is a simple list dropdown with **placeholder items** — need
-  the owner's real list.
-- The hero's 3rd card is titled "VPS Hosting", but the nav link right above
-  it still says "Servers" — open question whether the nav label should match.
+- **Web Hosting▾** and **Discount Programs▾** both use the same 2-column
+  intro+cards+divider mega-menu layout (`.nav__mega-inner--intro`), originally
+  built for Web Hosting from an owner-supplied reference design and later
+  extended to Discount Programs (see the "Launching Soon" pattern note
+  below). `.nav__mega-intro-title--wrap` exists only because "Discount
+  Programs" doesn't fit the shared 300px intro column on one line the way
+  "Web Hosting" does — don't remove it or the title clips/overlaps.
+  - **Web Hosting▾**: intro copy is real (same copy as the matching hero
+    cards, not invented for this spot); the two product cards (cPanel
+    Hosting / cPanel Business Hosting) reuse the exact same icon files as
+    the matching hero cards so the glyph stays identical everywhere that
+    product appears — cPanel Hosting is a real link, cPanel Business Hosting
+    is `.mega-card--soon` (see below). The "Key Features" / "cPanel Business
+    Hosting Difference" checklists are real owner-supplied plan-spec copy.
+    The app-logos strip's "See 300+ apps..." link and its "300+" figure are
+    still **placeholders** — no real apps-catalogue page exists yet, swap
+    both once one does. Four of its animations (link bounce, text glow,
+    pointer press, ripple wave) are scoped to `.nav__item.is-open`
+    specifically because an earlier unconditional version kept running in
+    the background while the menu was closed (`visibility:hidden` doesn't
+    pause CSS animations) and got caught mid-cycle on open — now they
+    restart fresh at 0% every time it opens.
+  - **Discount Programs▾**: all 3 cards are real, owner-supplied copy —
+    Student & Academic Programs, Startup Program, Agency & Freelancer
+    Program (titles + descriptions all final) — and all 3 are
+    `.mega-card--soon` (see below), since none of these programs are live
+    yet. The right-hand black box's heading ("Why We Built This:") and its
+    7-item list are also final, owner-supplied copy, replacing two earlier
+    placeholder passes ("Program Benefits" / a shorter 4-item "Why We Built
+    This" draft) — if the owner supplies yet another version, replace the
+    `<ul class="nav__mega-features-list">` contents wholesale, don't merge.
+- **"Launching Soon" placeholder pattern** — see C.18 for the full
+  cross-cutting writeup. In this nav specifically: cPanel Business Hosting
+  (Web Hosting▾ card), all 3 Discount Programs▾ cards, and the standalone
+  **Servers**/**Domains** nav items all use it. Servers/Domains are
+  non-shape-matched to a card, so they use the compact tooltip variant
+  (`.nav__link--soon` + `.nav__tooltip`, positioned `top:100%` below the
+  item) instead of a card overlay, and are `<span tabindex="0">`, not `<a>`
+  — there is deliberately no href to go nowhere.
+- **Support▾ was removed entirely** (it went through several intermediate
+  states first — trimmed to just "Contact Support", then removed) and
+  replaced with a single plain nav item, **"Open a Ticket"**, linking to
+  `https://hub.serversalad.com` in a new tab. **My Account** also points at
+  `https://hub.serversalad.com` (new tab) — both are the first two real,
+  non-placeholder destinations added to the main nav.
+- **Blog** was first added as its own main-nav item next to Support, then
+  moved into the topbar (next to About/Contact) once Support was removed —
+  it's a topbar link now, not a `nav__list` item; its href is still the
+  `#blog` placeholder anchor.
+- The hero's 3rd card is titled "VPS Hosting", but the nav item above it
+  still says "Servers" — now less consequential than before, since neither
+  leads anywhere yet (both are Launching Soon), but still worth aligning the
+  wording once the product is real.
 
 ### C.2 Hero
 - Fills the screen on load: `min-height: calc(100vh - 108px)` (108 = 34px
@@ -5401,12 +6581,14 @@ consistent with intent rather than just matching pixels.
   clamp's max px, not the `<br>` placement.
 - All 4 hero-card descriptions are **real, owner-approved copy**, no bold
   spans. Only the cPanel Hosting card carries the "Most Popular" badge.
-  **Each whole card is one `<a>`** — no separate price/CTA button, no price
-  shown at all here (live or static).
-  - cPanel Hosting → the real `/server-salad-cloud-services-web/cpanel-hosting/` page (same tab).
-  - cPanel Business Hosting, VPS Hosting, Domains → all `https://example.com/`
-    (new tab) — **deliberate temporary placeholders**, no "coming soon" UI
-    state; a card just keeps that href until it has a real page.
+  - cPanel Hosting is a real `<a>` to `/server-salad-cloud-services-web/cpanel-hosting/` (same tab), no price
+    shown (live or static).
+  - cPanel Business Hosting, VPS Hosting, and Domains are **not links at
+    all** — `.hero-card--soon` non-interactive `<div>`s with a full white
+    `.hero-card__soon` "Launching Soon" overlay that fades in on hover (see
+    C.18). They used to be `<a href="https://example.com/">` dead
+    placeholder links; that was replaced with this pattern specifically so
+    there's no dead/example.com href left in the markup at all.
 - The four hero-card icon files are reused as-is by the matching Plans-card
   and Web Hosting▾ mega-menu card (cPanel Hosting / cPanel Business Hosting
   pair specifically), so that product's glyph stays identical everywhere.
@@ -5444,6 +6626,9 @@ consistent with intent rather than just matching pixels.
   unreliable on mobile Safari/iOS, which falls back to normal scrolling there
   (expected, not a bug). The photo file (~8MB) is unoptimised; worth
   compressing before launch (no image tooling was available to do it here).
+- **Reused verbatim on cpanel-hosting**, as the very last section before its
+  footer (same `.eco*` classes, no page-specific CSS) — see B.9's section
+  order and C.17.
 
 ### C.5 Plans + Locations
 - Wrapped together in one `<div class="plans-locations">` and treated as one
@@ -5472,6 +6657,12 @@ consistent with intent rather than just matching pixels.
     card's version of the same product ("cPanel control"/"online stores"
     here vs. "full cPanel control"/"high-volume online stores" on the hero)
     — confirm whether one should be trimmed to match.
+  - The cPanel Business Hosting card's price is "To be announced", and its
+    "View Business Hosting Plans" button uses the **in-place overlay**
+    variant of the "Launching Soon" pattern (`.btn--soon` /
+    `.btn--soon-overlay`, a non-interactive `<span tabindex="0">` that swaps
+    its label for "Launching Soon" on hover) rather than the full-card
+    overlay used elsewhere — see C.18.
 - **Locations**: no heading/label (owner removed a placeholder "Our
   Location" eyebrow) — just the map + one marker. Owner's reference image
   showed 3 markers; **owner explicitly asked for only London**. The
@@ -5598,11 +6789,28 @@ first thing worth reconsidering.
 - The "Order ... Salad" CTA row sits at the **bottom** of the table (moved
   per owner — used to sit directly under each price at the top), matching an
   ordinary row's padding/border rhythm so it reads as one more row, not a
-  bolted-on footer. All 3 buttons point at `https://example.com/` — an
-  explicit temporary placeholder until real order-flow pages exist.
-- The spreadsheet's merged "Support" row was removed earlier per owner; the
-  merged "Money-Back Guarantee" row lives outside the table as a small line
-  under each plan's price block instead.
+  bolted-on footer. All 3 buttons now point at `https://hub.serversalad.com`
+  (new tab) — this used to be an explicit `https://example.com/` placeholder;
+  `hub.serversalad.com` is a real destination (the same one "Open a Ticket"
+  and "My Account" in the nav now use, see C.1), not a placeholder.
+- The spreadsheet's merged "Support" row was removed earlier per owner. The
+  merged "Money-Back Guarantee" row lives outside the table as a small
+  "14-Day Money Back Guarantee" line — it originally sat inside each black
+  package-header cell (`.cph-table__pkg`), but was moved down to sit **under
+  each "Order ... Salad" button** in the CTA row instead
+  (`.cph-table__pkg-guarantee`, inside `.cph-table__btn-cell`, which switched
+  to `flex-direction: column` to stack it under the button). Its colour was
+  then matched exactly to an owner-supplied font-inspector spec —
+  `rgb(127, 133, 136)` — since it moved from a dark background (where it was
+  a light colour) to a white one.
+- **Ash-grey `#ececf0` row separators were removed** throughout this table
+  (`.cph-table__label`, `.cph-table__val`, `.cph-table__btn-cell`,
+  `.cph-table__group` no longer carry a `border-top`) per owner request. That
+  left the feature rows looking too loosely spaced with nothing to visually
+  separate them, so vertical row padding was tightened afterward (`13px` →
+  `8px` on `.cph-table__label`/`.cph-table__val`) to compensate — do both
+  together if this table's row density is ever revisited; removing the lines
+  without the padding change looks wrong.
 - **Sticky billing toggle + sticky package header**, owner-requested so the
   toggle and the black package-header row track the same way down the page as
   you scroll the feature rows, until the CTA row comes into view. Three
@@ -5633,6 +6841,50 @@ first thing worth reconsidering.
      (inside each sticky element's own painted background), not `margin`
      (outside it) — a margin gap let scrolled content show through underneath
      once stuck.
+- **Package header "condenses" further once it's stuck**, owner-requested
+  on top of the plain sticky behaviour above: once `.cph-table__intro` /
+  `.cph-table__pkg` lock into their sticky position, the UK-flag icon, the
+  tagline paragraph, and the gap above the price all shrink away
+  (`.is-condensed` class), so continuing to scroll buys back more of the
+  black header's vertical space rather than it just sitting there full-size
+  forever. Detected via `IntersectionObserver` watching a dedicated 1px
+  `.cph-table__pkg-sentinel` placed in normal flow immediately before
+  `.cph-table-wrap` — the same sentinel-based "is this sticky element
+  currently stuck" pattern already used for
+  `.cph-billing-toggle.is-stuck` above, checking `entry.boundingClientRect.top`
+  against the sticky element's own `top` offset (not just `entry.isIntersecting`,
+  which alone can't tell "stuck" from "scrolled fully past"). Toggling one
+  class fires a short (~150–200ms) native CSS `transition` on `padding` /
+  `opacity` / `margin` / `max-height` for the affected elements; a synced
+  `transform: scaleY()` on the tagline (same trigger, same duration) keeps
+  its text from visibly clipping mid-shrink, since animating `max-height` +
+  `overflow:hidden` alone can slice straight through a text line or a raster
+  image (the flag icon) — the flag avoids this entirely by fading via
+  `opacity`/`margin` only, never `max-height`. `min-height: 0` is required
+  everywhere a `max-height: 0` collapse is meant to fully hide something —
+  `min-height` always wins the conflict otherwise, so a leftover base
+  `min-height` silently defeats the collapse. `@media (prefers-reduced-motion:
+  reduce)` disables all of these transitions (the class still toggles, just
+  instantly).
+  - ⚠️ **This went through three real implementation attempts before landing
+    on the IntersectionObserver version above** — worth knowing before
+    "improving" it again. Attempt 1 (a scroll-threshold class toggle) had a
+    `min-height`/`max-height` conflict bug (tagline wouldn't visually shrink).
+    Attempt 2, chasing a "make it scrub smoothly with scroll distance, not
+    snap" request, drove a `--cph-condense` CSS custom property continuously
+    from a `scroll` + `requestAnimationFrame` handler, consumed via `calc()`
+    on `padding`/`margin`/`max-height` — this is a **layout-thrashing
+    anti-pattern**: recomputing layout-affecting properties on every scroll
+    frame forces a full synchronous browser reflow dozens of times per scroll
+    gesture, which is what actually caused the reported "glitchy, can't read
+    anything" symptom (not a one-off rendering bug, as it first appeared).
+    The fix was **not** a smoother scrub — it was going back to a **single
+    binary class toggle fired once** by an efficient, browser-optimized
+    `IntersectionObserver`, with a short native CSS transition doing the
+    visual work instead of per-frame JS writes. If a future request asks for
+    scroll-scrubbed (not snap) condensing again, don't reach for a scroll+rAF
+    handler driving layout properties — that path has already been tried and
+    reverted for this exact performance reason.
 
 ### C.11 cpanel-hosting: Features
 - Heading is "Loaded Web Hosting Features" — deliberately **not**
@@ -5739,7 +6991,95 @@ first thing worth reconsidering.
   frame's box-shadow also deepens on hover, so it reads as lifting up
   slightly while the dissolve plays.
 
-### C.15 Footer (shared partial)
+### C.15 cpanel-hosting: Security
+- Light section (`.cph-security`), 6-card grid, sits directly after Backups.
+  Card copy (DDoS mitigation, cPGuard, WAF, CloudLinux isolation, encryption
+  & access control, ISO-certified datacentres) is real, owner-supplied
+  security-stack content matching what's independently referenced elsewhere
+  on the site (cPGuard already appears in the Features section and the
+  feature-comparison table; CloudLinux likewise).
+- Icons live in `assets/img/security/` (see A.5/B.8) — same masked
+  single-colour SVG pattern as every other icon section.
+
+### C.16 cpanel-hosting: Workflow
+- Light section (`.cph-workflow`), 6-card grid, "Works With Your Workflow" —
+  domain flexibility, FTP/SFTP/Git/SSH access, the 300+ Softaculous
+  one-click apps, Site.pro AI Builder, Sitejet Builder Suite, and temporary
+  preview URLs. All real, owner-supplied product capabilities, matching
+  claims already made elsewhere (the "300+" one-click app figure also
+  appears in the Web Hosting▾ mega-menu app strip and in the Technical
+  Overview's Software group — keep these three in sync if the real count
+  changes).
+- Icons live in `assets/img/workflow/` (see A.5/B.8).
+
+### C.17 cpanel-hosting: Technical Overview
+- Light section (`.cph-overview`), two columns of grouped feature lists
+  (Key Features, File/Domain/Database Management, Security and Protection,
+  Server Specification, Technical Support / Unlimited Features, Email
+  Features, Software, Datacentre, Web Applications) — a dense, literal
+  spec-sheet dump of the owner's plan spreadsheet, deliberately exhaustive
+  rather than curated/marketing-toned like the sections above it.
+- Every group heading (`.cph-overview__group-title`) and every list item are
+  **centred**, and list items render as **plain text, no bullet/checkmark
+  glyph** — both were owner-requested changes from an earlier left-aligned,
+  checkmark-bulleted version (`.cph-overview__check` SVGs were fully removed
+  from the markup, not just hidden). If more items are added later, keep
+  this plain-centred-text style; don't reintroduce bullets without being
+  asked.
+- Content overlaps in places with other sections lower in specificity
+  (e.g. "DDoS Protection"/"cpGuard Security" here vs. the dedicated Security
+  section, C.15) — deliberate, this section is meant to be the complete
+  reference list, not a de-duplicated summary.
+
+### C.18 "Launching Soon" placeholder pattern (site-wide)
+A general UI convention introduced this round for **any product/section
+that isn't live yet**, replacing the older approach of leaving a dead or
+`https://example.com/` placeholder `href` on the element. The point: a
+visitor can still see the card/link and what it's for, but gets an explicit
+"not live yet" signal on interaction instead of a link that goes nowhere
+real. Three shapes, depending on what the element already looks like —
+**don't invent a 4th** without a reason; extend one of these instead:
+- **Full-card overlay** (`*--soon` modifier class + a `*__soon` overlay
+  span, e.g. `.hero-card--soon`/`.hero-card__soon`,
+  `.mega-card--soon`/`.mega-card__soon`): the whole card is converted from
+  `<a>` to a non-interactive `<div>`/element, and a full-size overlay
+  (`opacity: 0`, white background, centred "Launching Soon" label) fades in
+  to `opacity: 1` on `:hover`, covering the card's normal content entirely.
+  Used for: the 3 non-live homepage hero cards (cPanel Business Hosting, VPS
+  Hosting, Domains — see C.2), the Web Hosting▾ mega-menu's cPanel Business
+  Hosting card, and all 3 Discount Programs▾ mega-menu cards (see C.1).
+- **Compact tooltip** (`*--soon` on the link/text + a sibling `*__tooltip`
+  pill, `role="tooltip"`, shown on hover/`:focus-visible`): used where the
+  element is short, single-word/short-phrase text rather than a card — not
+  worth a full overlay. The element itself becomes a non-interactive
+  `<span tabindex="0">` (no `href`), keeping it keyboard-focusable so the
+  tooltip is reachable without a mouse.
+  - **`.nav__tooltip`** (nav bar): positioned `top: 100%`, **below** the
+    item, since nav items sit near the top of the viewport. Used for the
+    Servers/Domains nav items (see C.1).
+  - **`.footer__tooltip`** (footer): positioned `bottom: 100%`, **above**
+    the item instead — the opposite direction from the nav tooltip,
+    deliberately, since footer items sit at the very bottom of the page and
+    a tooltip opening downward would run off-screen. Used for the footer
+    Products column's cPanel Business Hosting / VPS Hosting / Domains items
+    (see C.19). Needs `.footer__links { align-items: flex-start; }` — that
+    `<ul>` is a `flex-direction: column` container, and without
+    `align-items: flex-start` each `<li>` stretches to the column's full
+    width, which centres the tooltip (`left: 50%`) on the whole stretched
+    box rather than on the short text label inside it, landing it far from
+    where the label visually is.
+- **In-place button overlay** (`.btn--soon` + `.btn--soon-label` +
+  `.btn--soon-overlay`): for a plain `<button>`/`<a>`-shaped CTA that isn't a
+  card — the label swaps for "Launching Soon" in the same footprint on
+  hover, rather than a separate overlay layer on top. Used for the Plans
+  section's "View Business Hosting Plans" button (see C.5).
+- All three variants share the same non-interactive-element rule: convert
+  the original `<a href="...">` to a `<span>`/`<div>` (add `tabindex="0"`
+  only where a tooltip needs keyboard reachability) — never leave a
+  `href="#"` or a dead `https://example.com/` URL behind once an element
+  uses this pattern.
+
+### C.19 Footer (shared partial)
 - Solid black (`--bg-topbar`), bookending the equally-black topbar rather
   than one of the site's dark gradients — deliberate.
 - Brand column uses the **full** logo (icon + "SERVERSALAD" wordmark),
@@ -5756,10 +7096,21 @@ first thing worth reconsidering.
   owner-asserted (the text does say "now expanding"), but worth confirming
   these are real upcoming products rather than something a visitor can't
   find/order anywhere on the page yet.
-- Information column reuses the **same anchors** as the nav's Support▾
-  submenu (`#about`, `#contact`, `#knowledgebase`, `#ticket`, `#status`) so
-  footer and nav point at the same eventual pages; `#terms`/`#privacy` are
-  new placeholder anchors, no pages exist yet.
+- Information column still lists `#about`, `#contact`, `#knowledgebase`,
+  `#ticket`, `#status`, `#terms`, `#privacy`, `#discount-programs` —
+  originally written to mirror the nav's old Support▾ submenu items
+  one-for-one. **That submenu no longer exists in the nav** (see C.1 —
+  removed entirely, replaced by a single "Open a Ticket" link to
+  `https://hub.serversalad.com`), and this footer column was not touched
+  when that happened, so Knowledgebase/Submit a Ticket/System Status now
+  exist only here, as `#anchor` placeholders with no matching nav item —
+  flagged in Part D; ask before deciding whether to update this column to
+  match, leave it, or add real destination pages for these.
+- Products column: cPanel Hosting is a real link to
+  `/server-salad-cloud-services-web/cpanel-hosting/`; cPanel Business
+  Hosting, VPS Hosting, and Domains use the footer "Launching Soon" tooltip
+  variant (see C.18) — same non-live products as the homepage hero cards
+  and the Web Hosting▾ mega-menu, kept consistent across all three spots.
 - Get in Touch column: real contact details (same as the topbar), then
   Facebook/LinkedIn/Instagram — owner asked to "add fb, linkedin, instagram",
   read as the complete intended set, so an original X/Twitter icon was
@@ -5801,19 +7152,23 @@ first thing worth reconsidering.
   the moment the site itself runs on that server. Easy to forget.
 - **Footer brand description** names "dedicated servers" and "email
   hosting" as products — neither is offered/described anywhere else on the
-  site (see C.15). Worth confirming these are real upcoming products.
+  site (see C.19). Worth confirming these are real upcoming products.
 - **Footer** needs real destination pages for `#terms`, `#privacy`, and
   `#discount-programs`. No Company Number/VAT Number block — add one only
   with the owner's real registration details.
+- **Footer Information column is now out of sync with the nav** — it still
+  lists Knowledgebase/Submit a Ticket/System Status anchors mirroring the
+  nav's old Support▾ submenu, which has since been removed from the nav
+  entirely and replaced with "Open a Ticket" → `hub.serversalad.com` (see
+  C.1/C.19). Ask whether the footer should be updated to match (e.g. its own
+  "Submit a Ticket"/"Open a Ticket" item pointed at the same hub URL) or left
+  as-is pending real destination pages for those specific items.
 - **cpanel-hosting page**: most nav links won't resolve correctly when
   browsing this page (they're `index.html`-only anchors) — see C.8.
 - **cpanel-hosting: three near-identical light card components coexist**
   (`.cph-why-card`, `.cph-backups-card`, plus the dark `.cph-email-card` and
   the bare-icon `.cph-feature`). They share metrics but are separate
   rulesets — a candidate for consolidation if the page grows further.
-- **cpanel-hosting Plans section CTAs**: all 3 "Order ... Salad" buttons
-  point at `https://example.com/` — replace with real order-flow/checkout
-  pages once they exist.
 - **Cloud infrastructure section**: two card descriptions carry unverified
   qualitative claims the owner explicitly chose to keep (see C.7). No
   background photo, no bottom CTA button — both deliberate.
@@ -5833,21 +7188,33 @@ first thing worth reconsidering.
 - **Sustainability section label**: owner's brief calls it a "Pill/Badge"
   but it's plain text, not an actual pill shape — confirm whether a chip
   treatment is wanted.
-- **Web Hosting▾ mega-menu app-logos link is a placeholder** — see C.1;
-  swap both the link and the "300+" figure once real ones exist.
-- **Discount Programs▾ mega-menu cards** have real titles but placeholder
-  descriptions — need real copy for each.
-- **Support▾** submenu items are still placeholder guesses — need the
-  owner's real list.
-- All nav submenu links (`#anchors`) and the "My Account" link point nowhere
-  real yet — need real destination pages/URLs once those exist.
-- **Hero cards**: cPanel Business Hosting, VPS Hosting, and Domains all link
-  to `https://example.com/` — deliberate temporary placeholder (see C.2).
-- The hero's 3rd card is titled "VPS Hosting" but the nav link above it
-  still says "Servers" — worth asking whether the nav label should match.
+- **Web Hosting▾ mega-menu app-logos link is a placeholder** (`#apps`, "See
+  300+ apps..." — see C.1) — swap both the link and the "300+" figure once a
+  real apps-catalogue page exists. The same "300+" figure is also asserted
+  in the cph Workflow section ("300+ One-Click Applications", C.16) and the
+  Technical Overview's Software group ("Softaculous Auto-Installer (300+
+  Apps)", C.17) — keep all three in sync if the real count changes.
+- Topbar's **About** / **Contact** / **Blog** links (`#about`, `#contact`,
+  `#blog`) are still placeholder anchors — need real destination pages.
+  Blog was moved here from the main nav (see C.1); its target page still
+  doesn't exist yet either way.
+- All 3 Discount Programs▾ mega-menu cards, all Web Hosting▾'s cPanel
+  Business Hosting card, and the standalone Servers/Domains nav items are
+  now **"Launching Soon"** (see C.18) rather than placeholder links — no
+  action needed until each product/program actually goes live, at which
+  point swap that element back to a real `<a href>` and drop the
+  `--soon`/`__soon` markup for it specifically (don't blanket-remove the
+  pattern from elements that are still genuinely not live).
+- The hero's 3rd card is titled "VPS Hosting" but the nav item above it
+  still says "Servers" (see C.1) — worth aligning the wording once the
+  product is real; low priority since neither currently links anywhere.
 - `.mega-card__icon` (nav mega menus) still uses the general `--accent` red,
   not `--brand-orange` like the hero/Plans cards — no request has targeted
   this yet.
+- **cPanel Business Hosting's description text differs slightly across all
+  three spots it appears** (hero card, homepage Plans card, Web Hosting▾
+  mega-menu card) — never fully reconciled; confirm whether one canonical
+  version should be used everywhere.
 
 ## Part E — Prior Decisions Log
 - Serve locally through XAMPP htdocs; frontend only (HTML/CSS/JS) apart from
@@ -5883,3 +7250,54 @@ first thing worth reconsidering.
   is separate — bump on every JS change. Always check the live number in
   both HTML files rather than trusting a figure remembered from earlier in a
   conversation.
+- **"Launching Soon" is the standing pattern for any not-yet-live
+  product/section** (see C.18) — never leave a dead `#anchor` or
+  `https://example.com/` href on an element for something that isn't real
+  yet; convert it to one of the three documented variants (full-card
+  overlay, compact tooltip, in-place button overlay) instead, matching the
+  element's shape. Applied to: 3 homepage hero cards, the Web Hosting▾ and
+  Discount Programs▾ mega-menu cards, the Servers/Domains nav items, the
+  Plans section's "View Business Hosting Plans" button, and the footer
+  Products column — see C.1/C.2/C.5/C.18/C.19.
+- **Nav restructuring**: Support▾ dropdown removed entirely (after several
+  intermediate trims) and replaced with a single "Open a Ticket" link;
+  "My Account" and "Open a Ticket" both point at the real
+  `https://hub.serversalad.com` (new tab) — the first genuinely real,
+  non-placeholder destinations added to the nav. Blog was added to the main
+  nav, then relocated into the topbar next to About/Contact. See C.1.
+- **Discount Programs▾ mega-menu was rebuilt to match Web Hosting▾'s
+  intro+cards+divider layout** rather than staying a plain flat grid, once
+  real card copy existed — see C.1. Its content (card copy, subtitle, and
+  the black box's heading/list) went through multiple owner-supplied
+  revisions before landing on the final version in Part B; when an owner
+  supplies replacement copy for an already-"final" section like this again,
+  overwrite the block wholesale rather than trying to merge it in.
+- **cpanel-hosting Plans table**: ash-grey `#ececf0` row separators removed
+  per owner request, with row padding tightened afterward to compensate for
+  rows reading too loosely spaced without them (see C.10) — do both
+  together if revisited. The "14-Day Money Back Guarantee" note moved from
+  inside the black package header down to under each CTA button, recoloured
+  to an owner-supplied exact font-inspector spec (`rgb(127, 133, 136)`) to
+  suit its new white background. All 3 "Order ... Salad" buttons now point
+  at the real `https://hub.serversalad.com`, replacing the old
+  `https://example.com/` placeholder.
+- **Sticky package header "condense on scroll" is implemented via
+  `IntersectionObserver` + a single CSS class toggle + a short native CSS
+  transition — deliberately not a scroll-event handler driving layout
+  properties per frame.** That scroll-driven approach was tried, and
+  reverted, specifically because it caused real, reported jank (see C.10)
+  — recomputing `padding`/`margin`/`max-height` on every scroll frame forces
+  a synchronous browser layout reflow that many times per scroll gesture.
+  This is the general lesson, not just a one-off fix: **any future
+  "something should visually respond continuously to scroll position"
+  request should reach for `IntersectionObserver` (or, for genuinely
+  continuous scrubbing, a compositor-only property like `transform`/
+  `opacity` — never a JS-computed `padding`/`margin`/`width`/`height`/
+  `max-height`) before reaching for a `scroll` + `requestAnimationFrame`
+  handler that writes layout-affecting inline styles.**
+- **Technical Overview section's group headings and list items were
+  centred, and its checkmark bullets removed entirely** (plain centred text)
+  per owner request — see C.17. A footer/nav thin white separator
+  (`.footer { border-top: 1px solid #fff; }`) was also added between the
+  footer and whatever section precedes it, after an initial low-opacity
+  version wasn't visible enough and was replaced with pure white.
