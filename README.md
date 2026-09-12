@@ -1388,9 +1388,10 @@ unless the owner says otherwise — update this list when that happens:
   every server…"), **UK Datacenter Location** ("Hosted in top-tier UK
   facilities…"), **Hands-On Tech Experts** ("…cPanel-certified technicians and
   system engineers who actively manage the platform."). Plain text, no bold
-  spans — matches an owner-supplied reference table. Section description: "We prep our hosting stack from top to bottom with
-  enterprise Samsung NVMe storage, resilient networking, and cPGuard security
-  managed directly by the engineers who handle your support tickets."
+  spans — matches an owner-supplied reference table. Section description: "We
+  build our hosting stack from top to bottom with high-speed Samsung NVMe
+  storage, resilient networking, and cPGuard security, managed directly by the
+  engineers who handle your support tickets."
 - Icons: `assets/img/why/` (3 files). Card classes `.cph-why-card*`; icon custom
   property `--why-icon`.
 
