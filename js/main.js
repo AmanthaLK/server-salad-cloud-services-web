@@ -315,4 +315,35 @@
 
     renderPrices(); // initial paint from the HTML fallback data-monthly values
   }
+
+  /* ===== Billing toggle: detect its own "stuck" sticky state =====
+     .cph-billing-toggle (see css/styles.css) has a wider padding-bottom by
+     default — the gap to the table below it looked cramped in normal
+     document flow — but that same wider gap wasn't wanted once the toggle
+     locks into its sticky spot under the nav (that stuck-state gap was
+     already fine). CSS alone can't tell those two states apart (padding is
+     part of the box regardless of scroll position), so: watch a 1px
+     sentinel placed immediately above the toggle in the markup, and compare
+     its own live viewport position against the toggle's sticky `top` (75px)
+     on every observer callback. Below that line (sentinel not yet reached
+     it, e.g. still off-screen further down the page on first load) -> not
+     stuck yet. At or above it (scrolled past, whether entering from below or
+     already passed) -> stuck. Using the position directly (not just
+     `entry.isIntersecting`) is what makes this work correctly on load, when
+     the sentinel starts out below the fold and so isn't "intersecting"
+     either way — that alone can't tell the two not-stuck/stuck cases apart. */
+  var billingSentinel = document.querySelector(".cph-billing-toggle__sentinel");
+  var billingToggleEl = document.querySelector(".cph-billing-toggle");
+  if (billingSentinel && billingToggleEl && "IntersectionObserver" in window) {
+    var STICKY_TOP = 75; // matches .cph-billing-toggle's own sticky `top`
+    var stickyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          billingToggleEl.classList.toggle("is-stuck", entry.boundingClientRect.top < STICKY_TOP);
+        });
+      },
+      { rootMargin: "-" + STICKY_TOP + "px 0px 0px 0px", threshold: [0, 1] }
+    );
+    stickyObserver.observe(billingSentinel);
+  }
 })();

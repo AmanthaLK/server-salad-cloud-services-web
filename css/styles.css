@@ -2308,6 +2308,14 @@ button { font: inherit; cursor: pointer; }
   padding: 88px 0;
 }
 
+/* Sits immediately before the toggle, invisible — purely an
+   IntersectionObserver target (see js/main.js) marking where the toggle's own
+   top edge is in normal flow, so JS can tell exactly when it locks into its
+   sticky position (see .cph-billing-toggle.is-stuck below). 1px, not 0 —
+   some browsers handle intersection ratios unreliably for a truly zero-area
+   target. */
+.cph-billing-toggle__sentinel { height: 1px; }
+
 /* Billing toggle (Monthly / Annually) — see js/main.js for the switch handler
    and the monthly↔annual price math, README "Pricing API" for why the annual
    figures are calculated client-side rather than a 2nd DB column.
@@ -2327,15 +2335,12 @@ button { font: inherit; cursor: pointer; }
   /* Padding, not margin, on both sides — margin sits OUTSIDE this element's
      own painted background, so while stuck it would leave a gap that reveals
      whatever feature row has scrolled to that band underneath (the same bug
-     on both the nav-side and table-side of this box). Top stays 14px (flush,
-     no reveal, against the nav) but bottom is wider — the switcher<->table
-     gap looked cramped before the toggle reaches its stuck position, and
-     widening it (rather than a table-side margin, which would hit the same
-     reveal bug) fixes that pre-stick gap without touching the nav<->switcher
-     one. .cph-table__intro / .cph-table__pkg's own sticky `top` is re-derived
-     from this box's new total height — see their comments. Sticky top is
-     flush with the nav's own bottom edge (74px content + 1px border) so
-     there's no gap at all between .nav's background and this one. */
+     on both the nav-side and table-side of this box). Equal 14px top/bottom
+     once stuck (see .is-stuck below) so the nav<->switcher gap matches the
+     switcher<->table-header gap, same as before — that stuck-state look was
+     fine as-is. Sticky top is flush with the nav's own bottom edge (74px
+     content + 1px border) so there's no gap at all between .nav's background
+     and this one. */
   padding-top: 14px;
   padding-bottom: 28px;
   position: sticky;
@@ -2343,6 +2348,14 @@ button { font: inherit; cursor: pointer; }
   z-index: 20;
   background: #f7f7f9; /* matches .cph-plans so scrolled-past rows don't show through while stuck */
 }
+/* Only the pre-stick (normal document-flow) switcher<->table gap needed
+   widening — the already-stuck gap was fine and had to stay exactly as it
+   was. Padding can't differ between those two states on its own (it's part
+   of the box regardless of scroll position), so js/main.js watches the
+   sentinel just above this element with an IntersectionObserver and adds
+   .is-stuck the instant this toggle actually locks into its sticky spot,
+   which is exactly when this override should kick in. */
+.cph-billing-toggle.is-stuck { padding-bottom: 14px; }
 .cph-billing-toggle__label {
   font-family: "Montserrat", var(--font-heading);
   font-size: 14px;
@@ -2524,7 +2537,7 @@ button { font: inherit; cursor: pointer; }
   color: rgb(40, 39, 39);
   text-align: center;
   position: sticky;
-  top: 143px; /* 75px toggle offset + its 14px+26px+28px padding-top/content/padding-bottom, all inside its own painted box so nothing shows through */
+  top: 129px; /* 75px toggle offset + its stuck-state 14px+26px+14px padding-top/content/padding-bottom (.is-stuck — see that class's comment), all inside its own painted box so nothing shows through */
   z-index: 15;
   background: none; /* the white fill now comes from ::before below, not this box's own background */
   border-top: none; /* it's the true first cell of .cph-table--main now (moved off :first-child — that selector would've also wrongly matched .cph-table__label--last, the first cell of the separate .cph-table--cta grid) */
@@ -2582,7 +2595,7 @@ button { font: inherit; cursor: pointer; }
   /* sticky (not just relative) so this cell pins alongside .cph-table__intro
      and releases the same way (see .cph-table__intro's comment above). */
   position: sticky;
-  top: 143px; /* matches .cph-table__intro's offset, so the row pins as one */
+  top: 129px; /* matches .cph-table__intro's offset, so the row pins as one */
   z-index: 15;
   display: flex;
   flex-direction: column;
