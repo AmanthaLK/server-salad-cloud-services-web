@@ -1384,12 +1384,11 @@ unless the owner says otherwise — update this list when that happens:
   **"Enterprise Cloud Hosting, Built for Performance"**, and the map shows one
   London pin. **If Server Salad genuinely adds USA/Germany regions, this section
   AND the homepage Locations section must both be updated** — see "Open items".
-- 3 cards: **Samsung NVMe Storage** ("Premium **Samsung NVMe SSDs** deployed
-  across every server…"), **UK Datacenter Location** ("Hosted in top-tier **UK
-  facilities**…"), **Hands-On Tech Experts** ("…**cPanel-certified technicians**
-  and system engineers who actively manage the platform."). Each description has
-  one bold-emphasised phrase (`<strong>`), matched to an owner-supplied
-  reference. Section description: "We prep our hosting stack from top to bottom with
+- 3 cards: **Samsung NVMe Storage** ("Premium Samsung NVMe SSDs deployed across
+  every server…"), **UK Datacenter Location** ("Hosted in top-tier UK
+  facilities…"), **Hands-On Tech Experts** ("…cPanel-certified technicians and
+  system engineers who actively manage the platform."). Plain text, no bold
+  spans — matches an owner-supplied reference table. Section description: "We prep our hosting stack from top to bottom with
   enterprise Samsung NVMe storage, resilient networking, and cPGuard security
   managed directly by the engineers who handle your support tickets."
 - Icons: `assets/img/why/` (3 files). Card classes `.cph-why-card*`; icon custom
