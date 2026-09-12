@@ -2117,7 +2117,8 @@ button { font: inherit; cursor: pointer; }
 }
 
 .footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-.footer__links a {
+.footer__links a,
+.footer__links-link--soon {
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 300;
@@ -2126,6 +2127,63 @@ button { font: inherit; cursor: pointer; }
   transition: color .15s;
 }
 .footer__links a:hover { color: var(--brand-orange); }
+
+/* Not-yet-launched products (cPanel Business Hosting, VPS Hosting, Domains):
+   plain <span>, not a link — hovering/focusing shows a small "Launching
+   Soon" tooltip, same idea as the nav's .nav__tooltip (Servers/Domains) but
+   positioned ABOVE the item instead of below, since these sit at the very
+   bottom of the page and a below-item tooltip could run off past the
+   viewport/page edge. */
+.footer__links-item--soon { position: relative; }
+.footer__links-link--soon { display: inline-block; cursor: default; }
+.footer__links-link--soon:hover { color: rgba(245, 245, 247, .68); }
+
+.footer__tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  margin-bottom: 10px;
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 20;
+}
+.footer__tooltip::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--brand-orange);
+}
+.footer__tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-1.5px);
+  border: 5px solid transparent;
+  border-top-color: #fff;
+}
+.footer__links-item--soon:hover .footer__tooltip,
+.footer__links-link--soon:focus-visible + .footer__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 .footer__col--touch { display: flex; flex-direction: column; gap: 14px; }
 
