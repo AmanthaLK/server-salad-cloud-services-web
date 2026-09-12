@@ -347,64 +347,43 @@
     stickyObserver.observe(billingSentinel);
   }
 
-  /* ===== Package header row: condense further after extra scrolling =====
+  /* ===== Package header row: condense once it locks into its sticky spot =====
      .cph-table__intro / .cph-table__pkg (css/styles.css) pin under the
      billing toggle at top:129px while scrolling the feature rows. Per owner:
-     once scrolling continues well past that initial stick, this black header
-     should shrink further — the tagline fades out and the package name and
-     price pull closer together — so it takes up less of the viewport while
-     browsing the long feature list below.
+     it should shrink further right as that happens — the tagline fades out
+     and the package name and price pull closer together — so it takes up
+     less of the viewport while browsing the long feature list below.
 
-     Drives a --cph-condense custom property (0 = fully expanded, 1 = fully
-     condensed) that css/styles.css reads via calc() on every affected
-     property, rather than toggling a class tied to a fixed-duration CSS
-     transition — an earlier version did that and it felt like "nothing for
-     a while, then a sudden snap" once the threshold was crossed. Scrubbing a
-     continuous value directly off scroll position instead makes the shrink
-     track the scroll 1:1, with no delay and no snap. Set on
-     .cph-plans__sticky-scope (an ancestor of every affected element) since
-     custom properties inherit, so one write reaches all of them.
+     Same technique as the billing toggle's own is-stuck detector above: an
+     IntersectionObserver watches a 1px sentinel placed immediately before
+     this row in the markup and toggles .is-condensed the instant the row's
+     own position crosses its 129px sticky offset — see that detector's
+     comment for why boundingClientRect.top (not just entry.isIntersecting)
+     is what makes this correct on load, when the row can start out below
+     the fold.
 
-     Unlike the billing-toggle's is-stuck detector above, this needs to know
-     not just WHETHER it's stuck but HOW FAR past that point the page has
-     scrolled, and a sticky element's own position stops changing the moment
-     it locks in (that's what "stuck" means) — so an IntersectionObserver
-     firing once at the stick boundary can't measure that. Track window
-     scroll position directly instead: getBoundingClientRect().top on the
-     header tells us whether it's currently stuck (it sits exactly at its
-     129px offset once it is); the first time that's true, remember
-     window.scrollY, then turn every later scrollY's distance from that
-     anchor into a 0-1 progress value over CONDENSE_DISTANCE. Resets the
-     moment it's no longer stuck (scrolled back above the table), so
-     scrolling back down re-measures from wherever it re-sticks. */
+     An EARLIER version tried to scrub this continuously off live scroll
+     position instead (a scroll-event handler recomputing padding/margin/
+     max-height every frame via a CSS custom property). That thrashed
+     layout on every scroll pixel — a textbook jank source — and it showed:
+     stuttery, dropped frames, unreadable mid-scroll. Firing an
+     IntersectionObserver callback once and letting a plain CSS transition
+     (see .is-condensed in css/styles.css) handle the shrink costs one
+     short, browser-optimized transition instead of dozens of forced
+     reflows per scroll gesture. */
+  var pkgSentinel = document.querySelector(".cph-table__pkg-sentinel");
   var pkgHeaderEls = document.querySelectorAll(".cph-table__intro, .cph-table__pkg");
-  var pkgCondenseScope = document.querySelector(".cph-plans__sticky-scope");
-  if (pkgHeaderEls.length && pkgCondenseScope) {
+  if (pkgSentinel && pkgHeaderEls.length && "IntersectionObserver" in window) {
     var PKG_STICKY_TOP = 129; // matches .cph-table__intro / .cph-table__pkg's own sticky `top`
-    var CONDENSE_DISTANCE = 90; // px of extra scroll past the stick point to go from 0 to 1
-    var pkgStuckAtY = null;
-    var pkgTicking = false;
-
-    var updatePkgCondense = function () {
-      pkgTicking = false;
-      var isStuck = Math.round(pkgHeaderEls[0].getBoundingClientRect().top) <= PKG_STICKY_TOP;
-      var progress = 0;
-      if (isStuck) {
-        if (pkgStuckAtY === null) pkgStuckAtY = window.scrollY;
-        progress = Math.min(1, Math.max(0, (window.scrollY - pkgStuckAtY) / CONDENSE_DISTANCE));
-      } else {
-        pkgStuckAtY = null;
-      }
-      pkgCondenseScope.style.setProperty("--cph-condense", String(progress));
-    };
-
-    window.addEventListener("scroll", function () {
-      if (!pkgTicking) {
-        pkgTicking = true;
-        window.requestAnimationFrame(updatePkgCondense);
-      }
-    }, { passive: true });
-
-    updatePkgCondense(); // initial paint, in case the page loads already scrolled down
+    var pkgStickyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          var condensed = entry.boundingClientRect.top < PKG_STICKY_TOP;
+          pkgHeaderEls.forEach(function (el) { el.classList.toggle("is-condensed", condensed); });
+        });
+      },
+      { rootMargin: "-" + PKG_STICKY_TOP + "px 0px 0px 0px", threshold: [0, 1] }
+    );
+    pkgStickyObserver.observe(pkgSentinel);
   }
 })();
