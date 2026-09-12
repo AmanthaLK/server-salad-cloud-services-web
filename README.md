@@ -3,7 +3,8 @@ _Describes the site as it currently exists — not a change history. Read this t
 
 ## Purpose
 Website for a web hosting business. Built and served locally via XAMPP (Apache) from
-`c:\xampp\htdocs\serversalad`. Local URL: http://localhost/serversalad/
+`htdocs/server-salad-cloud-services-web`. Local URL:
+http://localhost/server-salad-cloud-services-web/
 
 ## How this project is being built
 The owner provides a **step-by-step guide**; each step is implemented one at a time —
@@ -102,9 +103,15 @@ the site exactly as it exists right now, and continue work, without needing hist
   spelling in **all human-readable text** — page copy, headings, `alt`/`aria-label`
   text, future page titles. The tab title is already "Server Salad Cloud Services".
 - **Machine-readable slugs stay one lowercase word `serversalad`** and must NOT be
-  changed: the project folder (`c:\xampp\htdocs\serversalad`), the local URL, image
-  filenames (`serversalad-logo.png`, `serversalad-favicon.svg`), CSS classes, and the
-  `info@serversalad.com` / `+94 71 200 0006` contact details.
+  changed: image filenames (`serversalad-logo.png`, `serversalad-favicon.svg`), CSS
+  classes, the `info@serversalad.com` / `+94 71 200 0006` contact details, and any
+  real external URL/domain (`serversalad.com`, the Trustpilot/LinkedIn links).
+  **The project folder and every root-relative site path now use the longer slug
+  `server-salad-cloud-services-web`** instead (`/server-salad-cloud-services-web/...`
+  in every page's `<link>`/`<script>` tags, partial fetches, nav/footer hrefs, and
+  the pricing-API fetch) — the repo itself was renamed from `serversalad` to
+  `server-salad-cloud-services-web`, so this is now the current local URL/folder
+  name, distinct from the one-word slugs above which stayed unchanged.
 - If you see the one-word "ServerSalad" in visible text anywhere, it's a bug — fix it
   to the two-word form.
 
@@ -129,7 +136,7 @@ the site exactly as it exists right now, and continue work, without needing hist
 
 ## Project structure
 ```
-serversalad/
+server-salad-cloud-services-web/
   README.md                        <- this file (current-state reference)
   index.html                       <- the whole page: topbar, nav, hero, features,
                                        sustainability, plans, locations, migration,
@@ -145,7 +152,7 @@ serversalad/
     footer.html                    <- the ONE copy of the footer markup — every page
                                        includes both via a fetch, not by pasting them in
   cpanel-hosting/
-    index.html                     <- 2nd page, URL /serversalad/cpanel-hosting/ —
+    index.html                     <- 2nd page, URL /server-salad-cloud-services-web/cpanel-hosting/ —
                                        Hero, Plans/comparison, Features, Why Server
                                        Salad, Business Email, Backups (see below)
   api/
@@ -512,7 +519,7 @@ unless the owner says otherwise — update this list when that happens:
   - **Each card is a whole-tile `<a class="hero-card" href="...">`** — there is no
     separate price/CTA button on the hero cards; no price is shown here at all
     (live or static). Destinations:
-    - cPanel Hosting → `/serversalad/cpanel-hosting/` (same tab)
+    - cPanel Hosting → `/server-salad-cloud-services-web/cpanel-hosting/` (same tab)
     - cPanel Business Hosting → `https://example.com/` (new tab, placeholder)
     - VPS Hosting → `https://example.com/` (new tab, placeholder)
     - Domains → `https://example.com/` (new tab, placeholder)
@@ -785,7 +792,7 @@ unless the owner says otherwise — update this list when that happens:
     align-self: center`, not full-width; **8px corner radius**, overriding the
     base `.btn` pill) styled in `--brand-orange` (border/text, filling solid
     orange with white text on hover). **cPanel Hosting's button now
-    points at the real page** `/serversalad/cpanel-hosting/`; Business Hosting's
+    points at the real page** `/server-salad-cloud-services-web/cpanel-hosting/`; Business Hosting's
     still points at the `#cpanel-business-hosting` placeholder anchor — not a real
     page yet.
   - Resting border is `1px solid #c9c9d2` — a darker ash than the site's usual
@@ -866,7 +873,7 @@ unless the owner says otherwise — update this list when that happens:
   - `getenv('SS_DB_HOST')` etc. checked first, with a hardcoded fallback. Ideally
     production sets real env vars rather than relying on the hardcoded fallback
     long-term.
-  - **Working, verified live**: `curl http://localhost/serversalad/api/pricing.php`
+  - **Working, verified live**: `curl http://localhost/server-salad-cloud-services-web/api/pricing.php`
     returns `{"ok":true,"prices":{"starter_salad":549,"standard_salad":649,"premium_salad":829}}`
     (exact numbers fluctuate as the DB is edited directly — that's expected of a
     live fetch).
@@ -1112,8 +1119,8 @@ unless the owner says otherwise — update this list when that happens:
     `<div id="site-header"></div>` right after `<body>`, and
     `<div id="site-footer"></div>` right before `<script src=".../js/main.js">`.
   - `js/main.js` fetches both (root-relative URLs —
-    `/serversalad/partials/header.html` / `.../footer.html` — so it works no matter
-    how deep the including page lives, e.g. `/serversalad/cpanel-hosting/`) and
+    `/server-salad-cloud-services-web/partials/header.html` / `.../footer.html` — so it works no matter
+    how deep the including page lives, e.g. `/server-salad-cloud-services-web/cpanel-hosting/`) and
     replaces each placeholder div with the fetched markup (`mount.outerHTML =
     html`). Each fetch logs to the console and leaves that part of the page absent
     (not broken) if it fails. **Both fetches pass `{ cache: "no-store" }`** — without
@@ -1139,8 +1146,8 @@ unless the owner says otherwise — update this list when that happens:
     relative path would resolve against whichever page injected the partial, not
     against the partial file's own location.
   - **`index.html`'s and `cpanel-hosting/index.html`'s own `<link>`/`<script>` tags
-    are both root-relative** (`/serversalad/css/styles.css?v=N`,
-    `/serversalad/js/main.js?v=N`, favicon too). `js/main.js` has its own `?v=N`
+    are both root-relative** (`/server-salad-cloud-services-web/css/styles.css?v=N`,
+    `/server-salad-cloud-services-web/js/main.js?v=N`, favicon too). `js/main.js` has its own `?v=N`
     cache-buster, same rule as the stylesheet: **bump it in every page's
     `<script>` tag whenever `main.js` changes.** Any future page should follow the
     same root-relative pattern in its `<head>` and before `</body>`, whatever depth
@@ -1150,10 +1157,10 @@ unless the owner says otherwise — update this list when that happens:
     from `cpanel-hosting/` won't scroll anywhere, since there's no `#about` there.
     Worth addressing once more real pages exist and some nav items should point at
     other pages instead of in-page anchors. One exception: the Web Hosting▾
-    mega-menu's "cPanel Hosting" card links to `/serversalad/cpanel-hosting/` — a
+    mega-menu's "cPanel Hosting" card links to `/server-salad-cloud-services-web/cpanel-hosting/` — a
     **real** page.
 
-### cpanel-hosting page (2nd page — `/serversalad/cpanel-hosting/`)
+### cpanel-hosting page (2nd page — `/server-salad-cloud-services-web/cpanel-hosting/`)
 - `cpanel-hosting/index.html` — same `<head>` as `index.html` (title, favicon,
   fonts, stylesheet — all root-relative, see above), shared header + footer wired
   up via the partial system.
@@ -1333,8 +1340,8 @@ unless the owner says otherwise — update this list when that happens:
     `.cph-table__val--yes` cells, each with an inline `.cph-table__check` SVG
     (same build as `.cph-table__cross`, `color: var(--brand-orange)`).
 - Folder-with-`index.html` structure (not `cpanel-hosting.html`) so the URL is
-  clean: `/serversalad/cpanel-hosting/` rather than
-  `/serversalad/cpanel-hosting.html`. Apache serves `index.html` automatically for
+  clean: `/server-salad-cloud-services-web/cpanel-hosting/` rather than
+  `/server-salad-cloud-services-web/cpanel-hosting.html`. Apache serves `index.html` automatically for
   a directory request — no `.htaccess`/rewrite config needed (the flat-file
   alternative would need an `.htaccess` rewrite rule to strip `.html`, which is the
   same category of "server config that can't be visually verified here" already
@@ -1474,7 +1481,7 @@ unless the owner says otherwise — update this list when that happens:
   (`#discount-programs`) — moved here from Products per owner, since it's a pricing
   program/policy rather than a hosting product.
 - **Products column**: cPanel Hosting (now the real page,
-  `/serversalad/cpanel-hosting/`), cPanel Business Hosting, VPS Hosting, Domains —
+  `/server-salad-cloud-services-web/cpanel-hosting/`), cPanel Business Hosting, VPS Hosting, Domains —
   the other three still reuse existing placeholder anchors
   (`#cpanel-business-hosting`, `#servers`, `#domains`).
 - **Get in Touch column**: the site's **real, already-established contact details**
@@ -1649,7 +1656,7 @@ unless the owner says otherwise — update this list when that happens:
 - **Hero cards: cPanel Business Hosting, VPS Hosting, and Domains all link to
   `https://example.com/`** (whole tile — see Hero notes) — a deliberate temporary
   placeholder; replace once those products have their own real pages (cPanel
-  Hosting already points at the real `/serversalad/cpanel-hosting/`). There's no
+  Hosting already points at the real `/server-salad-cloud-services-web/cpanel-hosting/`). There's no
   separate "coming soon" UI state to maintain — a card not yet launched just keeps
   its `href` at `https://example.com/` until it has a real page.
 - The hero's 3rd card is titled **"VPS Hosting"**, but the main nav link right above
