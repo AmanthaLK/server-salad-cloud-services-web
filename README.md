@@ -49,7 +49,7 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=259**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
+  **v=260**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
   Bump the relevant one any time that file changes, in **every** page's tag,
   so browsers fetch the latest version instead of a stale cached copy.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
@@ -2885,7 +2885,22 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   border-radius: 50%;
   background: var(--brand-orange);
   box-shadow: 0 0 0 4px rgba(245, 126, 32, .18);
+  transition: opacity .3s ease;
 }
+/* Same UK circle flag as the homepage Locations card (assets/img/flags/uk-flag-circle.png).
+   Sits over the dot, hidden until the map is hovered/zoomed, then crossfades in. */
+.cph-why__pin-flag {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.cph-why__map:hover .cph-why__pin-dot { opacity: 0; }
+.cph-why__map:hover .cph-why__pin-flag { opacity: 1; }
 .cph-why__pin-label {
   position: absolute;
   left: 16px;
@@ -2902,6 +2917,8 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
 @media (prefers-reduced-motion: reduce) {
   .cph-why__map-inner { transition: none; }
   .cph-why__map:hover .cph-why__map-inner { transform: none; }
+  .cph-why__pin-dot,
+  .cph-why__pin-flag { transition: none; }
 }
 
 .cph-why__grid {
@@ -3928,7 +3945,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=259">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=260">
 </head>
 <body>
 
@@ -4362,7 +4379,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=259">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=260">
 </head>
 <body>
 
@@ -4681,6 +4698,7 @@ mounts, folder-with-`index.html` so the URL is
               <img class="cph-why__map-img" src="/server-salad-cloud-services-web/assets/img/graphics/world-map-dots.png" alt="World map highlighting the Server Salad data center in London, United Kingdom" width="1920" height="1080">
               <span class="cph-why__pin" aria-hidden="true">
                 <span class="cph-why__pin-dot"></span>
+                <img class="cph-why__pin-flag" src="/server-salad-cloud-services-web/assets/img/flags/uk-flag-circle.png" alt="">
                 <span class="cph-why__pin-label">London, UK</span>
               </span>
             </div>
@@ -5057,7 +5075,7 @@ After building from Parts A/B, confirm:
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
 - [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **both**
-      HTML pages (currently v=259 / v=13) — bump both on every future change to
+      HTML pages (currently v=260 / v=13) — bump both on every future change to
       that file, in every page's tag.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows

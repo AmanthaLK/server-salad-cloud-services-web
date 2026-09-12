@@ -2683,7 +2683,22 @@ button { font: inherit; cursor: pointer; }
   border-radius: 50%;
   background: var(--brand-orange);
   box-shadow: 0 0 0 4px rgba(245, 126, 32, .18);
+  transition: opacity .3s ease;
 }
+/* Same UK circle flag as the homepage Locations card (assets/img/flags/uk-flag-circle.png).
+   Sits over the dot, hidden until the map is hovered/zoomed, then crossfades in. */
+.cph-why__pin-flag {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.cph-why__map:hover .cph-why__pin-dot { opacity: 0; }
+.cph-why__map:hover .cph-why__pin-flag { opacity: 1; }
 .cph-why__pin-label {
   position: absolute;
   left: 16px;
@@ -2700,6 +2715,8 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .cph-why__map-inner { transition: none; }
   .cph-why__map:hover .cph-why__map-inner { transform: none; }
+  .cph-why__pin-dot,
+  .cph-why__pin-flag { transition: none; }
 }
 
 .cph-why__grid {
