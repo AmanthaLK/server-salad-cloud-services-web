@@ -3316,12 +3316,14 @@ button { font: inherit; cursor: pointer; }
 
 .cph-security__underline {
   width: 64px;
-  height: 2px;
+  height: 3px;
   margin: 36px auto 0;
   border-radius: 2px;
-  /* Same red -> brand-orange gradient as .cph-features__underline, for
-     consistency with the rest of the cpanel-hosting page. */
-  background: linear-gradient(90deg, var(--accent), var(--brand-orange));
+  /* Same red -> orange gradient as .cph-backups__underline (owner's "orange
+     and red mixed gradient" colour code) — reads more clearly as a mix than
+     the previous accent -> brand-orange pairing, which sat too close in hue
+     to show at this bar's width. */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 .cph-security__grid {
