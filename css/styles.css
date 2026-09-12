@@ -2632,16 +2632,20 @@ button { font: inherit; cursor: pointer; }
 .cph-table__intro-flag {
   width: 34px;
   height: auto;
-  max-height: 26px;
   margin-bottom: 14px;
   opacity: 1;
-  overflow: hidden;
-  transition: max-height .3s ease, opacity .25s ease, margin-bottom .3s ease;
+  transition: opacity .25s ease, margin-bottom .3s ease;
 }
-/* Collapses away once scrolled well past the initial stick — see
-   .cph-table__intro's comment above and js/main.js. */
+/* Fades away once scrolled well past the initial stick — see
+   .cph-table__intro's comment above and js/main.js. No max-height/
+   overflow:hidden collapse here (tried first, reverted): animating a
+   raster image's height that way clips it frame-by-frame instead of
+   scaling it, which read as a glitchy little sliver mid-transition rather
+   than a smooth shrink. Opacity + margin animate cleanly with no such
+   artifact — the flag's own un-collapsed height barely matters anyway,
+   since the row's total height is set by the taller .cph-table__pkg cells
+   regardless (see their own is-condensed rules). */
 .cph-table__intro.is-condensed .cph-table__intro-flag {
-  max-height: 0;
   opacity: 0;
   margin-bottom: 0;
 }
