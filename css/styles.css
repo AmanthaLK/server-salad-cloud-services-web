@@ -1533,6 +1533,27 @@ button { font: inherit; cursor: pointer; }
 }
 .btn--outline:hover { background: var(--brand-orange); color: #fff; }
 
+/* Not-yet-launched plan (cPanel Business Hosting): plain <span> now, not a
+   link — hovering/focusing swaps the label for "Launching Soon" instead of
+   navigating anywhere. */
+.btn--soon { position: relative; overflow: hidden; cursor: default; }
+.btn--soon-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-orange);
+  color: #fff;
+  opacity: 0;
+  transition: opacity .18s ease;
+  pointer-events: none;
+}
+.btn--soon:hover .btn--soon-overlay,
+.btn--soon:focus-visible .btn--soon-overlay {
+  opacity: 1;
+}
+
 @media (max-width: 860px) {
   .plans__cards { grid-template-columns: 1fr; }
 }
