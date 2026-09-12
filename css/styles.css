@@ -2300,13 +2300,28 @@ button { font: inherit; cursor: pointer; }
   color: #fff;
 }
 
-.cph-table-wrap { margin-top: 0; overflow-x: auto; }
+/* overflow-x only applies below the width the 680px-min-width table actually
+   needs it (~728px of usable space) — kept out of the unconditional rule
+   because ANY non-"visible" overflow on an ancestor (even just one axis; the
+   other axis auto-computes to "auto" too) becomes the nearest scroll container
+   for position:sticky descendants, breaking the sticky package-header row's
+   stick-to-the-real-page-scroll behaviour. Above that width the table already
+   fits, so no horizontal scroll is needed and sticky works normally. */
+.cph-table-wrap { margin-top: 0; }
+@media (max-width: 860px) {
+  .cph-table-wrap { overflow-x: auto; }
+}
 
 /* Direct grid children in row-major order (label, val, val, val, repeat…) — CSS
    Grid auto-placement wraps them into rows on its own, so no wrapping "row" divs
    are needed. A shared-across-plans row (Support, Money-Back) just supplies one
    spanning value cell (`--span3`) instead of 3, and auto-placement still lands the
-   next row's label in column 1 correctly. */
+   next row's label in column 1 correctly.
+
+   No overflow:hidden here (same reason as .cph-table-wrap above — it would
+   block the sticky header row) — the rounded corners are instead carved
+   directly into the 4 corner cells (.cph-table__intro, .cph-table__pkg--last,
+   .cph-table__label--last, .cph-table__btn-cell--last) below. */
 .cph-table {
   display: grid;
   grid-template-columns: minmax(160px, 1.2fr) repeat(3, minmax(150px, 1fr));
@@ -2314,7 +2329,6 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   border: 1px solid #e3e3e8;
   border-radius: 14px;
-  overflow: hidden;
 }
 
 .cph-table__label {
@@ -2331,6 +2345,9 @@ button { font: inherit; cursor: pointer; }
   border-right: 1px solid #ececf0;
 }
 .cph-table__label:first-child { border-top: none; background: #fff; }
+/* Last row's empty leading cell (under the intro column) — bottom-left corner,
+   same reasoning as .cph-table__pkg--last above. */
+.cph-table__label--last { border-bottom-left-radius: 14px; }
 /* The otherwise-empty top-left spacer cell carries an intro line instead of
    sitting blank next to the black package headers. Pinned (with .cph-table__pkg
    below) right under .cph-billing-toggle while scrolling the feature rows —
@@ -2349,6 +2366,7 @@ button { font: inherit; cursor: pointer; }
   position: sticky;
   top: 146px; /* 88px toggle offset + toggle's own ~26px height + its 32px margin-bottom */
   z-index: 15;
+  border-top-left-radius: 14px; /* .cph-table has no overflow:hidden any more (see comment above it) */
 }
 .cph-table__intro-flag { width: 34px; height: auto; }
 
@@ -2402,6 +2420,9 @@ button { font: inherit; cursor: pointer; }
   padding: 26px 18px;
   background: var(--bg-topbar);
 }
+/* Last (Premium Salad) header cell only — carries the top-right corner that
+   .cph-table's own border-radius used to get for free via overflow:hidden. */
+.cph-table__pkg--last { border-top-right-radius: 14px; }
 .cph-table__pkg-name {
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
@@ -2451,6 +2472,9 @@ button { font: inherit; cursor: pointer; }
   padding: 18px 16px;
   border-top: 1px solid #ececf0;
 }
+/* Last (Premium Salad) button cell — bottom-right corner, same reasoning as
+   .cph-table__pkg--last above. */
+.cph-table__btn-cell--last { border-bottom-right-radius: 14px; }
 .cph-table__pkg-btn {
   width: 100%;
   background: transparent;
