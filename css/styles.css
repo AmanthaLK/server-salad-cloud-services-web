@@ -2690,7 +2690,7 @@ button { font: inherit; cursor: pointer; }
 .cph-why__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start; /* cards size to their own content, like the template */
+  align-items: stretch; /* equal-height cards regardless of description length */
   gap: 20px;
 }
 
