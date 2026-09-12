@@ -2353,7 +2353,7 @@ button { font: inherit; cursor: pointer; }
   border-top: 1px solid #ececf0;
   border-right: 1px solid #ececf0;
 }
-.cph-table__label:first-child { border-top: none; background: #fff; }
+.cph-table__label:first-child { border-top: none; }
 /* Last row's empty leading cell (under the intro column) — bottom-left corner,
    same reasoning as .cph-table__pkg--last above. */
 .cph-table__label--last { border-bottom-left-radius: 14px; }
@@ -2375,15 +2375,22 @@ button { font: inherit; cursor: pointer; }
   position: sticky;
   top: 129px; /* 75px toggle offset + its 14px+26px+14px padding-top/content/padding-bottom (equal top/bottom padding), all inside its own painted box so nothing shows through */
   z-index: 15;
-  border-top-left-radius: 14px; /* .cph-table has no overflow:hidden any more (see comment above it) */
-  /* overflow:hidden ON the sticky element itself (not an ancestor of it) is
-     safe — it doesn't affect this element's OWN stickiness, only how it
-     clips its own content — and it's needed here: some browsers don't
-     reliably apply border-radius to a position:sticky element once it's
-     actually in its "stuck"/offset state, so the rounded corner above would
-     render fine before sticking and go square after. overflow:hidden forces
-     the clip to actually happen either way. */
-  overflow: hidden;
+  background: none; /* the white fill now comes from ::before below, not this box's own background */
+}
+/* The white background + rounded top-left corner live on a ::before instead
+   of directly on this box: some browsers don't reliably keep clipping a
+   position:sticky element's OWN border-radius once it's actually in its
+   "stuck"/offset state (confirmed — overflow:hidden on the element itself
+   wasn't enough), but a plain absolutely-positioned pseudo-element with its
+   own border-radius has no such issue since it isn't itself the thing being
+   stuck. z-index:-1 keeps it behind the real content (flag + text). */
+.cph-table__intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  border-top-left-radius: 14px;
 }
 .cph-table__intro-flag { width: 34px; height: auto; }
 
@@ -2438,12 +2445,20 @@ button { font: inherit; cursor: pointer; }
   background: var(--bg-topbar);
 }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
-   .cph-table's own border-radius used to get for free via overflow:hidden. */
-/* overflow:hidden here forces the rounded corner to actually clip while this
-   cell is in its sticky "stuck" state too — see .cph-table__intro's comment
-   for why border-radius alone isn't reliable there. Safe on the sticky
-   element itself; only an ANCESTOR's overflow would break its stickiness. */
-.cph-table__pkg--last { border-top-right-radius: 14px; overflow: hidden; }
+   .cph-table's own border-radius used to get for free via overflow:hidden.
+   Same ::before approach as .cph-table__intro (see its comment): a plain
+   pseudo-element with its own border-radius, instead of border-radius
+   directly on the sticky cell, since that wasn't reliably clipping once
+   the cell was actually stuck. */
+.cph-table__pkg--last { background: none; }
+.cph-table__pkg--last::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-topbar);
+  border-top-right-radius: 14px;
+}
 .cph-table__pkg-name {
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
