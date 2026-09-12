@@ -3031,7 +3031,7 @@ button { font: inherit; cursor: pointer; }
 .cph-backups__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -3077,17 +3077,20 @@ button { font: inherit; cursor: pointer; }
 .cph-backups-card__title {
   align-self: center;
   margin: 0;
+  font-family: "Cairo", var(--font-heading);
   font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #1b1b1f;
+  font-weight: 600;
+  line-height: 21px;
+  color: rgb(32, 29, 44);
 }
 .cph-backups-card__desc {
   grid-column: 1 / -1;
   margin: 0;
+  font-family: "Manrope", var(--font-body);
   font-size: 13px;
-  line-height: 1.5;
-  color: #6a6a72;
+  font-weight: 300;
+  line-height: 20px;
+  color: rgba(32, 29, 44, .74);
 }
 
 @media (max-width: 980px) {
