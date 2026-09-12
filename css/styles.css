@@ -13,6 +13,7 @@
   --accent: #e5484d;
   --accent-2: #ff8a5c;
   --eco-green-light: rgb(95, 227, 154); /* used only in the sustainability section */
+  --security-teal: #00aec0; /* used only in the cpanel-hosting Security in depth section */
   --radius: 8px;
   --container: 1240px;   /* max content width — same on every section */
   --gutter: 24px;        /* left/right page spacing — same on every section */
@@ -3274,4 +3275,120 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .cph-email__inner { padding: 64px 0; }
   .cph-email__grid { grid-template-columns: 1fr; }
+}
+
+/* ===== cPanel Hosting page: security ===== */
+.cph-security {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  /* Dark section so the page keeps alternating: light backups -> dark
+     security. Teal-tinted glow instead of the usual orange one, matching
+     this section's own accent (--security-teal), a deliberate one-off. */
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 174, 192, .14) 0, transparent 45%),
+    linear-gradient(160deg, #0b1417 0%, #0d1a1e 55%, #0a1113 100%);
+}
+
+.cph-security__inner { padding: 88px 0; }
+
+.cph-security__head { text-align: center; margin-bottom: 64px; }
+
+.cph-security__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: .2px;
+}
+
+.cph-security__subtitle {
+  margin: 14px auto 0;
+  max-width: 620px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(245, 245, 247, .72);
+}
+
+.cph-security__underline {
+  width: 64px;
+  height: 2px;
+  margin: 36px auto 0;
+  border-radius: 2px;
+  /* This section's own accent (teal) into the site's red, rather than the
+     brand-orange/red pairing used elsewhere — ties the underline to the
+     teal icons below it. */
+  background: linear-gradient(90deg, var(--security-teal), var(--accent));
+}
+
+.cph-security__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 28px;
+}
+
+/* Same icon (col 1, row 1) | title (col 2, row 1); description spans both
+   cols on row 2 layout as .cph-feature/.cph-backups-card/.cph-email-card. */
+.cph-security-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  row-gap: 14px;
+  padding: 30px 28px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.cph-security-card:hover {
+  border-color: rgba(0, 174, 192, .5);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-3px);
+}
+
+/* Icons are external single-colour SVGs in assets/img/security/ (each card
+   sets its own file via the --security-icon custom property), masked with
+   --security-teal — same masked-icon technique used throughout the site. */
+.cph-security-card__icon {
+  display: block;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: var(--security-teal);
+  -webkit-mask: var(--security-icon) center / contain no-repeat;
+  mask: var(--security-icon) center / contain no-repeat;
+}
+
+.cph-security-card__title {
+  align-self: center;
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 26px;
+  color: #fff;
+}
+
+.cph-security-card__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgba(245, 245, 247, .72);
+}
+
+@media (max-width: 900px) {
+  .cph-security__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-security__inner { padding: 64px 0; }
+  .cph-security__grid { grid-template-columns: 1fr; }
+  .cph-security-card__title { font-size: 19px; }
+  .cph-security-card__icon { width: 30px; height: 30px; }
 }
