@@ -646,6 +646,90 @@
         </div>
       </div>
     </section>
+
+    <!-- ===== Migration (same section as the homepage's — shared .migration*
+         classes in css/styles.css, no page-specific CSS needed) ===== -->
+    <section class="migration">
+      <div class="container migration__inner">
+        <div class="migration__top">
+          <div class="migration__content">
+            <span class="migration__eyebrow">Hassle-Free Migration</span>
+            <h2 class="migration__title">Effortless cPanel Transfer</h2>
+            <div class="migration__underline" aria-hidden="true"></div>
+            <p class="migration__desc">Switching to Server Salad is completely simple. Our technical team securely transfers your full cPanel account via native system APIs, ensuring total data integrity, complete account accuracy, and zero migration fees.</p>
+          </div>
+
+          <div class="migration__visual" aria-hidden="true">
+            <div class="migration__box">
+              <span class="migration__box-label">Your current host</span>
+              <span class="migration__bar"></span>
+              <span class="migration__bar migration__bar--mid"></span>
+              <span class="migration__bar migration__bar--short"></span>
+            </div>
+
+            <svg class="migration__arrow" viewBox="0 0 130 70" fill="none">
+              <path id="migrationPathCph" class="migration__arrow-path" d="M4 46C30 12 78 8 118 26" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round"/>
+              <path d="M108 17l12 9-13 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <!-- File "packet" that rides the dashed path from the old host to Server Salad -->
+              <g class="migration__packet">
+                <rect x="-5" y="-6.5" width="10" height="13" rx="2" fill="#1b2427" stroke="#f57e20" stroke-width="1.5"/>
+                <path d="M-2.5-3h5M-2.5 0h5M-2.5 3h3" stroke="#f57e20" stroke-width="1.2" stroke-linecap="round"/>
+                <animateMotion dur="2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
+                  <mpath href="#migrationPathCph" xlink:href="#migrationPathCph"/>
+                </animateMotion>
+                <animate attributeName="opacity" dur="2.6s" repeatCount="indefinite"
+                         values="0;1;1;1;0" keyTimes="0;0.12;0.5;0.85;1"/>
+              </g>
+            </svg>
+
+            <div class="migration__box migration__box--ours">
+              <span class="migration__box-label">Server Salad</span>
+              <span class="migration__tick">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12.5l4.5 4.5L19 7.5"/>
+                </svg>
+              </span>
+              <span class="migration__box-note">NVMe cloud</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="migration__grid">
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/cpanel-account-move-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Free &amp; Complete<br>cPanel Account Move</h3>
+            <p class="migration-card__desc">We transfer your entire cPanel account from your previous host at zero additional cost, handling all technical work for you.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/api-transfers-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Automated &amp; Secure<br>API Transfers</h3>
+            <p class="migration-card__desc">Migrations execute directly through secure system APIs, keeping your website files, databases, and DNS configurations intact.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/quick-request-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Quick &amp; Simple<br>Request Process</h3>
+            <p class="migration-card__desc">Submit your migration request in seconds without filling out complicated technical forms or dealing with tedious back-and-forth.</p>
+          </div>
+
+          <div class="migration-card">
+            <span class="migration-card__icon">
+              <span class="migration-card__icon-img" style="--migration-icon: url(/server-salad-cloud-services-web/assets/img/migration/email-retention-icon.svg)" aria-hidden="true"></span>
+            </span>
+            <h3 class="migration-card__title">Complete Data &amp;<br>Email Retention</h3>
+            <p class="migration-card__desc">All mailboxes, saved emails, and account credentials transfer over seamlessly without requiring manual re-configuration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
