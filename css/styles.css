@@ -928,6 +928,60 @@ button { font: inherit; cursor: pointer; }
 }
 .nav__link:hover { color: var(--brand-orange); }
 
+/* Not-yet-launched top-level nav items (Servers, Domains): plain <span>, not a
+   link — hovering/focusing shows a small "Launching Soon" tooltip below it.
+   Same white-pill/orange-border look as .hero-card__badge, for visual
+   consistency with the other "coming soon" treatments on the site. */
+.nav__link--soon { cursor: default; }
+.nav__link--soon:hover { color: rgba(255, 255, 255, .9); }
+
+.nav__tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  margin-top: 14px;
+  background: #fff;
+  color: var(--brand-orange);
+  border: 1.5px solid var(--brand-orange);
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 20;
+}
+.nav__tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: var(--brand-orange);
+}
+.nav__tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(1.5px);
+  border: 5px solid transparent;
+  border-bottom-color: #fff;
+}
+.nav__item--soon:hover .nav__tooltip,
+.nav__link--soon:focus-visible + .nav__tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
