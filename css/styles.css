@@ -2823,34 +2823,49 @@ button { font: inherit; cursor: pointer; }
 
 .cph-email__visual { display: flex; justify-content: center; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
-.cph-email__art-env { fill: rgba(255, 255, 255, .04); stroke: rgba(255, 255, 255, .32); stroke-width: 2; }
-.cph-email__art-line { fill: none; stroke: rgba(255, 255, 255, .26); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Sketch reveal: each shape's stroke draws in from stroke-dashoffset 100 -> 0
+   (pathLength="100" on the markup normalizes the dash length so this works the
+   same regardless of the shape's actual perimeter), holds, fades out, and
+   restarts. Lines are staggered behind the envelope outline via animation-delay
+   so the outline appears to sketch first, then its folds. */
+.cph-email__art-env {
+  fill: rgba(255, 255, 255, .04);
+  stroke: rgba(255, 255, 255, .32);
+  stroke-width: 2;
+  stroke-dasharray: 100;
+  animation: cph-email-draw 6s ease-in-out infinite;
+}
+.cph-email__art-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, .26);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  animation: cph-email-draw 6s ease-in-out infinite;
+}
+.cph-email__art-line:nth-of-type(1) { animation-delay: .6s; }
+.cph-email__art-line:nth-of-type(2) { animation-delay: .9s; }
+@keyframes cph-email-draw {
+  0%   { stroke-dashoffset: 100; opacity: 0; }
+  8%   { opacity: 1; }
+  45%  { stroke-dashoffset: 0; opacity: 1; }
+  75%  { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
 .cph-email__art-badge { fill: rgba(245, 126, 32, .14); stroke: var(--brand-orange); stroke-width: 2; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
-
-/* Animated send/receive on the envelope illustration. The packets themselves ride
-   their paths via SMIL <animateMotion> in the markup; these rules style them and
-   animate the dashed trails + the @ badge ping ring. */
-.cph-email__art-flow {
-  stroke: var(--brand-orange);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-dasharray: 3 7;
-  opacity: .32;
-  animation: cph-email-flow 1s linear infinite;
-}
-@keyframes cph-email-flow { to { stroke-dashoffset: -10; } } /* 3 + 7 = one dash cycle */
-
-.cph-email__art-packet > rect { fill: var(--brand-orange); }
-.cph-email__art-packet-flap { stroke: rgba(20, 27, 37, .85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
 
-/* SMIL animations can't be halted by CSS `animation: none`, so the animated
-   elements are hidden outright — same approach as the Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-flow { animation: none; opacity: .28; }
-  .cph-email__art-packet,
+  .cph-email__art-env,
+  .cph-email__art-line {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
   .cph-email__art-ping { display: none; }
 }
 

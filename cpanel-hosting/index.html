@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=260">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=261">
 </head>
 <body>
 
@@ -366,32 +366,15 @@
         <div class="cph-email__top">
           <div class="cph-email__visual">
             <svg class="cph-email__art" viewBox="0 0 260 190" fill="none" aria-hidden="true">
-              <rect class="cph-email__art-env" x="10" y="20" width="214" height="150" rx="16"/>
-              <path class="cph-email__art-line" d="M22 36 117 110 212 36"/>
-              <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94"/>
-
-              <!-- Animated send / receive: a packet drops into the envelope (receiving)
-                   and another leaves toward the @ badge (sending), on flowing dashed
-                   trails. mpath references the path by id so the packet can't drift
-                   off it. Disabled under prefers-reduced-motion (see styles.css). -->
-              <path id="cphEmailIn" class="cph-email__art-flow" d="M6 22C40 6 82 18 117 46"/>
-              <path id="cphEmailOut" class="cph-email__art-flow" d="M150 120C190 142 224 150 250 160"/>
-              <g class="cph-email__art-packet">
-                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
-                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
-                <animateMotion dur="2.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
-                  <mpath href="#cphEmailIn" xlink:href="#cphEmailIn"/>
-                </animateMotion>
-                <animate attributeName="opacity" dur="2.8s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.8;1"/>
-              </g>
-              <g class="cph-email__art-packet">
-                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
-                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
-                <animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1">
-                  <mpath href="#cphEmailOut" xlink:href="#cphEmailOut"/>
-                </animateMotion>
-                <animate attributeName="opacity" dur="2.8s" begin="1.4s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.06;0.22;0.78;1"/>
-              </g>
+              <!-- Sketch reveal: the envelope outline "draws" itself in (stroke-dashoffset
+                   100 -> 0, via pathLength="100" so the dash animates the same way
+                   regardless of each shape's actual perimeter), holds, fades, and
+                   redraws on a loop. The two fold lines are staggered slightly behind
+                   the outer envelope so it reads as outline-then-fold. See styles.css
+                   cph-email-draw keyframes; disabled under prefers-reduced-motion. -->
+              <rect class="cph-email__art-env" x="10" y="20" width="214" height="150" rx="16" pathLength="100"/>
+              <path class="cph-email__art-line" d="M22 36 117 110 212 36" pathLength="100"/>
+              <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94" pathLength="100"/>
 
               <circle class="cph-email__art-badge" cx="214" cy="146" r="36"/>
               <circle class="cph-email__art-ping" cx="214" cy="146" r="34">
