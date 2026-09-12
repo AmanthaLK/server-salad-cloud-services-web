@@ -2924,7 +2924,7 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
 
 /* Static envelope outline — no reveal/fade cycle. Motion lives entirely in
-   the "typing…" indicator dots (.cph-email__art-typing) further down. */
+   the "sent!" particle burst (.cph-email__art-burst) further down. */
 .cph-email__art-env {
   fill: rgba(255, 255, 255, .04);
   stroke: rgba(255, 255, 255, .32);
@@ -2942,15 +2942,15 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
 
-/* "Typing…" indicator dots, sitting under the envelope's flap apex — their
-   r/opacity pulse is driven by SMIL <animate> in the markup (staggered
-   0.2s apart per dot, chat-app style). */
-.cph-email__art-typing-dot { fill: var(--brand-orange); }
+/* "Sent!" particle burst dots — their outward cx/cy travel + fade is driven
+   by SMIL <animate> in the markup (6 dots, one per 60° direction, all firing
+   and fading together on the same timeline). */
+.cph-email__art-burst-dot { fill: var(--brand-orange); }
 
-/* SMIL animations can't be halted by CSS `animation: none`, so the typing
+/* SMIL animations can't be halted by CSS `animation: none`, so the burst
    dots are hidden outright — same approach as the Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-typing,
+  .cph-email__art-burst,
   .cph-email__art-ping { display: none; }
 }
 
