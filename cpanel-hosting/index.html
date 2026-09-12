@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=270">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=271">
 </head>
 <body>
 
@@ -388,11 +388,10 @@
         <div class="cph-email__top">
           <div class="cph-email__visual">
             <svg class="cph-email__art" viewBox="0 0 260 190" fill="none" aria-hidden="true">
-              <!-- Static envelope outline (no reveal/fade cycle any more) — the
-                   motion now lives entirely in the small mail icon orbiting the
-                   @ badge below, on a fixed circular path (radius 43, 7px
-                   outside the badge's own radius of 36 — kept within the 260x190
-                   viewBox at its widest point, cx 214 + r 43 = 257). -->
+              <!-- Static envelope outline (no reveal/fade cycle) — the motion
+                   now lives entirely in the "typing…" indicator below, sitting
+                   just under the flap's apex (117,110) as if a message were
+                   actively being composed inside the envelope. -->
               <rect class="cph-email__art-env" x="10" y="20" width="214" height="150" rx="16"/>
               <path class="cph-email__art-line" d="M22 36 117 110 212 36"/>
               <path class="cph-email__art-line" d="M22 152 94 94M212 152 140 94"/>
@@ -403,20 +402,25 @@
                 <animate attributeName="opacity" values="0.5;0" dur="2.8s" repeatCount="indefinite" keyTimes="0;1" calcMode="spline" keySplines="0.2 0.6 0.2 1"/>
               </circle>
 
-              <!-- Orbiting mail icon: a small envelope continuously circles the
-                   @ badge along #cphEmailOrbit (an invisible circular path — no
-                   fill/stroke of its own, it only exists for the mpath below to
-                   reference). Disabled under prefers-reduced-motion (see
-                   styles.css — SMIL can't be halted by CSS animation:none, so
-                   it's hidden outright there, same approach used elsewhere on
-                   this page). -->
-              <path id="cphEmailOrbit" d="M257 146A43 43 0 1 1 171 146A43 43 0 1 1 257 146" fill="none" stroke="none"/>
-              <g class="cph-email__art-packet">
-                <rect x="-5" y="-3.5" width="10" height="7" rx="1.6"/>
-                <path class="cph-email__art-packet-flap" d="M-5 -2.5 0 1 5 -2.5"/>
-                <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear">
-                  <mpath href="#cphEmailOrbit" xlink:href="#cphEmailOrbit"/>
-                </animateMotion>
+              <!-- "Typing…" indicator: 3 dots pulse in sequence (classic chat-app
+                   composing indicator), each 0.2s behind the last, suggesting a
+                   message being written inside the envelope before it sends.
+                   Disabled under prefers-reduced-motion (see styles.css — SMIL
+                   can't be halted by CSS animation:none, so it's hidden outright
+                   there, same approach used elsewhere on this page). -->
+              <g class="cph-email__art-typing">
+                <circle class="cph-email__art-typing-dot" cx="106" cy="126" r="3">
+                  <animate attributeName="r" values="3;5;3" dur="1.2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                  <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                </circle>
+                <circle class="cph-email__art-typing-dot" cx="117" cy="126" r="3">
+                  <animate attributeName="r" values="3;5;3" dur="1.2s" repeatCount="indefinite" begin="0.2s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                  <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" begin="0.2s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                </circle>
+                <circle class="cph-email__art-typing-dot" cx="128" cy="126" r="3">
+                  <animate attributeName="r" values="3;5;3" dur="1.2s" repeatCount="indefinite" begin="0.4s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                  <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" begin="0.4s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+                </circle>
               </g>
 
               <text class="cph-email__art-at" x="214" y="157" text-anchor="middle">@</text>

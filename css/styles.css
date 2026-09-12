@@ -2924,7 +2924,7 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art { width: 100%; max-width: 340px; height: auto; }
 
 /* Static envelope outline — no reveal/fade cycle. Motion lives entirely in
-   the orbiting mail icon (.cph-email__art-packet) further down. */
+   the "typing…" indicator dots (.cph-email__art-typing) further down. */
 .cph-email__art-env {
   fill: rgba(255, 255, 255, .04);
   stroke: rgba(255, 255, 255, .32);
@@ -2942,16 +2942,15 @@ button { font: inherit; cursor: pointer; }
 .cph-email__art-at { fill: var(--brand-orange); font-family: var(--font-heading); font-size: 30px; font-weight: 700; }
 .cph-email__art-ping { fill: none; stroke: var(--brand-orange); stroke-width: 1.6; }
 
-/* Small envelope orbiting the @ badge, riding #cphEmailOrbit (an invisible
-   circular path) via SMIL animateMotion in the markup — see the HTML comment
-   there. Same visual style as the old send/receive packet. */
-.cph-email__art-packet > rect { fill: var(--brand-orange); }
-.cph-email__art-packet-flap { stroke: rgba(20, 27, 37, .85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+/* "Typing…" indicator dots, sitting under the envelope's flap apex — their
+   r/opacity pulse is driven by SMIL <animate> in the markup (staggered
+   0.2s apart per dot, chat-app style). */
+.cph-email__art-typing-dot { fill: var(--brand-orange); }
 
-/* SMIL animations can't be halted by CSS `animation: none`, so the orbiting
-   icon is hidden outright — same approach as the Migration packet. */
+/* SMIL animations can't be halted by CSS `animation: none`, so the typing
+   dots are hidden outright — same approach as the Migration packet. */
 @media (prefers-reduced-motion: reduce) {
-  .cph-email__art-packet,
+  .cph-email__art-typing,
   .cph-email__art-ping { display: none; }
 }
 
