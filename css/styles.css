@@ -2376,6 +2376,14 @@ button { font: inherit; cursor: pointer; }
   top: 129px; /* 75px toggle offset + its 14px+26px+14px padding-top/content/padding-bottom (equal top/bottom padding), all inside its own painted box so nothing shows through */
   z-index: 15;
   border-top-left-radius: 14px; /* .cph-table has no overflow:hidden any more (see comment above it) */
+  /* overflow:hidden ON the sticky element itself (not an ancestor of it) is
+     safe — it doesn't affect this element's OWN stickiness, only how it
+     clips its own content — and it's needed here: some browsers don't
+     reliably apply border-radius to a position:sticky element once it's
+     actually in its "stuck"/offset state, so the rounded corner above would
+     render fine before sticking and go square after. overflow:hidden forces
+     the clip to actually happen either way. */
+  overflow: hidden;
 }
 .cph-table__intro-flag { width: 34px; height: auto; }
 
@@ -2431,7 +2439,11 @@ button { font: inherit; cursor: pointer; }
 }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
    .cph-table's own border-radius used to get for free via overflow:hidden. */
-.cph-table__pkg--last { border-top-right-radius: 14px; }
+/* overflow:hidden here forces the rounded corner to actually clip while this
+   cell is in its sticky "stuck" state too — see .cph-table__intro's comment
+   for why border-radius alone isn't reliable there. Safe on the sticky
+   element itself; only an ANCESTOR's overflow would break its stickiness. */
+.cph-table__pkg--last { border-top-right-radius: 14px; overflow: hidden; }
 .cph-table__pkg-name {
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
