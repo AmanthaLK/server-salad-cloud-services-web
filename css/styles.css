@@ -2569,7 +2569,10 @@ button { font: inherit; cursor: pointer; }
 .cph-table__label {
   display: flex;
   align-items: center;
-  padding: 13px 20px;
+  /* Vertical padding tightened from 13px — with the row-separator lines gone
+     (see .cph-table__val's comment), that much padding read as too loose a
+     gap between rows. */
+  padding: 8px 20px;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 400;
@@ -2623,7 +2626,11 @@ button { font: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 13px 14px;
+  /* Vertical padding tightened from 13px to 8px, matching .cph-table__label —
+     the border-top row separators used to mark each row's edge, so once
+     those were removed this much padding left the rows looking too loosely
+     spaced. */
+  padding: 8px 14px;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 700;
