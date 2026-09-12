@@ -355,6 +355,16 @@
      price pull closer together — so it takes up less of the viewport while
      browsing the long feature list below.
 
+     Drives a --cph-condense custom property (0 = fully expanded, 1 = fully
+     condensed) that css/styles.css reads via calc() on every affected
+     property, rather than toggling a class tied to a fixed-duration CSS
+     transition — an earlier version did that and it felt like "nothing for
+     a while, then a sudden snap" once the threshold was crossed. Scrubbing a
+     continuous value directly off scroll position instead makes the shrink
+     track the scroll 1:1, with no delay and no snap. Set on
+     .cph-plans__sticky-scope (an ancestor of every affected element) since
+     custom properties inherit, so one write reaches all of them.
+
      Unlike the billing-toggle's is-stuck detector above, this needs to know
      not just WHETHER it's stuck but HOW FAR past that point the page has
      scrolled, and a sticky element's own position stops changing the moment
@@ -363,28 +373,29 @@
      scroll position directly instead: getBoundingClientRect().top on the
      header tells us whether it's currently stuck (it sits exactly at its
      129px offset once it is); the first time that's true, remember
-     window.scrollY, then diff every later scrollY against that anchor and
-     condense once the diff passes CONDENSE_DISTANCE. Resets the moment it's
-     no longer stuck (scrolled back above the table), so scrolling back down
-     re-measures from wherever it re-sticks. */
+     window.scrollY, then turn every later scrollY's distance from that
+     anchor into a 0-1 progress value over CONDENSE_DISTANCE. Resets the
+     moment it's no longer stuck (scrolled back above the table), so
+     scrolling back down re-measures from wherever it re-sticks. */
   var pkgHeaderEls = document.querySelectorAll(".cph-table__intro, .cph-table__pkg");
-  if (pkgHeaderEls.length) {
+  var pkgCondenseScope = document.querySelector(".cph-plans__sticky-scope");
+  if (pkgHeaderEls.length && pkgCondenseScope) {
     var PKG_STICKY_TOP = 129; // matches .cph-table__intro / .cph-table__pkg's own sticky `top`
-    var CONDENSE_DISTANCE = 90; // px of extra scroll past the stick point before condensing
+    var CONDENSE_DISTANCE = 90; // px of extra scroll past the stick point to go from 0 to 1
     var pkgStuckAtY = null;
     var pkgTicking = false;
 
     var updatePkgCondense = function () {
       pkgTicking = false;
       var isStuck = Math.round(pkgHeaderEls[0].getBoundingClientRect().top) <= PKG_STICKY_TOP;
-      var condensed = false;
+      var progress = 0;
       if (isStuck) {
         if (pkgStuckAtY === null) pkgStuckAtY = window.scrollY;
-        condensed = window.scrollY - pkgStuckAtY > CONDENSE_DISTANCE;
+        progress = Math.min(1, Math.max(0, (window.scrollY - pkgStuckAtY) / CONDENSE_DISTANCE));
       } else {
         pkgStuckAtY = null;
       }
-      pkgHeaderEls.forEach(function (el) { el.classList.toggle("is-condensed", condensed); });
+      pkgCondenseScope.style.setProperty("--cph-condense", String(progress));
     };
 
     window.addEventListener("scroll", function () {

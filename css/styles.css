@@ -2594,15 +2594,17 @@ button { font: inherit; cursor: pointer; }
    releasing exactly when .cph-table--main's own bottom edge (now right before
    the CTA row — see .cph-table--cta) reaches this offset. Per owner: once
    scrolling continues well past that initial stick, this whole header row
-   should shrink further — see .cph-table__intro.is-condensed /
-   .cph-table__pkg.is-condensed below, toggled by js/main.js. */
+   should shrink further as scrolling continues — see the --cph-condense
+   custom property below (set by js/main.js on every scroll frame, not a
+   fixed-duration CSS transition, so the shrink tracks the scroll position
+   exactly with no delay-then-snap feel). */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
   justify-content: center; /* centre the flag + heading block in the tall cell */
   /* No `gap` here (moved to .cph-table__intro-flag's own margin-bottom) — a
-     flex `gap` can't be transitioned away when the flag collapses on
-     .is-condensed below, since it isn't owned by either child. */
+     flex `gap` can't be scaled by --cph-condense below, since it isn't owned
+     by either child. */
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
   line-height: 24px;
@@ -2629,25 +2631,22 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   border-top-left-radius: 14px;
 }
+/* Fades out and its margin shrinks in direct proportion to --cph-condense
+   (0 = fully expanded, 1 = fully condensed; see .cph-table__intro's comment
+   above) as the page scrolls, instead of a fixed-duration CSS transition
+   triggered at a threshold — the earlier threshold+transition version had
+   a "nothing happens, then it suddenly snaps" feel; scrubbing it directly
+   off scroll position removes both the delay and the snap. No max-height/
+   overflow:hidden collapse on the flag itself (tried first, reverted):
+   animating a raster image's height that way clips it frame-by-frame
+   instead of scaling it, which read as a glitchy little sliver mid-shrink.
+   Its own un-collapsed height barely matters anyway, since the row's total
+   height is set by the taller .cph-table__pkg cells regardless. */
 .cph-table__intro-flag {
   width: 34px;
   height: auto;
-  margin-bottom: 14px;
-  opacity: 1;
-  transition: opacity .25s ease, margin-bottom .3s ease;
-}
-/* Fades away once scrolled well past the initial stick — see
-   .cph-table__intro's comment above and js/main.js. No max-height/
-   overflow:hidden collapse here (tried first, reverted): animating a
-   raster image's height that way clips it frame-by-frame instead of
-   scaling it, which read as a glitchy little sliver mid-transition rather
-   than a smooth shrink. Opacity + margin animate cleanly with no such
-   artifact — the flag's own un-collapsed height barely matters anyway,
-   since the row's total height is set by the taller .cph-table__pkg cells
-   regardless (see their own is-condensed rules). */
-.cph-table__intro.is-condensed .cph-table__intro-flag {
-  opacity: 0;
-  margin-bottom: 0;
+  margin-bottom: calc(14px * (1 - var(--cph-condense, 0)));
+  opacity: calc(1 - var(--cph-condense, 0));
 }
 
 .cph-table__val {
@@ -2696,16 +2695,14 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   text-align: center;
   /* Inter-child spacing lives on each child's own margin-top now, not a flex
-     `gap` — a `gap` can't be transitioned away when the tagline collapses on
-     .is-condensed below, since it isn't owned by either neighbouring child.
-     Values match the old 16px gap (see each child's own margin comment). */
-  padding: 26px 18px;
+     `gap` — a `gap` can't be scaled by --cph-condense below, since it isn't
+     owned by either neighbouring child. Values match the old 16px gap (see
+     each child's own margin comment). */
+  /* Vertical padding shrinks from 26px to 8px as --cph-condense goes 0 -> 1
+     — see .cph-table__intro's comment above. */
+  padding: calc(26px - 18px * var(--cph-condense, 0)) 18px;
   background: var(--bg-topbar);
-  transition: padding .3s ease;
 }
-/* Shrinks further once scrolled well past the initial stick — see
-   .cph-table__intro's comment above and js/main.js. */
-.cph-table__pkg.is-condensed { padding: 8px 18px; }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
    .cph-table's own border-radius used to get for free via overflow:hidden.
    Same ::before approach as .cph-table__intro (see its comment): a plain
@@ -2728,42 +2725,25 @@ button { font: inherit; cursor: pointer; }
   font-weight: 500;
   color: #fff;
 }
+/* Fades away and its box shrinks to nothing in direct proportion to
+   --cph-condense (see .cph-table__intro's comment above), bringing the
+   package name and price closer together as it goes — no min-height here
+   (an earlier version kept the base min-height in the .is-condensed override
+   and it silently won over max-height, since min-height always wins when
+   the two conflict — the tagline's box stayed full-height, just invisible,
+   which was the actual bug behind the name<->price gap not visibly
+   shrinking). max-height alone, scaled by --cph-condense, is what collapses
+   the space here now. */
 .cph-table__pkg-tagline {
-  margin: 16px 0 0; /* was the parent's 16px gap, now owned here so it can
-                        collapse away below */
-  min-height: 34px;
-  max-height: 60px;
+  margin: calc(16px * (1 - var(--cph-condense, 0))) 0 0; /* was the parent's 16px gap, now owned here */
+  max-height: calc(60px * (1 - var(--cph-condense, 0)));
   overflow: hidden;
-  opacity: 1;
+  opacity: calc(1 - var(--cph-condense, 0));
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 500;
   line-height: 16px;
   color: rgb(255, 255, 255);
-  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;
-}
-/* Fades away once scrolled well past the initial stick, bringing the
-   package name and price closer together — see .cph-table__intro's comment
-   above and js/main.js. */
-.cph-table__pkg.is-condensed .cph-table__pkg-tagline {
-  margin-top: 0;
-  /* min-height must drop too — min-height wins over max-height whenever the
-     two conflict, so leaving the base 34px min-height in place here would
-     have silently defeated the max-height:0 collapse below, keeping the
-     tagline's box (just invisible, via opacity:0) at its full height. That
-     was the actual bug behind the name<->price gap not visibly shrinking
-     despite lowering .cph-table__pkg-price's own margin-top twice. */
-  min-height: 0;
-  max-height: 0;
-  opacity: 0;
-}
-/* Condensing still happens (js/main.js still toggles the class), just as an
-   instant cut instead of an animated shrink. */
-@media (prefers-reduced-motion: reduce) {
-  .cph-table__intro-flag,
-  .cph-table__pkg-tagline,
-  .cph-table__pkg-price,
-  .cph-table__pkg { transition: none; }
 }
 .cph-table__pkg-price {
   /* price + "/mo" share one baseline-aligned row instead of stacking */
@@ -2771,13 +2751,12 @@ button { font: inherit; cursor: pointer; }
   align-items: baseline;
   justify-content: center;
   gap: 5px;
-  margin: 20px 0 0; /* was the parent's 16px gap + this element's own 4px */
+  /* 20px (16px old gap + this element's own 4px) shrinking to 2px as
+     --cph-condense goes 0 -> 1, pulling it in once the tagline above it is
+     gone — see .cph-table__intro's comment above. */
+  margin: calc(20px - 18px * var(--cph-condense, 0)) 0 0;
   color: rgba(255, 255, 255, .6);
-  transition: margin-top .3s ease;
 }
-/* Pulls closer to the name once the tagline above it is gone — see
-   .cph-table__intro's comment and js/main.js. */
-.cph-table__pkg.is-condensed .cph-table__pkg-price { margin-top: 2px; }
 .cph-table__pkg-price strong {
   font-family: "Manrope", var(--font-body);
   font-size: 24px;
