@@ -179,10 +179,10 @@ button { font: inherit; cursor: pointer; }
   padding-top: 28px;
   padding-bottom: 32px;
 }
-/* Web Hosting▾ only (so far — the only one with real existing copy to fill an
-   intro column with, see its comment in header.html): a fixed-width intro column
-   + thin divider + a flexible row of cards, instead of the plain auto-fit grid
-   the other (introless) mega menus use. */
+/* Used by the Web Hosting▾ and Discount Programs▾ menus (see their comments
+   in header.html): a fixed-width intro column + thin divider + a flexible row
+   of cards, instead of the plain auto-fit grid the other (introless) mega
+   menus use. */
 .nav__mega-inner--intro {
   grid-template-columns: 1fr 260px;
   align-items: stretch;
@@ -212,6 +212,10 @@ button { font: inherit; cursor: pointer; }
   color: rgb(40, 39, 39);
   white-space: nowrap;
 }
+/* Discount Programs▾'s title ("Discount Programs") is longer than Web
+   Hosting's ("Web Hosting") and doesn't fit the 300px intro column on one
+   line — let it wrap to two instead of overflowing into the cards column. */
+.nav__mega-intro-title--wrap { white-space: normal; }
 /* Gradient accent word — same red/orange gradient as .hero__title-accent. */
 .nav__mega-intro-title strong {
   font-weight: 700;
