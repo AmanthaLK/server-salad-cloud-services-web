@@ -2663,7 +2663,7 @@ button { font: inherit; cursor: pointer; }
   transform-origin: 46.5% 37%;
   transition: transform .5s ease;
 }
-.cph-why__map:hover .cph-why__map-inner { transform: scale(1.6); }
+.cph-why__map:hover .cph-why__map-inner { transform: scale(2.6); }
 .cph-why__map-img { display: block; width: 100%; height: auto; }
 
 /* Single marker over London — same map image and same coordinates as the

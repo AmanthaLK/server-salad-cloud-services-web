@@ -49,7 +49,7 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=258**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
+  **v=259**); `js/main.js` has its own separate `?v=N` (currently **v=13**).
   Bump the relevant one any time that file changes, in **every** page's tag,
   so browsers fetch the latest version instead of a stale cached copy.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
@@ -2865,7 +2865,7 @@ page's .cph-* rules are the second half of this same file, in the next block.)*
   transform-origin: 46.5% 37%;
   transition: transform .5s ease;
 }
-.cph-why__map:hover .cph-why__map-inner { transform: scale(1.6); }
+.cph-why__map:hover .cph-why__map-inner { transform: scale(2.6); }
 .cph-why__map-img { display: block; width: 100%; height: auto; }
 
 /* Single marker over London — same map image and same coordinates as the
@@ -3928,7 +3928,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=258">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=259">
 </head>
 <body>
 
@@ -4362,7 +4362,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=258">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=259">
 </head>
 <body>
 
@@ -5057,7 +5057,7 @@ After building from Parts A/B, confirm:
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
 - [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **both**
-      HTML pages (currently v=258 / v=13) — bump both on every future change to
+      HTML pages (currently v=259 / v=13) — bump both on every future change to
       that file, in every page's tag.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows
