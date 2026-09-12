@@ -79,7 +79,7 @@
      once the real markup is in the DOM, since it queries for nav elements. */
   var headerMount = document.getElementById("site-header");
   if (headerMount) {
-    fetch("/serversalad/partials/header.html", { cache: "no-store" })
+    fetch("/server-salad-cloud-services-web/partials/header.html", { cache: "no-store" })
       .then(function (res) {
         if (!res.ok) throw new Error("header fetch failed: " + res.status);
         return res.text();
@@ -180,11 +180,11 @@
   /* ===== Shared footer =====
      One copy of the footer markup lives in partials/footer.html; every page that
      wants it just needs `<div id="site-footer"></div>` before the closing </body>
-     script tag. Root-relative path (/serversalad/...) so this works no matter how
-     deep the including page lives (e.g. /serversalad/pages/about.html). */
+     script tag. Root-relative path (/server-salad-cloud-services-web/...) so this works no matter how
+     deep the including page lives (e.g. /server-salad-cloud-services-web/pages/about.html). */
   var footerMount = document.getElementById("site-footer");
   if (footerMount) {
-    fetch("/serversalad/partials/footer.html", { cache: "no-store" })
+    fetch("/server-salad-cloud-services-web/partials/footer.html", { cache: "no-store" })
       .then(function (res) {
         if (!res.ok) throw new Error("footer fetch failed: " + res.status);
         return res.text();
@@ -294,7 +294,7 @@
       if (t && t.closest && t.closest(".cph-table__pkg-billed-switch")) setAnnual(true);
     });
 
-    fetch("/serversalad/api/pricing.php", { cache: "no-store" })
+    fetch("/server-salad-cloud-services-web/api/pricing.php", { cache: "no-store" })
       .then(function (res) {
         if (!res.ok) throw new Error("pricing fetch failed: " + res.status);
         return res.json();
