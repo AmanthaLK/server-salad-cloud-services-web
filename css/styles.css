@@ -2997,7 +2997,7 @@ button { font: inherit; cursor: pointer; }
   height: 3px;
   margin: 18px 0 20px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #ffb27a, var(--brand-orange));
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 .cph-backups__desc {
