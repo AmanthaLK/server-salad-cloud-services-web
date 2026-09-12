@@ -346,4 +346,54 @@
     );
     stickyObserver.observe(billingSentinel);
   }
+
+  /* ===== Package header row: condense further after extra scrolling =====
+     .cph-table__intro / .cph-table__pkg (css/styles.css) pin under the
+     billing toggle at top:129px while scrolling the feature rows. Per owner:
+     once scrolling continues well past that initial stick, this black header
+     should shrink further — the tagline fades out and the package name and
+     price pull closer together — so it takes up less of the viewport while
+     browsing the long feature list below.
+
+     Unlike the billing-toggle's is-stuck detector above, this needs to know
+     not just WHETHER it's stuck but HOW FAR past that point the page has
+     scrolled, and a sticky element's own position stops changing the moment
+     it locks in (that's what "stuck" means) — so an IntersectionObserver
+     firing once at the stick boundary can't measure that. Track window
+     scroll position directly instead: getBoundingClientRect().top on the
+     header tells us whether it's currently stuck (it sits exactly at its
+     129px offset once it is); the first time that's true, remember
+     window.scrollY, then diff every later scrollY against that anchor and
+     condense once the diff passes CONDENSE_DISTANCE. Resets the moment it's
+     no longer stuck (scrolled back above the table), so scrolling back down
+     re-measures from wherever it re-sticks. */
+  var pkgHeaderEls = document.querySelectorAll(".cph-table__intro, .cph-table__pkg");
+  if (pkgHeaderEls.length) {
+    var PKG_STICKY_TOP = 129; // matches .cph-table__intro / .cph-table__pkg's own sticky `top`
+    var CONDENSE_DISTANCE = 90; // px of extra scroll past the stick point before condensing
+    var pkgStuckAtY = null;
+    var pkgTicking = false;
+
+    var updatePkgCondense = function () {
+      pkgTicking = false;
+      var isStuck = Math.round(pkgHeaderEls[0].getBoundingClientRect().top) <= PKG_STICKY_TOP;
+      var condensed = false;
+      if (isStuck) {
+        if (pkgStuckAtY === null) pkgStuckAtY = window.scrollY;
+        condensed = window.scrollY - pkgStuckAtY > CONDENSE_DISTANCE;
+      } else {
+        pkgStuckAtY = null;
+      }
+      pkgHeaderEls.forEach(function (el) { el.classList.toggle("is-condensed", condensed); });
+    };
+
+    window.addEventListener("scroll", function () {
+      if (!pkgTicking) {
+        pkgTicking = true;
+        window.requestAnimationFrame(updatePkgCondense);
+      }
+    }, { passive: true });
+
+    updatePkgCondense(); // initial paint, in case the page loads already scrolled down
+  }
 })();

@@ -2465,9 +2465,9 @@ button { font: inherit; cursor: pointer; }
 }
 
 .cph-table__pkg-billed {
-  margin: -10px 0 0; /* pulls in against the wider 16px base gap, so price +
-                         billed-as-line read as one paired unit, not two
-                         separately-spaced lines */
+  margin: 6px 0 0; /* was the parent's 16px gap + this element's own -10px —
+                       kept net-tight so price + billed-as-line still read as
+                       one paired unit, not two separately-spaced lines */
   min-height: 16px; /* reserves space so toggling Monthly/Annually doesn't
                         reflow the row (the CTA button lives in its own row at
                         the bottom of the table now, not directly below this —
@@ -2592,12 +2592,17 @@ button { font: inherit; cursor: pointer; }
    sitting blank next to the black package headers. Pinned (with .cph-table__pkg
    below) right under .cph-billing-toggle while scrolling the feature rows,
    releasing exactly when .cph-table--main's own bottom edge (now right before
-   the CTA row — see .cph-table--cta) reaches this offset. */
+   the CTA row — see .cph-table--cta) reaches this offset. Per owner: once
+   scrolling continues well past that initial stick, this whole header row
+   should shrink further — see .cph-table__intro.is-condensed /
+   .cph-table__pkg.is-condensed below, toggled by js/main.js. */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
   justify-content: center; /* centre the flag + heading block in the tall cell */
-  gap: 14px;
+  /* No `gap` here (moved to .cph-table__intro-flag's own margin-bottom) — a
+     flex `gap` can't be transitioned away when the flag collapses on
+     .is-condensed below, since it isn't owned by either child. */
   font-family: "Cairo", var(--font-heading);
   font-size: 24px;
   line-height: 24px;
@@ -2624,7 +2629,22 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   border-top-left-radius: 14px;
 }
-.cph-table__intro-flag { width: 34px; height: auto; }
+.cph-table__intro-flag {
+  width: 34px;
+  height: auto;
+  max-height: 26px;
+  margin-bottom: 14px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height .3s ease, opacity .25s ease, margin-bottom .3s ease;
+}
+/* Collapses away once scrolled well past the initial stick — see
+   .cph-table__intro's comment above and js/main.js. */
+.cph-table__intro.is-condensed .cph-table__intro-flag {
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+}
 
 .cph-table__val {
   display: flex;
@@ -2671,14 +2691,17 @@ button { font: inherit; cursor: pointer; }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 16px; /* was 8px — the individual elements' own margins below layer on
-                top of this for an uneven, cramped rhythm; widened the base gap
-                and re-tuned those margins for a more consistent, breathable
-                spacing pattern (name → tagline → price [tightly paired with the
-                billed-as line] → guarantee). */
+  /* Inter-child spacing lives on each child's own margin-top now, not a flex
+     `gap` — a `gap` can't be transitioned away when the tagline collapses on
+     .is-condensed below, since it isn't owned by either neighbouring child.
+     Values match the old 16px gap (see each child's own margin comment). */
   padding: 26px 18px;
   background: var(--bg-topbar);
+  transition: padding .3s ease;
 }
+/* Shrinks further once scrolled well past the initial stick — see
+   .cph-table__intro's comment above and js/main.js. */
+.cph-table__pkg.is-condensed { padding: 14px 18px; }
 /* Last (Premium Salad) header cell only — carries the top-right corner that
    .cph-table's own border-radius used to get for free via overflow:hidden.
    Same ::before approach as .cph-table__intro (see its comment): a plain
@@ -2702,13 +2725,33 @@ button { font: inherit; cursor: pointer; }
   color: #fff;
 }
 .cph-table__pkg-tagline {
-  margin: 0;
+  margin: 16px 0 0; /* was the parent's 16px gap, now owned here so it can
+                        collapse away below */
   min-height: 34px;
+  max-height: 60px;
+  overflow: hidden;
+  opacity: 1;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 500;
   line-height: 16px;
   color: rgb(255, 255, 255);
+  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;
+}
+/* Fades away once scrolled well past the initial stick, bringing the
+   package name and price closer together — see .cph-table__intro's comment
+   above and js/main.js. */
+.cph-table__pkg.is-condensed .cph-table__pkg-tagline {
+  margin-top: 0;
+  max-height: 0;
+  opacity: 0;
+}
+/* Condensing still happens (js/main.js still toggles the class), just as an
+   instant cut instead of an animated shrink. */
+@media (prefers-reduced-motion: reduce) {
+  .cph-table__intro-flag,
+  .cph-table__pkg-tagline,
+  .cph-table__pkg { transition: none; }
 }
 .cph-table__pkg-price {
   /* price + "/mo" share one baseline-aligned row instead of stacking */
@@ -2716,7 +2759,7 @@ button { font: inherit; cursor: pointer; }
   align-items: baseline;
   justify-content: center;
   gap: 5px;
-  margin: 4px 0 0;
+  margin: 20px 0 0; /* was the parent's 16px gap + this element's own 4px */
   color: rgba(255, 255, 255, .6);
 }
 .cph-table__pkg-price strong {
