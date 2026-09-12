@@ -34,7 +34,7 @@ the site exactly as it exists right now, and continue work, without needing hist
   it to a lowercase-hyphenated SEO-friendly filename — never keep an upload's original
   name (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - `css/styles.css` is linked from every page with a cache-busting query string
-  (`css/styles.css?v=N`, currently **v=253**). **`js/main.js` has its own separate
+  (`css/styles.css?v=N`, currently **v=254**). **`js/main.js` has its own separate
   `?v=N`** (currently **v=13**) on its `<script>` tag. **Bump the relevant one any
   time that file changes**, so browsers fetch the latest version instead of
   serving a stale cached copy — this caused real confusion once already (see
@@ -1695,6 +1695,6 @@ unless the owner says otherwise — update this list when that happens:
   as a fabricated number; the owner may choose to keep them anyway (their call), but
   they should never be added silently.
 - `css/styles.css?v=N` cache-busting — bump `N` on every CSS change (see
-  Conventions); currently **v=253** (and `js/main.js?v=13`). Always check the live
+  Conventions); currently **v=254** (and `js/main.js?v=13`). Always check the live
   number in both HTML files rather than trusting a figure remembered from earlier
   in a conversation.

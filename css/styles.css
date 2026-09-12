@@ -2640,8 +2640,10 @@ button { font: inherit; cursor: pointer; }
 .cph-why__desc {
   margin: 0;
   max-width: 560px;
+  font-family: "Manrope", var(--font-body);
   font-size: 15px;
-  line-height: 1.5;
+  font-weight: 300;
+  line-height: 25px;
   color: #55555c;
 }
 
