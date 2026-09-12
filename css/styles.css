@@ -3574,6 +3574,7 @@ button { font: inherit; cursor: pointer; }
 .cph-overview__list {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
   margin: 0;
   padding: 0;
