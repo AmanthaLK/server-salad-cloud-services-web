@@ -2553,8 +2553,8 @@ button { font: inherit; cursor: pointer; }
    the sticky header release exactly when the CTA row arrives instead of
    after it). Split the outer frame's border/radius between them so together
    they still read as one continuous rounded box — border-bottom (main) /
-   border-top (cta) are dropped since each row's own per-cell border-top
-   already draws that seam, same as every other internal row boundary. */
+   border-top (cta) are dropped so no line shows at that seam, same as the
+   (now border-free) boundary between every other row inside the table. */
 .cph-table--main {
   border-bottom: none;
   border-bottom-left-radius: 0;
@@ -2576,7 +2576,6 @@ button { font: inherit; cursor: pointer; }
   line-height: 20px;
   color: rgb(23, 25, 26);
   background: #fafafb;
-  border-top: 1px solid #ececf0;
   border-right: 1px solid #ececf0;
 }
 /* Last row's empty leading cell (under the intro column) — bottom-left corner,
@@ -2602,7 +2601,6 @@ button { font: inherit; cursor: pointer; }
   top: 129px; /* 75px toggle offset + its stuck-state 14px+26px+14px padding-top/content/padding-bottom (.is-stuck — see that class's comment), all inside its own painted box so nothing shows through */
   z-index: 15;
   background: none; /* the white fill now comes from ::before below, not this box's own background */
-  border-top: none; /* it's the true first cell of .cph-table--main now (moved off :first-child — that selector would've also wrongly matched .cph-table__label--last, the first cell of the separate .cph-table--cta grid) */
 }
 /* The white background + rounded top-left corner live on a ::before instead
    of directly on this box: some browsers don't reliably keep clipping a
@@ -2632,7 +2630,6 @@ button { font: inherit; cursor: pointer; }
   line-height: 20px;
   text-align: center;
   color: rgb(23, 25, 26);
-  border-top: 1px solid #ececf0;
 }
 .cph-table__cross { color: #d3382e; }
 
@@ -2733,7 +2730,6 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
   justify-content: center;
   padding: 18px 16px;
-  border-top: 1px solid #ececf0;
 }
 /* Last (Premium Salad) button cell — bottom-right corner, same reasoning as
    .cph-table__pkg--last above. */
@@ -2765,7 +2761,6 @@ button { font: inherit; cursor: pointer; }
   text-decoration: underline;
   text-underline-offset: 3px;
   background: #fafafb;
-  border-top: 1px solid #ececf0;
 }
 /* "Yes" value cells under Exclusive Benefits — check glyph + label. */
 .cph-table__val--yes { color: rgb(23, 25, 26); }
