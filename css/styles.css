@@ -13,7 +13,6 @@
   --accent: #e5484d;
   --accent-2: #ff8a5c;
   --eco-green-light: rgb(95, 227, 154); /* used only in the sustainability section */
-  --security-teal: #00aec0; /* used only in the cpanel-hosting Security in depth section */
   --radius: 8px;
   --container: 1240px;   /* max content width — same on every section */
   --gutter: 24px;        /* left/right page spacing — same on every section */
@@ -3283,11 +3282,13 @@ button { font: inherit; cursor: pointer; }
   overflow: hidden;
   color: var(--text);
   /* Dark section so the page keeps alternating: light backups -> dark
-     security. Teal-tinted glow instead of the usual orange one, matching
-     this section's own accent (--security-teal), a deliberate one-off. */
+     security. Same brand-orange-tinted dark gradient as every other dark
+     band on this page (.cph-features, .cph-email) — kept consistent with
+     the rest of the cpanel-hosting page rather than a one-off accent. */
   background:
-    radial-gradient(circle at 50% 0%, rgba(0, 174, 192, .14) 0, transparent 45%),
-    linear-gradient(160deg, #0b1417 0%, #0d1a1e 55%, #0a1113 100%);
+    radial-gradient(circle at 15% 12%, rgba(245, 126, 32, .12) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(245, 126, 32, .08) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
 }
 
 .cph-security__inner { padding: 88px 0; }
@@ -3318,10 +3319,9 @@ button { font: inherit; cursor: pointer; }
   height: 2px;
   margin: 36px auto 0;
   border-radius: 2px;
-  /* This section's own accent (teal) into the site's red, rather than the
-     brand-orange/red pairing used elsewhere — ties the underline to the
-     teal icons below it. */
-  background: linear-gradient(90deg, var(--security-teal), var(--accent));
+  /* Same red -> brand-orange gradient as .cph-features__underline, for
+     consistency with the rest of the cpanel-hosting page. */
+  background: linear-gradient(90deg, var(--accent), var(--brand-orange));
 }
 
 .cph-security__grid {
@@ -3344,20 +3344,20 @@ button { font: inherit; cursor: pointer; }
   transition: border-color .18s, background .18s, transform .18s;
 }
 .cph-security-card:hover {
-  border-color: rgba(0, 174, 192, .5);
+  border-color: rgba(245, 126, 32, .5);
   background: rgba(255, 255, 255, .07);
   transform: translateY(-3px);
 }
 
 /* Icons are external single-colour SVGs in assets/img/security/ (each card
    sets its own file via the --security-icon custom property), masked with
-   --security-teal — same masked-icon technique used throughout the site. */
+   --brand-orange — same masked-icon technique used throughout the site. */
 .cph-security-card__icon {
   display: block;
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  background-color: var(--security-teal);
+  background-color: var(--brand-orange);
   -webkit-mask: var(--security-icon) center / contain no-repeat;
   mask: var(--security-icon) center / contain no-repeat;
 }
