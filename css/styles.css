@@ -3027,54 +3027,60 @@ button { font: inherit; cursor: pointer; }
 .cph-backups__frame:hover {
   box-shadow: 0 28px 64px rgba(50, 61, 65, .2);
 }
-/* Stage sets up the 3D "scene" (perspective + the shared rounded corners);
-   .cph-backups__flip is the card that actually rotates inside it. aspect-ratio
-   matches the screenshot's own intrinsic 1195x614 so the box holds its shape
-   now that both faces are positioned absolutely rather than sizing the box
-   via a normal in-flow <img>. */
+/* Stage holds the screenshot on top of the real JetBackup logo — overflow
+   hidden + the shared border-radius live here so the cross-dissolve below
+   stays clipped to a clean rounded rect. aspect-ratio matches the
+   screenshot's own intrinsic 1195x614 so the box holds its shape now that
+   both images are positioned absolutely rather than sizing the box via a
+   normal in-flow <img>. */
 .cph-backups__stage {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
   background: #fff;
   aspect-ratio: 1195 / 614;
-  perspective: 1600px;
 }
-/* On hover, the whole card flips over like turning a photo around — the
-   screenshot is the front face, the real JetBackup logo is printed on the
-   back. transform-style: preserve-3d keeps both faces in the same 3D space;
-   backface-visibility on each face is what hides whichever one is currently
-   facing away, so only one is ever visible at a time. */
-.cph-backups__flip {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform .9s cubic-bezier(.65, 0, .35, 1);
-}
-.cph-backups__frame:hover .cph-backups__flip { transform: rotateY(180deg); }
-
+/* On hover, the screenshot zooms out slightly and blurs away while the logo
+   underneath zooms in from a touch smaller and sharpens into focus — a soft
+   cross-dissolve (opacity + scale + blur together), no hard wipe edge or
+   flip, both layers transitioning at once. */
 .cph-backups__shot,
 .cph-backups__logo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  transition: opacity .9s ease, transform .9s ease, filter .9s ease;
 }
-.cph-backups__shot { object-fit: cover; }
+.cph-backups__shot {
+  z-index: 2;
+  object-fit: cover;
+  transform: scale(1);
+  filter: blur(0);
+}
 .cph-backups__logo {
-  /* Pre-rotated 180deg so that once the parent flips, the logo lands right
-     side up (not mirrored) facing the viewer. */
-  transform: rotateY(180deg);
+  z-index: 1;
   box-sizing: border-box;
   padding: 15% 16%;
   object-fit: contain;
   background: #fff;
+  opacity: 0;
+  transform: scale(.85);
+  filter: blur(6px);
+}
+.cph-backups__frame:hover .cph-backups__shot {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: blur(10px);
+}
+.cph-backups__frame:hover .cph-backups__logo {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  .cph-backups__flip { transition: none; }
+  .cph-backups__shot,
+  .cph-backups__logo { transition: none; }
 }
 
 .cph-backups__grid {
