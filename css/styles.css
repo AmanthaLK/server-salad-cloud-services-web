@@ -3394,3 +3394,125 @@ button { font: inherit; cursor: pointer; }
   .cph-security-card__title { font-size: 19px; }
   .cph-security-card__icon { width: 30px; height: 30px; }
 }
+
+/* ===== cPanel Hosting page: workflow ===== */
+.cph-workflow {
+  position: relative;
+  /* Light section — keeps the page alternating: dark security -> light
+     workflow. Same light gradient treatment as .cph-backups. */
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fb 58%, #eef1f7 100%);
+}
+
+.cph-workflow__inner { padding: 88px 0; }
+
+.cph-workflow__head { text-align: center; margin-bottom: 56px; }
+
+/* Type scale matches the source template. */
+.cph-workflow__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  color: rgb(45, 42, 53);
+}
+
+.cph-workflow__subtitle {
+  margin: 14px auto 0;
+  max-width: 600px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 24px;
+  color: rgb(92, 88, 104);
+}
+
+.cph-workflow__underline {
+  width: 64px;
+  height: 3px;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  /* Same red -> orange gradient as .cph-backups__underline /
+     .cph-security__underline (owner's "orange and red mixed gradient"
+     colour code) — brand-orange throughout this page, not the teal used in
+     the supplied mockup (see .cph-workflow-card__icon below). */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.cph-workflow__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 28px;
+}
+
+/* Centred icon-chip -> title -> description stack (unlike the paired
+   icon+title row layout used elsewhere on this page — matches the source
+   template's centred card treatment for this section specifically). */
+.cph-workflow-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 40px 30px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.cph-workflow-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+
+/* Icon chip: a soft orange-tinted rounded square housing the masked icon —
+   same recolour technique as every other section's icons (external
+   single-colour SVG in assets/img/workflow/, set per card via
+   --workflow-icon, painted with --brand-orange), just larger and centred to
+   match this section's own card layout. */
+.cph-workflow-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(245, 126, 32, .1);
+}
+.cph-workflow-card__icon::before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  background-color: var(--brand-orange);
+  -webkit-mask: var(--workflow-icon) center / contain no-repeat;
+  mask: var(--workflow-icon) center / contain no-repeat;
+}
+
+.cph-workflow-card__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 24px;
+  color: rgb(45, 42, 53);
+}
+
+.cph-workflow-card__desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 22px;
+  color: rgb(92, 88, 104);
+}
+
+@media (max-width: 900px) {
+  .cph-workflow__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .cph-workflow__inner { padding: 64px 0; }
+  .cph-workflow__grid { grid-template-columns: 1fr; }
+}
