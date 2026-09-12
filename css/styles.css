@@ -577,6 +577,30 @@ button { font: inherit; cursor: pointer; }
   box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
 }
 
+/* Not-yet-launched services (cPanel Business Hosting, VPS Hosting, Domains):
+   plain <div> now, not a link — hovering reveals a "Launching Soon" overlay
+   instead of navigating anywhere. */
+.hero-card--soon { cursor: default; }
+.hero-card__soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.hero-card--soon:hover .hero-card__soon { opacity: 1; }
+
 /* Floating pill centred on the card's top edge, half in / half out — replaces the
    earlier corner-ribbon treatment. */
 .hero-card__badge {
