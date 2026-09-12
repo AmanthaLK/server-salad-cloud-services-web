@@ -2766,7 +2766,7 @@ button { font: inherit; cursor: pointer; }
 }
 /* Pulls closer to the name once the tagline above it is gone — see
    .cph-table__intro's comment and js/main.js. */
-.cph-table__pkg.is-condensed .cph-table__pkg-price { margin-top: 8px; }
+.cph-table__pkg.is-condensed .cph-table__pkg-price { margin-top: 2px; }
 .cph-table__pkg-price strong {
   font-family: "Manrope", var(--font-body);
   font-size: 24px;
