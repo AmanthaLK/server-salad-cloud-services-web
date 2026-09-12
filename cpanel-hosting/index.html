@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=261">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=262">
 </head>
 <body>
 
@@ -42,6 +42,13 @@
     <!-- ===== Plans & feature comparison ===== -->
     <section class="cph-plans">
       <div class="container">
+        <!-- Sticky scope: bounds exactly the toggle + table (nothing else), so both
+             the toggle and the black package-header row below can be pinned under
+             the nav while scrolling through the feature rows, and release together
+             the instant the CTA button row (bottom of the table) reaches them —
+             see .cph-billing-toggle / .cph-table__intro / .cph-table__pkg in
+             styles.css for the sticky rules that rely on this boundary. -->
+        <div class="cph-plans__sticky-scope">
         <!-- Billing toggle: annual figures are calculated client-side from the
              fetched monthly price (10× monthly = year total, "2 months free" vs.
              12× monthly; that total ÷ 12 = the equivalent /mo rate shown here) —
@@ -225,6 +232,7 @@
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Starter Salad</a></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Standard Salad</a></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Premium Salad</a></div>
+        </div>
         </div>
         </div>
       </div>

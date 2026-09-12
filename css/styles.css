@@ -2183,13 +2183,22 @@ button { font: inherit; cursor: pointer; }
 
 /* Billing toggle (Monthly / Annually) — see js/main.js for the switch handler
    and the monthly↔annual price math, README "Pricing API" for why the annual
-   figures are calculated client-side rather than a 2nd DB column. */
+   figures are calculated client-side rather than a 2nd DB column.
+
+   Pinned under the sticky nav (74px + a small gap) while scrolling through the
+   feature rows below, with the black package-header row (.cph-table__intro /
+   .cph-table__pkg) pinned right beneath it — see .cph-plans__sticky-scope for
+   why both release together the instant the CTA row reaches them. */
 .cph-billing-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 14px;
   margin-bottom: 32px;
+  position: sticky;
+  top: 88px; /* 74px nav + 14px gap */
+  z-index: 20;
+  background: #f7f7f9; /* matches .cph-plans so scrolled-past rows don't show through while stuck */
 }
 .cph-billing-toggle__label {
   font-family: "Montserrat", var(--font-heading);
@@ -2323,7 +2332,9 @@ button { font: inherit; cursor: pointer; }
 }
 .cph-table__label:first-child { border-top: none; background: #fff; }
 /* The otherwise-empty top-left spacer cell carries an intro line instead of
-   sitting blank next to the black package headers. */
+   sitting blank next to the black package headers. Pinned (with .cph-table__pkg
+   below) right under .cph-billing-toggle while scrolling the feature rows —
+   see .cph-plans__sticky-scope for the release-point explanation. */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
@@ -2335,6 +2346,9 @@ button { font: inherit; cursor: pointer; }
   font-weight: 500;
   color: rgb(40, 39, 39);
   text-align: center;
+  position: sticky;
+  top: 146px; /* 88px toggle offset + toggle's own ~26px height + its 32px margin-bottom */
+  z-index: 15;
 }
 .cph-table__intro-flag { width: 34px; height: auto; }
 
@@ -2371,7 +2385,11 @@ button { font: inherit; cursor: pointer; }
 }
 
 .cph-table__pkg {
-  position: relative;
+  /* sticky (not just relative) so this cell pins alongside .cph-table__intro —
+     see .cph-plans__sticky-scope for the release-point explanation. */
+  position: sticky;
+  top: 146px; /* matches .cph-table__intro's offset, so the row pins as one */
+  z-index: 15;
   display: flex;
   flex-direction: column;
   align-items: center;
