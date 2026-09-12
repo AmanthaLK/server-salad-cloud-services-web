@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=268">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=269">
 </head>
 <body>
 
@@ -42,12 +42,15 @@
     <!-- ===== Plans & feature comparison ===== -->
     <section class="cph-plans">
       <div class="container">
-        <!-- Sticky scope: bounds exactly the toggle + table (nothing else), so both
-             the toggle and the black package-header row below can be pinned under
-             the nav while scrolling through the feature rows, and release together
-             the instant the CTA button row (bottom of the table) reaches them —
-             see .cph-billing-toggle / .cph-table__intro / .cph-table__pkg in
-             styles.css for the sticky rules that rely on this boundary. -->
+        <!-- Sticky scope: bounds the toggle + BOTH table grids below (nothing
+             else), giving the toggle its long stick range through the whole
+             table. The black package-header row inside .cph-table--main has
+             its OWN, separate (shorter) bound — that grid's own box, which now
+             ends right before the CTA row — see the comment above
+             .cph-table--cta for why. So the toggle can stay stuck a little
+             longer than the header once the header releases first: content
+             just keeps scrolling normally underneath the still-pinned toggle,
+             same as any ordinary sticky bar — no gap either way. -->
         <div class="cph-plans__sticky-scope">
         <!-- Billing toggle: annual figures are calculated client-side from the
              fetched monthly price (10× monthly = year total, "2 months free" vs.
@@ -63,7 +66,7 @@
         </div>
 
         <div class="cph-table-wrap">
-        <div class="cph-table">
+        <div class="cph-table cph-table--main">
           <!-- Package header row -->
           <div class="cph-table__label cph-table__intro">
             <img src="/server-salad-cloud-services-web/assets/img/flags/uk-flag.svg" alt="United Kingdom" width="34" height="26" class="cph-table__flag cph-table__intro-flag">
@@ -225,9 +228,20 @@
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
           <div class="cph-table__val cph-table__val--yes"><svg class="cph-table__check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12"/></svg><span class="sr-only">Yes</span></div>
-
-          <!-- CTA row — moved here (bottom of the table) per owner; buttons used
-               to sit directly under each price at the top. -->
+        </div>
+        <!-- CTA row lives in its OWN grid, seamlessly stacked right under the one
+             above with the same columns (see .cph-table--main/.cph-table--cta in
+             styles.css), instead of being one more row inside the grid above.
+             The grid a sticky child lives in is what bounds how long it can stay
+             stuck — with the CTA row still inside that same grid, its bottom
+             edge (= the whole grid's bottom edge) was the release point, so the
+             header stayed stuck long enough to fully cover the CTA row first and
+             only let go once the row had already scrolled past — the buttons
+             were never actually visible, just hidden then skipped over. Ending
+             the sticky-bounding grid right BEFORE the CTA row instead means the
+             header releases the moment the CTA row's top arrives, so it scrolls
+             up into view normally like every other row. -->
+        <div class="cph-table cph-table--cta">
           <div class="cph-table__label cph-table__label--last"></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Starter Salad</a></div>
           <div class="cph-table__btn-cell"><a class="btn cph-table__pkg-btn" href="https://example.com/" target="_blank" rel="noopener">Order Standard Salad</a></div>

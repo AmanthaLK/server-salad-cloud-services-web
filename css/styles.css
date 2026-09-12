@@ -2187,8 +2187,11 @@ button { font: inherit; cursor: pointer; }
 
    Pinned under the sticky nav (74px + a small gap) while scrolling through the
    feature rows below, with the black package-header row (.cph-table__intro /
-   .cph-table__pkg) pinned right beneath it — see .cph-plans__sticky-scope for
-   why both release together the instant the CTA row reaches them. */
+   .cph-table__pkg) pinned right beneath it. This toggle's own stick range is
+   bounded by .cph-plans__sticky-scope (toggle + both table grids), longer than
+   the header's — see .cph-table--main / .cph-table--cta for why the header
+   specifically releases right as the CTA row arrives; it's fine for this
+   toggle to stay stuck a bit past that point, same as any ordinary sticky bar. */
 .cph-billing-toggle {
   display: flex;
   align-items: center;
@@ -2339,6 +2342,23 @@ button { font: inherit; cursor: pointer; }
   border: 1px solid #e3e3e8;
   border-radius: 14px;
 }
+/* The CTA row lives in its own grid, seamlessly stacked right under the main
+   one (see the HTML comment above .cph-table--cta for why: it's what makes
+   the sticky header release exactly when the CTA row arrives instead of
+   after it). Split the outer frame's border/radius between them so together
+   they still read as one continuous rounded box — border-bottom (main) /
+   border-top (cta) are dropped since each row's own per-cell border-top
+   already draws that seam, same as every other internal row boundary. */
+.cph-table--main {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.cph-table--cta {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
 
 .cph-table__label {
   display: flex;
@@ -2353,14 +2373,14 @@ button { font: inherit; cursor: pointer; }
   border-top: 1px solid #ececf0;
   border-right: 1px solid #ececf0;
 }
-.cph-table__label:first-child { border-top: none; }
 /* Last row's empty leading cell (under the intro column) — bottom-left corner,
    same reasoning as .cph-table__pkg--last above. */
 .cph-table__label--last { border-bottom-left-radius: 14px; }
 /* The otherwise-empty top-left spacer cell carries an intro line instead of
    sitting blank next to the black package headers. Pinned (with .cph-table__pkg
-   below) right under .cph-billing-toggle while scrolling the feature rows —
-   see .cph-plans__sticky-scope for the release-point explanation. */
+   below) right under .cph-billing-toggle while scrolling the feature rows,
+   releasing exactly when .cph-table--main's own bottom edge (now right before
+   the CTA row — see .cph-table--cta) reaches this offset. */
 .cph-table__intro {
   flex-direction: column;
   align-items: center;
@@ -2376,6 +2396,7 @@ button { font: inherit; cursor: pointer; }
   top: 129px; /* 75px toggle offset + its 14px+26px+14px padding-top/content/padding-bottom (equal top/bottom padding), all inside its own painted box so nothing shows through */
   z-index: 15;
   background: none; /* the white fill now comes from ::before below, not this box's own background */
+  border-top: none; /* it's the true first cell of .cph-table--main now (moved off :first-child — that selector would've also wrongly matched .cph-table__label--last, the first cell of the separate .cph-table--cta grid) */
 }
 /* The white background + rounded top-left corner live on a ::before instead
    of directly on this box: some browsers don't reliably keep clipping a
@@ -2427,8 +2448,8 @@ button { font: inherit; cursor: pointer; }
 }
 
 .cph-table__pkg {
-  /* sticky (not just relative) so this cell pins alongside .cph-table__intro —
-     see .cph-plans__sticky-scope for the release-point explanation. */
+  /* sticky (not just relative) so this cell pins alongside .cph-table__intro
+     and releases the same way (see .cph-table__intro's comment above). */
   position: sticky;
   top: 129px; /* matches .cph-table__intro's offset, so the row pins as one */
   z-index: 15;
