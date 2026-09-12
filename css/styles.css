@@ -2739,6 +2739,15 @@ button { font: inherit; cursor: pointer; }
   max-height: calc(60px * (1 - var(--cph-condense, 0)));
   overflow: hidden;
   opacity: calc(1 - var(--cph-condense, 0));
+  /* max-height alone clips this multi-line text at a plain horizontal line
+     as it shrinks — mid-scroll that means whatever's below the cut sits
+     right at the box edge, so a line can end up sliced through mid-glyph,
+     reading as garbled, not readable. Scaling the whole block down in sync
+     (same --cph-condense value driving both) keeps its visible content's
+     proportions matching the shrinking box at every point instead, so it
+     reads as one whole (if compressed) block of text, never a cut-off one. */
+  transform: scaleY(calc(1 - var(--cph-condense, 0)));
+  transform-origin: top;
   font-family: "Manrope", var(--font-body);
   font-size: 13px;
   font-weight: 500;
