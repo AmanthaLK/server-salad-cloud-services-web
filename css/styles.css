@@ -2743,6 +2743,13 @@ button { font: inherit; cursor: pointer; }
    above and js/main.js. */
 .cph-table__pkg.is-condensed .cph-table__pkg-tagline {
   margin-top: 0;
+  /* min-height must drop too — min-height wins over max-height whenever the
+     two conflict, so leaving the base 34px min-height in place here would
+     have silently defeated the max-height:0 collapse below, keeping the
+     tagline's box (just invisible, via opacity:0) at its full height. That
+     was the actual bug behind the name<->price gap not visibly shrinking
+     despite lowering .cph-table__pkg-price's own margin-top twice. */
+  min-height: 0;
   max-height: 0;
   opacity: 0;
 }
