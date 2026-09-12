@@ -449,10 +449,9 @@ button { font: inherit; cursor: pointer; }
   justify-content: center;
   border-radius: var(--radius);
   background: rgba(255, 255, 255, .96);
-  font-family: "Manrope", var(--font-body);
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 23px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
   letter-spacing: .4px;
   text-transform: uppercase;
   color: var(--brand-orange);
