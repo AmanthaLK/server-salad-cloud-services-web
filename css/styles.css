@@ -2116,7 +2116,11 @@ button { font: inherit; cursor: pointer; }
   margin-bottom: 0;
 }
 
-.footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+/* align-items: flex-start so each <li> shrinks to its own text width instead
+   of stretching to the column's full width — otherwise .footer__tooltip's
+   left:50% below centers on that full-width box instead of the short label
+   text sitting inside it, landing the tooltip far off to the side. */
+.footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .footer__links a,
 .footer__links-link--soon {
   font-family: "Manrope", var(--font-body);
