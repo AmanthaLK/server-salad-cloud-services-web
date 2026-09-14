@@ -4013,20 +4013,12 @@ button { font: inherit; cursor: pointer; }
   display: none;
   padding: 64px 0;
 }
-.discount-tabs__panel.is-active {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: start;
-}
-.discount-tabs__panel-title {
-  margin: 0;
-  font-family: "Cairo", var(--font-heading);
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 46px;
-  color: rgb(27, 27, 31);
-}
+/* Used to be a 2-column grid (a big heading on the left, this body on the
+   right) — the heading was removed per owner request, so the body just
+   takes the row on its own now, capped to a readable width instead of
+   stretching the full container. */
+.discount-tabs__panel.is-active { display: block; }
+.discount-tabs__panel-body { max-width: 640px; }
 .discount-tabs__panel-subtitle {
   margin: 0 0 16px;
   font-family: "Cairo", var(--font-heading);
@@ -4048,6 +4040,4 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
   .discount-tabs__label { font-size: 22px; line-height: 26px; }
-  .discount-tabs__panel.is-active { grid-template-columns: 1fr; gap: 24px; }
-  .discount-tabs__panel-title { font-size: 30px; line-height: 36px; }
 }
