@@ -4061,13 +4061,12 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
-/* Small caption link under each panel's description — was "Terms &
+/* Small plain-text caption under each panel's description (not a link —
+   was briefly an <a>, corrected to a <span> per owner) — was "Terms &
    Conditions", relabelled "Eligibility Criteria" per owner. Typography
    matched to an owner-supplied font-inspector spec (Manrope 600, 12px/18px)
    — colour deliberately kept as the site's own brand orange rather than
-   the spec's green, per explicit owner instruction. #eligibility is a new
-   placeholder anchor (not the footer's #terms one, since this is a
-   different link now) until a real destination page exists. */
+   the spec's green, per explicit owner instruction. */
 .discount-tabs__panel-eligibility {
   display: inline-block;
   font-family: "Manrope", var(--font-body);
@@ -4075,12 +4074,6 @@ button { font: inherit; cursor: pointer; }
   font-weight: 600;
   line-height: 18px;
   color: var(--brand-orange);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.discount-tabs__panel-eligibility:hover,
-.discount-tabs__panel-eligibility:focus-visible {
-  color: rgb(27, 27, 31);
 }
 
 @media (max-width: 760px) {
