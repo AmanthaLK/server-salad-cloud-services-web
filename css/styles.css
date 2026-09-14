@@ -3942,7 +3942,7 @@ button { font: inherit; cursor: pointer; }
    opacity applies to the PHOTO alone — putting opacity on the section would
    fade the tabs and all the copy with it.
 
-   Sits at 25% over the section's white, so it reads as a wash rather than a
+   Sits at 10% over the section's white, so it reads as a wash rather than a
    photo, and fades with the same .28s timing as the rest of the switch.
    data-active-tab is written by js/main.js and is also present in the markup,
    so the correct state is there on first paint. */
@@ -3958,7 +3958,7 @@ button { font: inherit; cursor: pointer; }
   pointer-events: none;
   transition: opacity .28s cubic-bezier(.4, 0, .2, 1); /* shared switch timing */
 }
-.discount-tabs[data-active-tab="1"] .discount-tabs__bg { opacity: .25; }
+.discount-tabs[data-active-tab="1"] .discount-tabs__bg { opacity: .1; }
 .discount-tabs__bar {
   position: relative; /* containing block for the sliding indicator below */
   z-index: 1; /* above .discount-tabs__bg */
