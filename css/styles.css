@@ -4166,6 +4166,12 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__criteria-card {
   padding: 22px;
+  /* Per owner: box text is centred. Set here rather than on the panel, because
+     the panels each align their own body differently (left/centre/right, see
+     below) and the criteria grid is a SIBLING of .discount-tabs__panel-body,
+     not a child — so it never inherited those alignments and all three tabs'
+     boxes centre identically from this one rule. */
+  text-align: center;
   background: #fff;
   border: 1px solid #e6e6ec;
   border-radius: 12px;
