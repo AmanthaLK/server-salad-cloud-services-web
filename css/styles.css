@@ -4011,28 +4011,27 @@ button { font: inherit; cursor: pointer; }
    the tab's own bottom edge instead of offsetting for that border.
 
    It's ONE shared element that slides, not a bar per tab: an is-active
-   ::after on each tab could only pop in and out, never travel. js/main.js
-   writes --tab-index (which tab is selected) and --tab-count onto the bar;
-   everything else is CSS.
+   ::after on each tab could only pop in and out, never travel.
 
-   The width maths has to account for .discount-tabs__bar also being a
-   .container: a percentage width on an absolutely positioned element
-   resolves against the containing block's PADDING box, while the grid
-   columns live in its CONTENT box. Subtracting the container's two
-   --gutter paddings reconciles the two, so one "column" here is exactly
-   one tab wide — and translateX(100%) then steps precisely one tab across,
-   because a transform percentage resolves against the element's own width.
-   Using the --gutter token means this stays correct at the ≤600px
-   breakpoint, where the token drops from 24px to 16px. */
+   Its width and offset are measured off the active tab by js/main.js and
+   written here as plain pixel styles — see that file for why driving the
+   transform through a CSS custom property did NOT animate. Because
+   offsetLeft is relative to the bar and already includes the bar's
+   .container padding, nothing here needs to know about --gutter or assume
+   the tabs are equal thirds. */
 .discount-tabs__indicator {
   position: absolute;
-  left: var(--gutter);
+  left: 0;
   bottom: 0;
   height: 3px;
-  width: calc((100% - 2 * var(--gutter)) / var(--tab-count, 3));
+  width: 0; /* real width + offset are measured and set by js/main.js */
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  transform: translateX(calc(var(--tab-index, 0) * 100%));
-  transition: transform .32s cubic-bezier(.4, 0, .2, 1);
+  /* No transition until .is-ready is added, so the very first placement on
+     page load snaps into position instead of sliding in from the left. */
+}
+.discount-tabs__indicator.is-ready {
+  transition: transform .4s cubic-bezier(.65, 0, .35, 1),
+              width .4s cubic-bezier(.65, 0, .35, 1);
 }
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
@@ -4067,7 +4066,7 @@ button { font: inherit; cursor: pointer; }
    its own — adding .is-active restarts this animation every switch. */
 .discount-tabs__panel.is-active {
   display: block;
-  animation: discount-panel-in .32s cubic-bezier(.4, 0, .2, 1) both;
+  animation: discount-panel-in .4s cubic-bezier(.65, 0, .35, 1) both;
 }
 @keyframes discount-panel-in {
   from { opacity: 0; transform: translateY(8px); }
@@ -4075,7 +4074,7 @@ button { font: inherit; cursor: pointer; }
 }
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {
-  .discount-tabs__indicator { transition: none; }
+  .discount-tabs__indicator.is-ready { transition: none; }
   .discount-tabs__panel.is-active { animation: none; }
 }
 .discount-tabs__panel-body { max-width: 640px; }

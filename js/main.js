@@ -428,25 +428,39 @@
   var discountTabs = document.querySelectorAll(".discount-tabs__tab");
   var discountPanels = document.querySelectorAll(".discount-tabs__panel");
   if (discountTabs.length && discountPanels.length) {
-    /* The active-tab underline is one shared element that slides, rather than
-       a bar drawn per tab — see .discount-tabs__indicator in css/styles.css.
-       All this needs from JS is WHICH tab is selected; the CSS does the
-       positioning and the easing from these two custom properties. */
+    /* The active-tab underline is one shared element that slides between tabs
+       — see .discount-tabs__indicator in css/styles.css.
+
+       Its width and offset are MEASURED off the active tab and written as
+       plain pixel styles. An earlier version drove the transform through CSS
+       custom properties instead (translateX(calc(var(--tab-index) * 100%))),
+       which didn't animate: an unregistered custom property has no type, so
+       browsers treat changes to it as discrete and a transition on a property
+       whose value merely derives from it doesn't reliably interpolate — the
+       bar jumped instead of sliding. Setting `transform` directly on the
+       element transitions the way any ordinary property change does.
+
+       Measuring also means the bar no longer has to reason about the tab
+       bar's .container padding or assume the tabs are equal thirds:
+       offsetLeft is already relative to the bar (its offsetParent) and
+       includes that padding. */
     var discountBar = document.querySelector(".discount-tabs__bar");
-    if (discountBar) {
-      discountBar.style.setProperty("--tab-count", discountTabs.length);
-    }
+    var discountIndicator = document.querySelector(".discount-tabs__indicator");
+
+    var moveDiscountIndicator = function (tab) {
+      if (!discountIndicator || !tab) return;
+      discountIndicator.style.width = tab.offsetWidth + "px";
+      discountIndicator.style.transform = "translateX(" + tab.offsetLeft + "px)";
+    };
 
     var activateDiscountTab = function (tab) {
       var target = tab.getAttribute("data-tab");
-      discountTabs.forEach(function (t, i) {
+      moveDiscountIndicator(tab);
+      discountTabs.forEach(function (t) {
         var active = t === tab;
         t.classList.toggle("is-active", active);
         t.setAttribute("aria-selected", active ? "true" : "false");
         t.tabIndex = active ? 0 : -1;
-        if (active && discountBar) {
-          discountBar.style.setProperty("--tab-index", i);
-        }
       });
       discountPanels.forEach(function (p) {
         var active = p.getAttribute("data-panel") === target;
@@ -456,6 +470,27 @@
     };
     discountTabs.forEach(function (tab) {
       tab.addEventListener("click", function () { activateDiscountTab(tab); });
+    });
+
+    /* Place the bar under whichever tab starts active, then switch the
+       transition on a frame later — otherwise it would visibly slide in from
+       the left edge on first load. Re-measured on resize because the tabs
+       change width with the viewport. */
+    var initialDiscountTab = null;
+    discountTabs.forEach(function (t) {
+      if (!initialDiscountTab && t.classList.contains("is-active")) initialDiscountTab = t;
+    });
+    moveDiscountIndicator(initialDiscountTab || discountTabs[0]);
+    requestAnimationFrame(function () {
+      if (discountIndicator) discountIndicator.classList.add("is-ready");
+    });
+
+    window.addEventListener("resize", function () {
+      var current = null;
+      discountTabs.forEach(function (t) {
+        if (!current && t.classList.contains("is-active")) current = t;
+      });
+      moveDiscountIndicator(current || discountTabs[0]);
     });
 
     /* Deep-link from the Discount Programs mega-menu cards (see
