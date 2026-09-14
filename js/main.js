@@ -530,6 +530,19 @@
         if (active) {
           p.hidden = false;
           p.classList.add("is-active");
+          /* Staggered entrance for the copy and the aside images (see
+             .discount-tabs__panel--entering in css/styles.css). It's a class
+             set here rather than something riding on .is-active because panel
+             1 carries .is-active in the markup — on .is-active the reveal
+             would also play on every page load, which this page has a history
+             of the owner reading as a flash.
+
+             Removed and re-added around a forced reflow so the animation
+             restarts when a panel is re-entered; without the reflow the
+             browser coalesces the two class changes and nothing replays. */
+          p.classList.remove("discount-tabs__panel--entering");
+          void p.offsetWidth;
+          p.classList.add("discount-tabs__panel--entering");
           return;
         }
         if (!p.classList.contains("is-active")) return;
