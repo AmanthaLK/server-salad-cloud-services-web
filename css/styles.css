@@ -3948,3 +3948,25 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .cph-overview__inner { padding: 64px 0; }
 }
+
+/* ===== discount-programs/index.html: Student & Academic Program ===== */
+.discount-section {
+  background: #fff;
+}
+.discount-section__head {
+  padding: 88px 0;
+  text-align: center;
+}
+/* Typography matched to an owner-supplied font-inspector spec, colour
+   included (see the reference-styling rule in README A.3 — usually only
+   typography/box dimensions are matched from a reference and colour is
+   kept as the site's own, but this spec explicitly gave a colour too, so
+   it's matched exactly rather than substituted). */
+.discount-section__title {
+  margin: 0;
+  font-family: "Cairo", "Manrope", sans-serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 46px;
+  color: rgb(32, 29, 44);
+}
