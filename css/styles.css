@@ -2639,7 +2639,17 @@ button { font: inherit; cursor: pointer; }
 .cph-table__intro::before {
   content: "";
   position: absolute;
-  inset: 0;
+  /* Top bled up 4px past the cell's own edge (instead of a plain inset:0)
+     to paint over a hairline gap some browsers render between this row and
+     the sticky toggle above it once both are stuck — a sub-pixel rounding
+     gap in the toggle's own stuck-state height vs. this row's `top: 129px`,
+     not something worth chasing to an exact px match. Sits behind the
+     toggle (z-index 20 vs. this cell's 15) whenever there's no real gap, so
+     the bleed is invisible except where it's actually needed. */
+  top: -4px;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: -1;
   background: #fff;
   border-top-left-radius: 14px;
@@ -2714,6 +2724,14 @@ button { font: inherit; cursor: pointer; }
      Values match the old 16px gap (see each child's own margin comment). */
   padding: 26px 18px;
   background: var(--bg-topbar);
+  /* Same hairline-gap fix as .cph-table__intro::before above, extended
+     upward instead of via a pseudo-element since this cell paints its own
+     background directly (the shadow just bleeds that same colour 4px past
+     the top edge, hidden behind the stuck toggle unless there's a real
+     gap to cover). Applies to .cph-table__pkg--last too, which is fine —
+     the shadow follows the real element's box regardless of that variant
+     using its own ::before for the corner-radius fill. */
+  box-shadow: 0 -4px 0 var(--bg-topbar);
   transition: padding .2s ease;
 }
 /* Shrinks once it locks into its sticky spot — see .cph-table__intro's
