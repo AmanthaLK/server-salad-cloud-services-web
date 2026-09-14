@@ -3978,12 +3978,6 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__tab:hover { background: #fafafb; }
 .discount-tabs__tab.is-active { background: var(--brand-orange); }
 .discount-tabs__tab.is-active:hover { background: var(--brand-orange); }
-.discount-tabs__num {
-  font-family: "Manrope", var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(27, 27, 31, .55);
-}
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
    replaced — see the reference-styling rule in README A.3: usually only
@@ -4036,7 +4030,6 @@ button { font: inherit; cursor: pointer; }
 
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
-  .discount-tabs__num { font-size: 12px; }
   .discount-tabs__label { font-size: 22px; line-height: 26px; }
   .discount-tabs__panel.is-active { grid-template-columns: 1fr; gap: 24px; }
   .discount-tabs__panel-title { font-size: 30px; line-height: 36px; }
