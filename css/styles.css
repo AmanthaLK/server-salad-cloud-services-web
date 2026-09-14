@@ -4084,14 +4084,28 @@ button { font: inherit; cursor: pointer; }
    border on hover) since this section sits on a white background, but
    simplified to description-only per owner: no icon, no per-card title.
    Sample placeholder text in the HTML; owner will replace with the real
-   criteria. Full container width, independent of .discount-tabs__panel-body's
-   own max-width/alignment above it — a card grid doesn't need that
-   left/centre/right text alignment applied to it. */
+   criteria. Independent of .discount-tabs__panel-body's own max-width/
+   alignment above it — a card grid doesn't need that left/centre/right
+   text alignment applied to it. */
 .discount-tabs__criteria-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px 24px;
   margin-top: 32px;
+}
+/* Per owner: panel 1's (Student & Academic) grid starts flush left and
+   ends at the horizontal midpoint of the Startup tab above it; panel 3's
+   (Agency & Freelancer) grid is the mirror — starts at that same midpoint
+   and ends flush right. Both this grid and .discount-tabs__bar sit in the
+   same .container, so 50% width lines up exactly with the Startup tab's
+   own centre. Panel 2's (Startup) own grid is untouched — stays full width. */
+#discount-panel-1 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-right: auto;
+}
+#discount-panel-3 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-left: auto;
 }
 .discount-tabs__criteria-card {
   padding: 22px;
@@ -4122,6 +4136,15 @@ button { font: inherit; cursor: pointer; }
 
 @media (max-width: 860px) {
   .discount-tabs__criteria-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The left-half/right-half split only makes sense lined up against the
+     desktop-width tab bar above — too cramped once the grid itself drops
+     to 2 columns, so both panels go back to full width here. */
+  #discount-panel-1 .discount-tabs__criteria-grid,
+  #discount-panel-3 .discount-tabs__criteria-grid {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 @media (max-width: 560px) {
