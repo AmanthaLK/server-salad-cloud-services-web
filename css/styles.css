@@ -3989,7 +3989,14 @@ button { font: inherit; cursor: pointer; }
   grid-template-columns: repeat(3, 1fr);
 }
 .discount-tabs__tab {
-  position: relative; /* anchors .is-active's ::after underline bar below */
+  /* Deliberately NOT positioned. It used to be position:relative to anchor a
+     per-tab .is-active::after underline, which no longer exists — and leaving
+     it in place was a real bug: positioned elements paint above non-positioned
+     ones, and the tabs come after the indicator in the DOM, so every tab
+     painted ON TOP of the sliding bar. Hovering a tab then covered the bar
+     with this rule's background, so the bar vanished under the pointer for as
+     long as it sat on the tab you'd just clicked — which looked like the
+     animation failing rather than the bar simply being hidden. */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4026,6 +4033,10 @@ button { font: inherit; cursor: pointer; }
   height: 3px;
   width: 0; /* real width + offset are measured and set by js/main.js */
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  /* Explicitly above the tabs. They're unpositioned so this already wins on
+     paint order, but stating it means giving a tab position/z-index later
+     can't silently hide the bar again. */
+  z-index: 1;
   /* Promote to its own compositor layer. Switching tabs swaps a 32-box panel
      in and out, which is a big synchronous layout + paint on the main thread;
      without promotion the bar's slide shares those frames and visibly hitches.
