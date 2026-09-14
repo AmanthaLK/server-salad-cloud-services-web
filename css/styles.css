@@ -4097,33 +4097,105 @@ button { font: inherit; cursor: pointer; }
   from { opacity: 1; }
   to   { opacity: 0; }
 }
+/* ===== Tab-switch entrance =====
+   Per owner, the straight cross-fade above was too plain. The fade still does
+   the actual swap — it has to, since both panels are briefly on screen at once
+   and neither has a background to hide the other — and this layers a staggered
+   rise on top of it, so the copy arrives in sequence instead of all at once.
+
+   Only the SMALL, BOUNDED parts move: the four elements of the copy block and
+   the one or two aside images. The criteria boxes are deliberately left to
+   ride the panel's fade. Putting a transform on the grid would animate a
+   subtree of up to 32 boxes in exactly the frames the indicator is sliding
+   through, which is the jank this section was already debugged out of once —
+   see the keyframes comment above. Adding motion to the boxes means animating
+   the cards individually, not their container.
+
+   Driven by --entering, added by js/main.js on switch, rather than by
+   .is-active: panel 1 carries .is-active in the markup, so riding it would
+   play a 0.74s reveal on every page load, which on this page has a history of
+   reading as the page flashing rather than as a transition.
+
+   Timing: the bar and the fade finish at .28s, then the copy settles through
+   to ~.74s. The cascade is the point — the bar arrives first and the content
+   follows it in. */
+.discount-tabs__panel--entering .discount-tabs__panel-subtitle,
+.discount-tabs__panel--entering .discount-tabs__panel-desc,
+.discount-tabs__panel--entering .discount-tabs__cta,
+.discount-tabs__panel--entering .discount-tabs__panel-eligibility {
+  animation: discount-rise .52s cubic-bezier(.16, 1, .3, 1) both;
+}
+.discount-tabs__panel--entering .discount-tabs__panel-subtitle    { animation-delay: .04s; }
+.discount-tabs__panel--entering .discount-tabs__panel-desc        { animation-delay: .10s; }
+.discount-tabs__panel--entering .discount-tabs__cta               { animation-delay: .16s; }
+.discount-tabs__panel--entering .discount-tabs__panel-eligibility { animation-delay: .22s; }
+
+/* The images settle a little slower and a little later than the copy, so the
+   two don't land on the same frame. Scale rather than a slide: they're pinned
+   in a sticky column, and sliding them would fight that. */
+.discount-tabs__panel--entering .discount-tabs__aside-img {
+  animation: discount-aside-in .66s cubic-bezier(.16, 1, .3, 1) both;
+}
+.discount-tabs__panel--entering .discount-tabs__aside-img--a { animation-delay: .06s; }
+.discount-tabs__panel--entering .discount-tabs__aside-img--b { animation-delay: .16s; }
+
+@keyframes discount-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes discount-aside-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: none; }
+}
+
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {
   /* the indicator checks prefers-reduced-motion in js/main.js itself */
   .discount-tabs__panel.is-active,
-  .discount-tabs__panel--leaving { animation: none; }
+  .discount-tabs__panel--leaving,
+  .discount-tabs__panel--entering .discount-tabs__panel-subtitle,
+  .discount-tabs__panel--entering .discount-tabs__panel-desc,
+  .discount-tabs__panel--entering .discount-tabs__cta,
+  .discount-tabs__panel--entering .discount-tabs__panel-eligibility,
+  .discount-tabs__panel--entering .discount-tabs__aside-img { animation: none; }
 }
-.discount-tabs__panel-body { max-width: 640px; }
-/* Per owner: each panel's content aligns differently — panel 1 (Student &
-   Academic) left (the default, no override needed), panel 2 (Startup)
-   centred, panel 3 (Agency & Freelancer) right. margin-left/right: auto
-   moves the whole (max-width-capped) block within the container; text-align
-   handles the text itself inside it. */
+/* Per owner: ALL THREE panels centre their copy, and each block spans exactly
+   the width of that panel's own criteria boxes below it — from the left edge
+   of its leftmost box to the right edge of its rightmost one. The width half
+   of that is already handled by the width:50% rule below (verified flush to
+   0.0px against the grid at every window width), so this is only the
+   centring.
+
+   Text alignment and block POSITION are separate things here: all three
+   centre their text, but panel 1's block sits in the left half of the
+   container, panel 2's in the middle and panel 3's in the right half — that's
+   what the margin-left/right: auto rules below do, and they must stay.
+
+   History, so it isn't undone: panel 1 was left-aligned, then briefly
+   right-aligned, before the owner settled on centred for 1 and 3 to match 2.
+   The original complaint was never geometry — the block edges always matched
+   the boxes — it was that ragged text stopped short of them. */
+.discount-tabs__panel-body {
+  /* No max-width here: every panel-body lives under #discount-panel-1/2/3,
+     and all three set max-width: none below, so a cap here can never apply.
+     The 640px fallback that used to sit here was dead; the live one is in the
+     max-width: 860px block near the end of this section. */
+  text-align: center;
+}
 #discount-panel-2 .discount-tabs__panel-body {
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
 }
 #discount-panel-3 .discount-tabs__panel-body {
   margin-left: auto;
-  text-align: right;
 }
 /* Per owner: every panel's description column must line up with its own
    criteria grid below it (see .discount-tabs__criteria-grid further down)
    — 50% instead of the shared 640px cap, so the heading/description/
    caption never run past where that panel's boxes start/end. Panel 2's
    own margin-left/right: auto above already centres this 50%-wide block;
-   panels 1/3 stay flush left/right via their own rules above. */
+   panel 1 stays flush left (no rule needed) and panel 3 flush right via its
+   own margin-left: auto above. */
 #discount-panel-1 .discount-tabs__panel-body,
 #discount-panel-2 .discount-tabs__panel-body,
 #discount-panel-3 .discount-tabs__panel-body {
@@ -4156,7 +4228,11 @@ button { font: inherit; cursor: pointer; }
   line-height: 25px;
   color: rgba(32, 29, 44, .82);
 }
-.discount-tabs__panel-desc:last-child { margin-bottom: 0; }
+/* A .discount-tabs__panel-desc:last-child rule used to sit here to drop the
+   description's bottom margin. It never matched: every panel body runs
+   subtitle -> description -> Claim button -> caption, so the description is
+   never the last child. Removed rather than left as a false hint that the
+   description can end a panel. */
 
 /* "Claim Your Discount" CTA, sat between each panel's description and its
    criteria caption. Matched to the homepage Plans button the owner pointed
@@ -4291,6 +4367,136 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
   line-height: 21px;
   color: rgba(27, 27, 31, .75);
+}
+
+/* ===== Sticky per-tab image columns (owner request) =====
+   Each panel's copy and criteria grid only occupy HALF the container (see the
+   width:50% rules above), so the other half sits empty — on the right for
+   panel 1, both sides for centred panel 2, on the left for panel 3. These fill
+   that empty half with two tall images per tab.
+
+   Behaviour the owner asked for: the images start level with the panel's
+   heading, run down to the bottom of the screen, and then stay FROZEN while
+   the copy and the boxes scroll past them.
+
+   That's position:sticky, not fixed. Fixed pins to the viewport for good, so
+   the images would still be stuck on screen once you'd scrolled on to the
+   footer, and it would take JS watching the scroll position to hide them.
+   Sticky gives the same frozen effect and RELEASES BY ITSELF at the end of the
+   panel's grid area — no JS, nothing to keep in sync. Same mechanism as the
+   sticky nav and the cPanel package header elsewhere in this file.
+
+   Layout is grid placement on .discount-tabs__panel itself rather than a new
+   wrapper element, so the existing body/criteria-grid markup is untouched;
+   the panel's two existing children are simply placed into column 1 (or 2)
+   and the aside spans both rows beside them.
+
+   Only above 1100px. Below that the empty half is gone, so the columns hide
+   and the panel falls back to the block layout and 50% widths defined above,
+   exactly as before this existed. */
+.discount-tabs__aside { display: none; }
+
+@media (min-width: 1101px) {
+  .discount-tabs__panel.is-active,
+  .discount-tabs__panel--leaving {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 596px each inside the 1192px container */
+    /* start, not the stretch default: a stretched grid item fills its area and
+       then has nowhere to travel, which silently kills position:sticky. */
+    align-items: start;
+  }
+  /* Panel 2's copy is centred, so it needs an empty quarter on EACH side
+     rather than one empty half — one image per side instead of two. */
+  #discount-panel-2.is-active,
+  #discount-panel-2.discount-tabs__panel--leaving {
+    grid-template-columns: 1fr 2fr 1fr; /* 298 / 596 / 298 */
+  }
+
+  /* Column placement. Panel 1 keeps its copy left, panel 3 mirrors it, and
+     the aside takes the empty column beside it. grid-row: 1 / span 2 (not
+     1 / -1 — there are no explicit rows here, so -1 would resolve back to
+     line 1 and span nothing). */
+  #discount-panel-1 .discount-tabs__panel-body     { grid-column: 1; grid-row: 1; }
+  #discount-panel-1 .discount-tabs__criteria-grid  { grid-column: 1; grid-row: 2; }
+  #discount-panel-1 .discount-tabs__aside          { grid-column: 2; grid-row: 1 / span 2; }
+
+  #discount-panel-2 .discount-tabs__panel-body     { grid-column: 2; grid-row: 1; }
+  #discount-panel-2 .discount-tabs__criteria-grid  { grid-column: 2; grid-row: 2; }
+  #discount-panel-2 .discount-tabs__aside--left    { grid-column: 1; grid-row: 1 / span 2; }
+  #discount-panel-2 .discount-tabs__aside--right   { grid-column: 3; grid-row: 1 / span 2; }
+
+  #discount-panel-3 .discount-tabs__panel-body     { grid-column: 2; grid-row: 1; }
+  #discount-panel-3 .discount-tabs__criteria-grid  { grid-column: 2; grid-row: 2; }
+  #discount-panel-3 .discount-tabs__aside          { grid-column: 1; grid-row: 1 / span 2; }
+
+  /* The grid columns now do what width:50% + auto margins did above, and the
+     two together would halve the copy again. Longhand margins so the criteria
+     grid keeps its 10px margin-top to the caption. */
+  #discount-panel-1 .discount-tabs__panel-body,
+  #discount-panel-2 .discount-tabs__panel-body,
+  #discount-panel-3 .discount-tabs__panel-body,
+  #discount-panel-1 .discount-tabs__criteria-grid,
+  #discount-panel-2 .discount-tabs__criteria-grid,
+  #discount-panel-3 .discount-tabs__criteria-grid {
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .discount-tabs__aside {
+    display: flex;
+    justify-content: center; /* even gutters either side of the pair */
+    gap: 24px;
+    /* Sized so the column clears BOTH edges of the screen, per owner — it
+       must not touch the nav above it, nor run off the bottom before you
+       start scrolling.
+
+       The bottom gap sets the height. At rest the column starts level with
+       the panel heading, which sits 243px below the top of the screen when
+       the section lands under the nav: 75 nav (74 .nav__inner + 1px border)
+       + 2 section border-top + 102 tab bar (28 + 46 line-height + 28) + 64
+       panel padding-top. Leaving 24px clear of the fold from there gives
+       100vh - 267px.
+
+       top is then set so the two gaps the owner cares about MATCH once the
+       column freezes: nav-bottom to image-top, and image-bottom to the fold.
+       171 - 75 (nav) = 96 above, and 100vh - (171 + 100vh - 267) = 96 below.
+       Centring the height in the viewport instead was tried and rejected —
+       that measures the top gap from the top of the SCREEN, so the nav ate
+       most of it and the bottom gap looked twice as large.
+
+       The two constraints agree: 96px is also the smallest gap that still
+       keeps the at-rest bottom edge 24px clear of the fold. Recompute the
+       pair together if the tab bar or the panel padding ever changes. */
+    position: sticky;
+    top: 171px;
+    height: calc(100vh - 267px);
+    min-height: 320px; /* floor for very short windows, where the calc runs out */
+    pointer-events: none; /* purely decorative */
+  }
+
+  .discount-tabs__aside-img {
+    flex: 0 0 240px;
+    height: 100%;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f2f2f5; /* shows while the image decodes */
+  }
+  /* The pair sits dead level. A 60px stagger on the second image was tried
+     and rejected by the owner — it read as two different heights rather than
+     as a deliberate offset. Don't reintroduce it. */
+
+  /* SAMPLE IMAGES — placeholders at the owner's spec (480x1640, shown at
+     240x820). Swap these three pairs for the real photos; nothing else needs
+     to change. */
+  #discount-panel-1 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/student-academic-1.png"); }
+  #discount-panel-1 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/student-academic-2.png"); }
+  #discount-panel-2 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/startup-1.png"); }
+  #discount-panel-2 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/startup-2.png"); }
+  #discount-panel-3 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/agency-freelancer-1.png"); }
+  #discount-panel-3 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/agency-freelancer-2.png"); }
 }
 
 @media (max-width: 860px) {
