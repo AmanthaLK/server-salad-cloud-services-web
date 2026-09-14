@@ -4101,11 +4101,13 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
 /* Small plain-text caption under each panel's description (not a link —
-   was briefly an <a>, corrected to a <span> per owner) — was "Terms &
-   Conditions", relabelled "Eligibility Criteria" per owner. Typography
-   matched to an owner-supplied font-inspector spec (Manrope 600, 12px/18px)
-   — colour deliberately kept as the site's own brand orange rather than
-   the spec's green, per explicit owner instruction. */
+   was briefly an <a>, corrected to a <span> per owner). Label history, each
+   step an owner relabel: "Terms & Conditions" → "Eligibility Criteria" →
+   "Eligibility Criteria and Conditions" (current). Typography matched to an
+   owner-supplied font-inspector spec (Manrope 600, 12px/18px); the colour is
+   the dark rgb(27,27,31) declared below — NOT that spec's green, and not
+   brand orange either, which an earlier version of this comment wrongly
+   claimed. See the note on the colour declaration itself. */
 .discount-tabs__panel-eligibility {
   display: inline-block;
   /* Per owner: this caption labels the boxes BELOW it, so it has to sit
@@ -4137,7 +4139,7 @@ button { font: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px 14px; /* tightened from 20/24 per owner — the boxes read as one set, not six separate cards */
-  margin-top: 10px; /* tight to the "Eligibility Criteria" caption above — see its rule */
+  margin-top: 10px; /* tight to the "Eligibility Criteria and Conditions" caption above — see its rule */
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
