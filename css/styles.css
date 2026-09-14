@@ -4203,11 +4203,22 @@ button { font: inherit; cursor: pointer; }
    Being inline-flex it follows each panel's own text-align, so it sits left
    on Student & Academic, centred on Startup and right on Agency &
    Freelancer without any per-panel rules. */
-.discount-tabs__cta {
+.discount-tabs__panel-body .discount-tabs__cta {
+  /* Specificity deliberately raised above .btn--outline (0,1,0 vs 0,2,0).
+     .btn--outline sets width:100% for the plan cards, and matching it on
+     source order alone left the button's width depending on rule order in
+     this file — one reorder away from stretching the full column again.
+     Every value below is the reference button, .plan-card .btn--outline. */
+  display: inline-flex;
   width: auto;
+  max-width: 100%;
   margin: 16px 0 0;
   padding: 12px 32px;
   border-radius: 8px;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 15px;
 }
 
 /* Small plain-text caption introducing each panel's criteria boxes. NOT a
