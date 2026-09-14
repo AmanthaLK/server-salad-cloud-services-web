@@ -4033,6 +4033,15 @@ button { font: inherit; cursor: pointer; }
   margin-left: auto;
   text-align: right;
 }
+/* Per owner: panels 1 and 3's description column must line up with their
+   own half-width criteria grid below it (see .discount-tabs__criteria-grid
+   further down) — 50% instead of the shared 640px cap, so the heading/
+   description/caption never run past where that panel's boxes start/end. */
+#discount-panel-1 .discount-tabs__panel-body,
+#discount-panel-3 .discount-tabs__panel-body {
+  width: 50%;
+  max-width: none;
+}
 /* Typography matched to an owner-supplied font-inspector spec (Cairo 600,
    25px/25px) — see the reference-styling rule in README A.3. That spec's
    colour was white, but this text sits on this section's white background,
@@ -4144,6 +4153,13 @@ button { font: inherit; cursor: pointer; }
     width: 100%;
     margin-left: 0;
     margin-right: 0;
+  }
+  /* Same reset for the matching description column above it (see
+     .discount-tabs__panel-body's own comment). */
+  #discount-panel-1 .discount-tabs__panel-body,
+  #discount-panel-3 .discount-tabs__panel-body {
+    width: auto;
+    max-width: 640px;
   }
 }
 
