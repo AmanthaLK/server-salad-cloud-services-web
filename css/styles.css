@@ -3962,6 +3962,7 @@ button { font: inherit; cursor: pointer; }
   border-bottom: 1px solid #e3e3e8;
 }
 .discount-tabs__tab {
+  position: relative; /* anchors .is-active's ::after underline bar below */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3977,8 +3978,20 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__tab:last-child { border-right: none; }
 .discount-tabs__tab:hover { background: #fafafb; }
-.discount-tabs__tab.is-active { background: var(--brand-orange); }
-.discount-tabs__tab.is-active:hover { background: var(--brand-orange); }
+/* Selected state used to fill the whole tab solid orange — per owner,
+   that's now just a thin underline bar instead, same red -> orange
+   gradient as .footer__underline/.cph-backups__underline (owner's "orange
+   and red mixed" gradient). Sits right on .discount-tabs__bar's own 1px
+   bottom border so it reads as one edge, not a doubled line. */
+.discount-tabs__tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
    replaced — see the reference-styling rule in README A.3: usually only
