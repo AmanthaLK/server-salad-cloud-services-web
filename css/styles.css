@@ -4233,7 +4233,13 @@ button { font: inherit; cursor: pointer; }
    below — NOT that spec's green, and not brand orange either, which an
    earlier version of this comment wrongly claimed. */
 .discount-tabs__panel-eligibility {
-  display: inline-block;
+  /* Block, not inline-block: the "Claim Your Discount" button above it is
+     inline-flex, so as an inline-level box this caption sat on the SAME line
+     as the button rather than beneath it. Block forces its own line. It was
+     inline-block back when this was a link and the underline had to hug the
+     text; as a plain caption there's nothing to hug, and text-align still
+     places it correctly per panel. */
+  display: block;
   /* Per owner: this caption labels the boxes BELOW it, so it has to sit
      closer to them than to the description above. It used to be 12px under
      the description and 32px above the grid, which read as part of the
