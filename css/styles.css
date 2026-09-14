@@ -3964,13 +3964,14 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__tab {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 28px 32px;
   border: none;
   border-right: 1px solid #e3e3e8;
   background: none;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   transition: background .18s ease;
 }
