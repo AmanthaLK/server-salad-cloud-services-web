@@ -3949,8 +3949,8 @@ button { font: inherit; cursor: pointer; }
    switch. data-active-tab is written by js/main.js and is also present in the
    markup, so the correct state is there on first paint.
 
-   To add one for Agency & Freelancer: drop a --3 layer into the markup and
-   add the two matching rules below. */
+   All three tabs have a photo. A fourth would need a --4 layer in the markup
+   plus its two rules below. */
 .discount-tabs__bg {
   position: absolute;
   inset: 0;
@@ -3964,9 +3964,11 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__bg--1 { background-image: url(/server-salad-cloud-services-web/assets/img/photos/graduated-students-illustration.jpg); }
 .discount-tabs__bg--2 { background-image: url(/server-salad-cloud-services-web/assets/img/photos/startup-lightbulb.jpg); }
+.discount-tabs__bg--3 { background-image: url(/server-salad-cloud-services-web/assets/img/photos/agency-conference-room.jpg); }
 
 .discount-tabs[data-active-tab="1"] .discount-tabs__bg--1 { opacity: .05; }
 .discount-tabs[data-active-tab="2"] .discount-tabs__bg--2 { opacity: .05; }
+.discount-tabs[data-active-tab="3"] .discount-tabs__bg--3 { opacity: .05; }
 .discount-tabs__bar {
   position: relative; /* containing block for the sliding indicator below */
   z-index: 1; /* above .discount-tabs__bg */

@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=370">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=371">
 </head>
 <body>
 
@@ -72,10 +72,11 @@
            is active (owner request) — see .discount-tabs__bg in css/styles.css.
            Separate layers rather than one element swapping background-image,
            so moving between two tabs that both have a photo cross-fades them
-           instead of cutting. Agency & Freelancer has none yet; add a --3
-           layer here and a matching rule in the CSS when it does. -->
+           instead of cutting. All three tabs have one; a fourth would need a
+           --4 layer here and a matching rule in the CSS. -->
       <div class="discount-tabs__bg discount-tabs__bg--1" aria-hidden="true"></div>
       <div class="discount-tabs__bg discount-tabs__bg--2" aria-hidden="true"></div>
+      <div class="discount-tabs__bg discount-tabs__bg--3" aria-hidden="true"></div>
 
       <div class="container discount-tabs__bar" role="tablist">
         <!-- One shared underline that slides between tabs, rather than a bar
