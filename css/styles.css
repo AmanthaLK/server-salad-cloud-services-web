@@ -4106,12 +4106,17 @@ button { font: inherit; cursor: pointer; }
   box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
   transform: translateY(-3px);
 }
+/* Typography matched to an owner-supplied font-inspector spec (Manrope 400,
+   14px/21px) — same recurring situation as the panel subtitle/description
+   above: the spec's colour (rgba(255,255,255,.78)) is translucent white,
+   which would be invisible on these cards' white background, so kept at
+   the site's own dark colour instead. */
 .discount-tabs__criteria-desc {
   margin: 0;
   font-family: "Manrope", var(--font-body);
   font-size: 14px;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 21px;
   color: rgba(27, 27, 31, .75);
 }
 
