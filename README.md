@@ -6998,8 +6998,9 @@ After building from Parts A/B, confirm:
       Cloud Infrastructure → Footer.
 - [ ] cpanel-hosting page section order: Hero → Plans & comparison table →
       Features → Why Server Salad → Business Email → Backups → Security →
-      Workflow → Technical Overview → Sustainability (shared `.eco*` markup,
-      same as the homepage's) → Footer.
+      Workflow → Migration (shared `.migration*` markup, same as the
+      homepage's) → Technical Overview → Sustainability (shared `.eco*`
+      markup, same as the homepage's) → Footer.
 - [ ] discount-programs page section order: Hero (centred, no product visual) →
       tab switcher (Student & Academic / Startup / Agency & Freelancer, each
       panel = subtitle + description + "Eligibility Criteria" caption + 6-card
@@ -7237,6 +7238,19 @@ consistent with intent rather than just matching pixels.
   packet's `<mpath>` references the arrow path by `id` rather than
   duplicating its `d` coordinates, so the two can never visually drift apart
   if the curve is edited.
+- **Reused on cpanel-hosting**, between that page's Workflow and Technical
+  Overview sections (same `.migration*` classes, no page-specific CSS) — the
+  same shared-section approach as Sustainability (see C.4). One deliberate
+  difference between the two copies: the arrow path's `id` (and the
+  `<mpath href>` pointing at it) is `migrationPath` on the homepage but
+  **`migrationPathCph`** on cpanel-hosting — keep them distinct if this
+  markup is ever copied between pages again.
+- ⚠️ Migration and Sustainability are **duplicated markup, not shared
+  partials** like the header/footer — a copy or markup change has to be made
+  in **both** `index.html` and `cpanel-hosting/index.html`, or the two pages
+  silently drift apart. (Verified identical at last README sync apart from
+  the `migrationPath` id above.) If either section starts changing often,
+  promote it to `partials/` rather than maintaining two copies.
 
 ### C.7 Cloud Infrastructure
 - Light section, deliberately **larger/airier** sizing than the site's other
@@ -7855,6 +7869,12 @@ real. Three shapes, depending on what the element already looks like —
   background photo, no bottom CTA button — both deliberate.
 - **Migration section**: worth confirming whether a "sites migrated" stat
   pill should exist once there's a real number to put in it.
+- **Migration and Sustainability exist as duplicated markup on both the
+  homepage and cpanel-hosting** (see C.4/C.6), unlike the header/footer which
+  are real shared partials — so every copy edit has to be made twice or the
+  pages drift. Currently in sync (only the deliberate `migrationPath` /
+  `migrationPathCph` id differs). Worth promoting either section to
+  `partials/` if it starts changing regularly.
 - **"Why Choose Server Salad" section**: content is real but states specific
   operational claims (see C.3) — keep in sync if any change. No background
   photo — ask if one is wanted.
