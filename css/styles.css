@@ -4073,7 +4073,10 @@ button { font: inherit; cursor: pointer; }
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: var(--brand-orange);
+  /* Owner asked for the normal dark text colour already used elsewhere on
+     this panel (subtitle/label), not brand orange or the font-inspector
+     spec's green. */
+  color: rgb(27, 27, 31);
 }
 
 @media (max-width: 760px) {
