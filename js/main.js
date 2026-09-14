@@ -449,14 +449,23 @@
     /* Deep-link from the Discount Programs mega-menu cards (see
        partials/header.html): each card's href carries a #hash matching one
        tab's data-hash, so arriving from that card opens straight on its own
-       tab instead of always defaulting to the first one. */
-    var discountHash = window.location.hash.replace(/^#/, "");
-    if (discountHash) {
+       tab instead of always defaulting to the first one.
+
+       Checked on load AND on "hashchange" — clicking one of those mega-menu
+       links while ALREADY on this page only changes the URL's hash (same
+       path, so the browser doesn't reload/re-run this script); without the
+       hashchange listener the tab never switched in that case, only when
+       arriving fresh from another page. */
+    var applyDiscountHash = function () {
+      var discountHash = window.location.hash.replace(/^#/, "");
+      if (!discountHash) return;
       var matchedDiscountTab = null;
       discountTabs.forEach(function (t) {
         if (t.getAttribute("data-hash") === discountHash) matchedDiscountTab = t;
       });
       if (matchedDiscountTab) activateDiscountTab(matchedDiscountTab);
-    }
+    };
+    applyDiscountHash();
+    window.addEventListener("hashchange", applyDiscountHash);
   }
 })();
