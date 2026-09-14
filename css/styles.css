@@ -4083,6 +4083,13 @@ button { font: inherit; cursor: pointer; }
    the spec's green, per explicit owner instruction. */
 .discount-tabs__panel-eligibility {
   display: inline-block;
+  /* Per owner: this caption labels the boxes BELOW it, so it has to sit
+     closer to them than to the description above. It used to be 12px under
+     the description and 32px above the grid, which read as part of the
+     paragraph; those gaps are now reversed (32px above / 10px below, the
+     10px living on .discount-tabs__criteria-grid). Keep the two in that
+     ratio if either is ever retuned. */
+  margin: 20px 0 0; /* + the description's own 12px bottom margin = 32px above */
   font-family: "Manrope", var(--font-body);
   font-size: 12px;
   font-weight: 600;
@@ -4105,7 +4112,7 @@ button { font: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px 24px;
-  margin-top: 32px;
+  margin-top: 10px; /* tight to the "Eligibility Criteria" caption above — see its rule */
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
