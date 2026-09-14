@@ -4026,6 +4026,13 @@ button { font: inherit; cursor: pointer; }
   height: 3px;
   width: 0; /* real width + offset are measured and set by js/main.js */
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  /* Promote to its own compositor layer. Switching tabs swaps a 32-box panel
+     in and out, which is a big synchronous layout + paint on the main thread;
+     without promotion the bar's slide shares those frames and visibly hitches.
+     On its own layer the transform animates off the main thread and stays
+     smooth regardless of what the panel swap is doing. js/main.js writes the
+     transform as translate3d for the same reason. */
+  will-change: transform;
   /* No transition until .is-ready is added, so the very first placement on
      page load snaps into position instead of sliding in from the left. */
 }
@@ -4034,10 +4041,16 @@ button { font: inherit; cursor: pointer; }
    (.28s, the standard ease-in-out). They used to run at .4s, .18s and .4s
    respectively, so the labels finished brightening while the bar was still
    travelling and the switch read as laggy and out of step. Change all three
-   together or they'll drift apart again. */
+   together or they'll drift apart again.
+
+   ONLY `transform` is transitioned — never `width`. An earlier version
+   animated both, and because the tabs differ by fractions of a pixel the
+   width transition really did fire, forcing a layout + repaint on every
+   single frame of the slide. That's what made the bar stutter. Width is now
+   set instantly (it only changes on resize anyway) and movement is pure
+   transform, which the compositor can handle without touching layout. */
 .discount-tabs__indicator.is-ready {
-  transition: transform .28s cubic-bezier(.4, 0, .2, 1),
-              width .28s cubic-bezier(.4, 0, .2, 1);
+  transition: transform .28s cubic-bezier(.4, 0, .2, 1);
 }
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
@@ -4074,9 +4087,12 @@ button { font: inherit; cursor: pointer; }
   display: block;
   animation: discount-panel-in .28s cubic-bezier(.4, 0, .2, 1) both; /* shared switch timing */
 }
+/* Opacity only — no transform. This animates a very large subtree (up to 32
+   boxes), and pairing opacity with a transform on something that big adds
+   real paint cost in exactly the frames the bar is trying to slide through. */
 @keyframes discount-panel-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {

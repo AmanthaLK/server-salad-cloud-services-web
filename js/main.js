@@ -456,9 +456,18 @@
       if (!discountIndicator || !discountBar || !tab) return;
       var barRect = discountBar.getBoundingClientRect();
       var tabRect = tab.getBoundingClientRect();
+
+      /* Width is written but NOT transitioned (see the CSS): tabs differ by
+         fractions of a pixel, so animating it fired a layout + repaint every
+         frame and made the slide stutter. Only the transform moves.
+
+         translate3d rather than translateX so the bar keeps its own
+         compositor layer — switching tabs swaps a 32-box panel, which is a
+         heavy main-thread layout, and the slide has to stay independent of
+         that to run smoothly. */
       discountIndicator.style.width = tabRect.width + "px";
       discountIndicator.style.transform =
-        "translateX(" + (tabRect.left - barRect.left) + "px)";
+        "translate3d(" + (tabRect.left - barRect.left) + "px, 0, 0)";
     };
 
     var activateDiscountTab = function (tab) {
