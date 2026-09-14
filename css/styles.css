@@ -4193,6 +4193,23 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
+/* "Claim Your Discount" CTA, sat between each panel's description and its
+   criteria caption. Matched to the homepage Plans button the owner pointed
+   at (.plan-card .btn--outline): same transparent fill, 1.5px brand-orange
+   border, Montserrat 700 15px and orange-fill-on-hover from .btn--outline,
+   with that button's own overrides repeated here — width:auto and the 8px
+   corner, both of which override the base .btn's full-width pill.
+
+   Being inline-flex it follows each panel's own text-align, so it sits left
+   on Student & Academic, centred on Startup and right on Agency &
+   Freelancer without any per-panel rules. */
+.discount-tabs__cta {
+  width: auto;
+  margin: 16px 0 0;
+  padding: 12px 32px;
+  border-radius: 8px;
+}
+
 /* Small plain-text caption introducing each panel's criteria boxes. NOT a
    link — it was briefly an <a> and was corrected to a <span> per owner, so
    don't reintroduce an href, underline or hover colour. Its wording has been
