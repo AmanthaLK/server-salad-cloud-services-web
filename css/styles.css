@@ -4019,12 +4019,17 @@ button { font: inherit; cursor: pointer; }
    stretching the full container. */
 .discount-tabs__panel.is-active { display: block; }
 .discount-tabs__panel-body { max-width: 640px; }
+/* Typography matched to an owner-supplied font-inspector spec (Cairo 600,
+   25px/25px) — see the reference-styling rule in README A.3. That spec's
+   colour was white, but this text sits on this section's white background,
+   so it's kept at the site's own dark colour instead (white would be
+   invisible here) — confirmed with the owner rather than assumed. */
 .discount-tabs__panel-subtitle {
   margin: 0 0 16px;
   font-family: "Cairo", var(--font-heading);
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 28px;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 25px;
   color: rgb(27, 27, 31);
 }
 .discount-tabs__panel-desc {
