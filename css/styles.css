@@ -3959,7 +3959,6 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #e3e3e8;
 }
 .discount-tabs__tab {
   position: relative; /* anchors .is-active's ::after underline bar below */
@@ -3970,25 +3969,24 @@ button { font: inherit; cursor: pointer; }
   gap: 8px;
   padding: 28px 32px;
   border: none;
-  border-right: 1px solid #e3e3e8;
   background: none;
   text-align: center;
   cursor: pointer;
   transition: background .18s ease;
 }
-.discount-tabs__tab:last-child { border-right: none; }
 .discount-tabs__tab:hover { background: #fafafb; }
 /* Selected state used to fill the whole tab solid orange — per owner,
    that's now just a thin underline bar instead, same red -> orange
    gradient as .footer__underline/.cph-backups__underline (owner's "orange
-   and red mixed" gradient). Sits right on .discount-tabs__bar's own 1px
-   bottom border so it reads as one edge, not a doubled line. */
+   and red mixed" gradient). The ash-grey column/row borders this used to
+   sit against were removed per owner request, so it now sits flush with
+   the tab's own bottom edge instead of offsetting for that border. */
 .discount-tabs__tab.is-active::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
