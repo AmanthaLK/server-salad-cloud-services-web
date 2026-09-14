@@ -193,11 +193,12 @@
                   <div class="nav__mega-middle">
                     <div class="nav__mega-intro-divider" aria-hidden="true"></div>
                     <div class="nav__mega-cards">
-                      <!-- All 3 cards point at the new discount-programs/ page (currently
-                           a blank placeholder — see its own comment) instead of the
-                           earlier "Launching Soon" overlay, now that there's a real
-                           destination to send visitors to. -->
-                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/">
+                      <!-- All 3 cards point at the discount-programs/ page, each with a
+                           #hash matching one tab's data-hash there (see
+                           discount-programs/index.html + js/main.js) — landing on the
+                           page opens straight on that card's own tab instead of always
+                           defaulting to the first one. -->
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#student-academic">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -209,7 +210,7 @@
                         </span>
                         <span class="mega-card__desc">Discounted hosting on select plans for recognized students and university or school clubs.</span>
                       </a>
-                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/">
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#startup">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -221,7 +222,7 @@
                         </span>
                         <span class="mega-card__desc">Reduced rates on select hosting plans designed to help newly established businesses launch their web presence.</span>
                       </a>
-                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/">
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#agency-freelancer">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

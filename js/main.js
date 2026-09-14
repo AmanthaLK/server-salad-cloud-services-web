@@ -421,28 +421,42 @@
   }
 
   /* ===== discount-programs/index.html: tab switcher =====
-     3 numbered tabs (.discount-tabs__tab) — clicking one shows its matching
+     3 tabs (.discount-tabs__tab) — clicking one shows its matching
      .discount-tabs__panel (same data-tab/data-panel value) and hides the
-     others. Plain click-to-toggle, no scroll/resize involved. Element-
-     existence guard means this safely no-ops on every other page. */
+     others. Element-existence guard means this safely no-ops on every
+     other page. */
   var discountTabs = document.querySelectorAll(".discount-tabs__tab");
   var discountPanels = document.querySelectorAll(".discount-tabs__panel");
   if (discountTabs.length && discountPanels.length) {
-    discountTabs.forEach(function (tab) {
-      tab.addEventListener("click", function () {
-        var target = tab.getAttribute("data-tab");
-        discountTabs.forEach(function (t) {
-          var active = t === tab;
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", active ? "true" : "false");
-          t.tabIndex = active ? 0 : -1;
-        });
-        discountPanels.forEach(function (p) {
-          var active = p.getAttribute("data-panel") === target;
-          p.classList.toggle("is-active", active);
-          p.hidden = !active;
-        });
+    var activateDiscountTab = function (tab) {
+      var target = tab.getAttribute("data-tab");
+      discountTabs.forEach(function (t) {
+        var active = t === tab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.tabIndex = active ? 0 : -1;
       });
+      discountPanels.forEach(function (p) {
+        var active = p.getAttribute("data-panel") === target;
+        p.classList.toggle("is-active", active);
+        p.hidden = !active;
+      });
+    };
+    discountTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () { activateDiscountTab(tab); });
     });
+
+    /* Deep-link from the Discount Programs mega-menu cards (see
+       partials/header.html): each card's href carries a #hash matching one
+       tab's data-hash, so arriving from that card opens straight on its own
+       tab instead of always defaulting to the first one. */
+    var discountHash = window.location.hash.replace(/^#/, "");
+    if (discountHash) {
+      var matchedDiscountTab = null;
+      discountTabs.forEach(function (t) {
+        if (t.getAttribute("data-hash") === discountHash) matchedDiscountTab = t;
+      });
+      if (matchedDiscountTab) activateDiscountTab(matchedDiscountTab);
+    }
   }
 })();
