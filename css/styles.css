@@ -4002,7 +4002,12 @@ button { font: inherit; cursor: pointer; }
   font-size: 40px;
   line-height: 46px;
   color: rgb(32, 29, 44);
+  /* Faded by default so the selected tab visibly stands out; the active
+     tab's own rule below brings it back to full opacity. */
+  opacity: .4;
+  transition: opacity .18s ease;
 }
+.discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
 
 .discount-tabs__panel {
   display: none;
