@@ -3984,6 +3984,7 @@ button { font: inherit; cursor: pointer; }
   border-top: 2px solid #1b1b1f;
 }
 .discount-tabs__bar {
+  position: relative; /* containing block for the sliding indicator below */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
@@ -4007,15 +4008,31 @@ button { font: inherit; cursor: pointer; }
    gradient as .footer__underline/.cph-backups__underline (owner's "orange
    and red mixed" gradient). The ash-grey column/row borders this used to
    sit against were removed per owner request, so it now sits flush with
-   the tab's own bottom edge instead of offsetting for that border. */
-.discount-tabs__tab.is-active::after {
-  content: "";
+   the tab's own bottom edge instead of offsetting for that border.
+
+   It's ONE shared element that slides, not a bar per tab: an is-active
+   ::after on each tab could only pop in and out, never travel. js/main.js
+   writes --tab-index (which tab is selected) and --tab-count onto the bar;
+   everything else is CSS.
+
+   The width maths has to account for .discount-tabs__bar also being a
+   .container: a percentage width on an absolutely positioned element
+   resolves against the containing block's PADDING box, while the grid
+   columns live in its CONTENT box. Subtracting the container's two
+   --gutter paddings reconciles the two, so one "column" here is exactly
+   one tab wide — and translateX(100%) then steps precisely one tab across,
+   because a transform percentage resolves against the element's own width.
+   Using the --gutter token means this stays correct at the ≤600px
+   breakpoint, where the token drops from 24px to 16px. */
+.discount-tabs__indicator {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: var(--gutter);
   bottom: 0;
   height: 3px;
+  width: calc((100% - 2 * var(--gutter)) / var(--tab-count, 3));
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: translateX(calc(var(--tab-index, 0) * 100%));
+  transition: transform .32s cubic-bezier(.4, 0, .2, 1);
 }
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
@@ -4044,7 +4061,23 @@ button { font: inherit; cursor: pointer; }
    right) — the heading was removed per owner request, so the body just
    takes the row on its own now, capped to a readable width instead of
    stretching the full container. */
-.discount-tabs__panel.is-active { display: block; }
+/* Panels swap via `display`, which cannot be transitioned, and they differ
+   wildly in height (32 boxes vs 30), so cross-fading two at once would
+   jump the page height around. Instead the INCOMING panel animates in on
+   its own — adding .is-active restarts this animation every switch. */
+.discount-tabs__panel.is-active {
+  display: block;
+  animation: discount-panel-in .32s cubic-bezier(.4, 0, .2, 1) both;
+}
+@keyframes discount-panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Site-wide convention: motion is opt-out. */
+@media (prefers-reduced-motion: reduce) {
+  .discount-tabs__indicator { transition: none; }
+  .discount-tabs__panel.is-active { animation: none; }
+}
 .discount-tabs__panel-body { max-width: 640px; }
 /* Per owner: each panel's content aligns differently — panel 1 (Student &
    Academic) left (the default, no override needed), panel 2 (Startup)

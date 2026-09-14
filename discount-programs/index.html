@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=355">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=356">
 </head>
 <body>
 
@@ -67,6 +67,10 @@
          mega-menu's shorter one-line descriptions). -->
     <section class="discount-tabs">
       <div class="container discount-tabs__bar" role="tablist">
+        <!-- One shared underline that slides between tabs, rather than a bar
+             per tab appearing/disappearing — js/main.js sets --tab-index on
+             this bar and CSS translates it. Purely decorative. -->
+        <span class="discount-tabs__indicator" aria-hidden="true"></span>
         <button class="discount-tabs__tab is-active" type="button" role="tab" id="discount-tab-1" aria-selected="true" aria-controls="discount-panel-1" data-tab="1" data-hash="student-academic">
           <span class="discount-tabs__label">Student &amp; Academic</span>
         </button>
@@ -216,6 +220,6 @@
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=26"></script>
 </body>
 </html>

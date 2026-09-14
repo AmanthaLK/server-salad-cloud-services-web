@@ -428,13 +428,25 @@
   var discountTabs = document.querySelectorAll(".discount-tabs__tab");
   var discountPanels = document.querySelectorAll(".discount-tabs__panel");
   if (discountTabs.length && discountPanels.length) {
+    /* The active-tab underline is one shared element that slides, rather than
+       a bar drawn per tab — see .discount-tabs__indicator in css/styles.css.
+       All this needs from JS is WHICH tab is selected; the CSS does the
+       positioning and the easing from these two custom properties. */
+    var discountBar = document.querySelector(".discount-tabs__bar");
+    if (discountBar) {
+      discountBar.style.setProperty("--tab-count", discountTabs.length);
+    }
+
     var activateDiscountTab = function (tab) {
       var target = tab.getAttribute("data-tab");
-      discountTabs.forEach(function (t) {
+      discountTabs.forEach(function (t, i) {
         var active = t === tab;
         t.classList.toggle("is-active", active);
         t.setAttribute("aria-selected", active ? "true" : "false");
         t.tabIndex = active ? 0 : -1;
+        if (active && discountBar) {
+          discountBar.style.setProperty("--tab-index", i);
+        }
       });
       discountPanels.forEach(function (p) {
         var active = p.getAttribute("data-panel") === target;
