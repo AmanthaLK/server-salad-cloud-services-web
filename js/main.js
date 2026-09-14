@@ -440,17 +440,25 @@
        bar jumped instead of sliding. Setting `transform` directly on the
        element transitions the way any ordinary property change does.
 
-       Measuring also means the bar no longer has to reason about the tab
-       bar's .container padding or assume the tabs are equal thirds:
-       offsetLeft is already relative to the bar (its offsetParent) and
-       includes that padding. */
+       Measured with getBoundingClientRect, NOT offsetLeft/offsetWidth: those
+       round to whole pixels, and each tab is 397.33px wide at the container's
+       max width. Rounding made the bar a fraction narrower than its tab, put
+       it up to a pixel out of line, and - because width is transitioned too -
+       made it visibly jitter wider and narrower as it travelled. Rects are
+       fractional, so the bar now matches its tab exactly and only moves.
+
+       Measuring at all means the bar doesn't have to reason about the tab
+       bar's .container padding or assume the tabs are equal thirds. */
     var discountBar = document.querySelector(".discount-tabs__bar");
     var discountIndicator = document.querySelector(".discount-tabs__indicator");
 
     var moveDiscountIndicator = function (tab) {
-      if (!discountIndicator || !tab) return;
-      discountIndicator.style.width = tab.offsetWidth + "px";
-      discountIndicator.style.transform = "translateX(" + tab.offsetLeft + "px)";
+      if (!discountIndicator || !discountBar || !tab) return;
+      var barRect = discountBar.getBoundingClientRect();
+      var tabRect = tab.getBoundingClientRect();
+      discountIndicator.style.width = tabRect.width + "px";
+      discountIndicator.style.transform =
+        "translateX(" + (tabRect.left - barRect.left) + "px)";
     };
 
     var activateDiscountTab = function (tab) {

@@ -4029,9 +4029,15 @@ button { font: inherit; cursor: pointer; }
   /* No transition until .is-ready is added, so the very first placement on
      page load snaps into position instead of sliding in from the left. */
 }
+/* Everything that moves on a tab switch — this bar, the tab labels' opacity
+   and the incoming panel — deliberately shares ONE duration and curve
+   (.28s, the standard ease-in-out). They used to run at .4s, .18s and .4s
+   respectively, so the labels finished brightening while the bar was still
+   travelling and the switch read as laggy and out of step. Change all three
+   together or they'll drift apart again. */
 .discount-tabs__indicator.is-ready {
-  transition: transform .4s cubic-bezier(.65, 0, .35, 1),
-              width .4s cubic-bezier(.65, 0, .35, 1);
+  transition: transform .28s cubic-bezier(.4, 0, .2, 1),
+              width .28s cubic-bezier(.4, 0, .2, 1);
 }
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
@@ -4048,7 +4054,7 @@ button { font: inherit; cursor: pointer; }
   /* Faded by default so the selected tab visibly stands out; the active
      tab's own rule below brings it back to full opacity. */
   opacity: .4;
-  transition: opacity .18s ease;
+  transition: opacity .28s cubic-bezier(.4, 0, .2, 1); /* shared switch timing — see .discount-tabs__indicator */
 }
 .discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
 
@@ -4066,10 +4072,10 @@ button { font: inherit; cursor: pointer; }
    its own — adding .is-active restarts this animation every switch. */
 .discount-tabs__panel.is-active {
   display: block;
-  animation: discount-panel-in .4s cubic-bezier(.65, 0, .35, 1) both;
+  animation: discount-panel-in .28s cubic-bezier(.4, 0, .2, 1) both; /* shared switch timing */
 }
 @keyframes discount-panel-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: none; }
 }
 /* Site-wide convention: motion is opt-out. */
