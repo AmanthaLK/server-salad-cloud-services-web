@@ -2097,7 +2097,13 @@ button { font: inherit; cursor: pointer; }
   display: block;
   margin-bottom: 22px;
   padding-top: 12px;
-  border-top: 3px solid var(--brand-orange);
+  /* Same red -> orange gradient as .cph-backups__underline (owner's "orange
+     and red mixed" gradient) instead of flat --brand-orange — border-color
+     can't take a gradient directly, so border-image stretches it across
+     this single (top-only) border side; other sides stay borderless since
+     their width is still 0. */
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--accent), var(--accent-2)) 1;
   font-family: "Cairo", var(--font-heading);
   font-size: 17px;
   font-weight: 600;
@@ -2218,7 +2224,9 @@ button { font: inherit; cursor: pointer; }
   width: 60px;
   height: 3px;
   margin: 6px 0 2px;
-  background: var(--brand-orange);
+  /* Same red -> orange gradient as .cph-backups__underline / .footer__col-title
+     above (owner's "orange and red mixed" gradient), instead of flat --brand-orange. */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 /* Same lesson as the logo backdrop above: a faint translucent circle on pure black
