@@ -3937,20 +3937,24 @@ button { font: inherit; cursor: pointer; }
   border-top: 2px solid #1b1b1f;
 }
 
-/* Background photo for the Student & Academic tab only (owner request). It's
-   a separate layer rather than a background on .discount-tabs itself so the
-   opacity applies to the PHOTO alone — putting opacity on the section would
-   fade the tabs and all the copy with it.
+/* Per-tab background photos (owner request). Each is its own layer rather
+   than one element swapping background-image, so switching between two tabs
+   that both have a photo cross-fades them instead of cutting. They're layers
+   rather than a background on .discount-tabs itself because the opacity has
+   to apply to the PHOTO alone — putting opacity on the section would fade the
+   tabs and all the copy with it.
 
-   Sits at 5% over the section's white, so it reads as a wash rather than a
-   photo, and fades with the same .28s timing as the rest of the switch.
-   data-active-tab is written by js/main.js and is also present in the markup,
-   so the correct state is there on first paint. */
+   Each sits at 5% over the section's white, so it reads as a faint wash
+   rather than a photo, and fades with the same .28s timing as the rest of the
+   switch. data-active-tab is written by js/main.js and is also present in the
+   markup, so the correct state is there on first paint.
+
+   To add one for Agency & Freelancer: drop a --3 layer into the markup and
+   add the two matching rules below. */
 .discount-tabs__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url(/server-salad-cloud-services-web/assets/img/photos/graduated-students-illustration.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3958,7 +3962,11 @@ button { font: inherit; cursor: pointer; }
   pointer-events: none;
   transition: opacity .28s cubic-bezier(.4, 0, .2, 1); /* shared switch timing */
 }
-.discount-tabs[data-active-tab="1"] .discount-tabs__bg { opacity: .05; }
+.discount-tabs__bg--1 { background-image: url(/server-salad-cloud-services-web/assets/img/photos/graduated-students-illustration.jpg); }
+.discount-tabs__bg--2 { background-image: url(/server-salad-cloud-services-web/assets/img/photos/startup-lightbulb.jpg); }
+
+.discount-tabs[data-active-tab="1"] .discount-tabs__bg--1 { opacity: .05; }
+.discount-tabs[data-active-tab="2"] .discount-tabs__bg--2 { opacity: .05; }
 .discount-tabs__bar {
   position: relative; /* containing block for the sliding indicator below */
   z-index: 1; /* above .discount-tabs__bg */

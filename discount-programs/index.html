@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=369">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=370">
 </head>
 <body>
 
@@ -68,9 +68,14 @@
     <!-- data-active-tab is set here as well as by js/main.js so the Student &
          Academic background is already correct on first paint, with no flash. -->
     <section class="discount-tabs" data-active-tab="1">
-      <!-- Background photo, shown only while the Student & Academic tab is
-           active (owner request) — see .discount-tabs__bg in css/styles.css. -->
-      <div class="discount-tabs__bg" aria-hidden="true"></div>
+      <!-- One background layer per tab, each fading in only while its own tab
+           is active (owner request) — see .discount-tabs__bg in css/styles.css.
+           Separate layers rather than one element swapping background-image,
+           so moving between two tabs that both have a photo cross-fades them
+           instead of cutting. Agency & Freelancer has none yet; add a --3
+           layer here and a matching rule in the CSS when it does. -->
+      <div class="discount-tabs__bg discount-tabs__bg--1" aria-hidden="true"></div>
+      <div class="discount-tabs__bg discount-tabs__bg--2" aria-hidden="true"></div>
 
       <div class="container discount-tabs__bar" role="tablist">
         <!-- One shared underline that slides between tabs, rather than a bar
