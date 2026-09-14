@@ -4061,6 +4061,23 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
+/* Small caption link under each panel's description — placeholder anchor
+   (#terms), same one already used by the footer's "Terms & Conditions"
+   link, until a real destination page exists. */
+.discount-tabs__panel-terms {
+  display: inline-block;
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--brand-orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.discount-tabs__panel-terms:hover,
+.discount-tabs__panel-terms:focus-visible {
+  color: rgb(27, 27, 31);
+}
+
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
   .discount-tabs__label { font-size: 22px; line-height: 26px; }
