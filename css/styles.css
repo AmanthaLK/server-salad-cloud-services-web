@@ -3950,8 +3950,10 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ===== discount-programs/index.html: tab switcher =====
-   3 numbered tabs (01/02/03), the active one filled solid orange; clicking
-   swaps the panel below it — see the click handler in js/main.js. */
+   3 tabs, the active one marked by a gradient underline (not a fill) and a
+   full-opacity label while the other two fade back; clicking swaps the
+   panel below it — see the click handler in js/main.js. Arriving with a
+   #hash from a mega-menu card also scrolls this bar up under the nav. */
 .discount-tabs {
   background: #fff;
   border-top: 2px solid #1b1b1f;
