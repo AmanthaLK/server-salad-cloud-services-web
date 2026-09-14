@@ -49,11 +49,23 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=346**); `js/main.js` has its own separate `?v=N` (currently **v=22**).
+  **v=352**); `js/main.js` has its own separate `?v=N` (currently **v=25**).
   Bump the relevant one any time that file changes, in **every** page's tag —
   now three pages (`index.html`, `cpanel-hosting/index.html`,
   `discount-programs/index.html`) — so browsers fetch the latest version
   instead of a stale cached copy.
+- **Nothing third-party may block first paint.** The Google Fonts stylesheet
+  in every page's `<head>` is loaded **asynchronously** — `rel="preload"
+  as="style"`, then the stylesheet itself at `media="print"` with
+  `onload="this.media='all'"`, plus a `<noscript>` copy. It is NOT a plain
+  `<link rel="stylesheet">`: measured from the dev machine that request takes
+  ~800ms, and as a blocking link the browser cannot paint a single pixel
+  until it returns, which made every navigation flash blank (see C.8). The
+  font URL already carries `display=swap`, so text was always going to paint
+  in the fallback stack and swap — async loading costs nothing that wasn't
+  already happening. Keep the two `preconnect` hints above it. Apply the same
+  treatment to any future third-party stylesheet; local `css/styles.css`
+  stays a normal blocking link, which is correct.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
   human-readable text** — page copy, headings, `alt`/`aria-label` text, page
   titles. The tab title is "Server Salad Cloud Services" on every page.
@@ -279,6 +291,30 @@ button { font: inherit; cursor: pointer; }
 
 @media (max-width: 600px) {
   :root { --gutter: 16px; }
+}
+
+/* ===== Shared header mount point =====
+   The topbar+nav live in partials/header.html and are fetched + injected by
+   js/main.js, so on first paint #site-header is an EMPTY, ZERO-HEIGHT div —
+   the page renders with no header at all, then lurches down 109px the moment
+   the fetch lands. That jump is what reads as the page "blinking" on open.
+
+   Holding the header's exact final height here means the first paint and the
+   injected layout are identical, so nothing moves. The background matches
+   what lands on top of it too (black topbar strip over the dark nav strip),
+   so the reserved space doesn't flash light-then-dark either — the header
+   appears to simply fill in rather than pop into place.
+
+   34px .topbar__inner + 74px .nav__inner + the nav's 1px border-bottom =
+   109px. Keep this in sync if any of those three change. */
+#site-header {
+  min-height: 109px;
+  background: linear-gradient(to bottom, var(--bg-topbar) 0 34px, var(--bg-dark) 34px);
+}
+@media (max-width: 980px) {
+  /* .topbar__inner drops to height:auto + 8px/8px padding below this width,
+     so the topbar sits ~36px tall on a single row. */
+  #site-header { min-height: 111px; }
 }
 
 /* ===== Top utility bar ===== */
@@ -4174,8 +4210,11 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ===== discount-programs/index.html: tab switcher =====
-   3 numbered tabs (01/02/03), the active one filled solid orange; clicking
-   swaps the panel below it — see the click handler in js/main.js. */
+   3 tabs, the active one marked by a gradient underline (not a fill) and a
+   full-opacity label while the other two fade back; clicking swaps the
+   panel below it — see the click handler in js/main.js. Arriving with a
+   #hash from a mega-menu card opens that tab, but does not scroll the page
+   (an auto-scroll to this bar was built and then removed per the owner). */
 .discount-tabs {
   background: #fff;
   border-top: 2px solid #1b1b1f;
@@ -4298,13 +4337,22 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
 /* Small plain-text caption under each panel's description (not a link —
-   was briefly an <a>, corrected to a <span> per owner) — was "Terms &
-   Conditions", relabelled "Eligibility Criteria" per owner. Typography
-   matched to an owner-supplied font-inspector spec (Manrope 600, 12px/18px)
-   — colour deliberately kept as the site's own brand orange rather than
-   the spec's green, per explicit owner instruction. */
+   was briefly an <a>, corrected to a <span> per owner). Label history, each
+   step an owner relabel: "Terms & Conditions" → "Eligibility Criteria" →
+   "Eligibility Criteria and Conditions" (current). Typography matched to an
+   owner-supplied font-inspector spec (Manrope 600, 12px/18px); the colour is
+   the dark rgb(27,27,31) declared below — NOT that spec's green, and not
+   brand orange either, which an earlier version of this comment wrongly
+   claimed. See the note on the colour declaration itself. */
 .discount-tabs__panel-eligibility {
   display: inline-block;
+  /* Per owner: this caption labels the boxes BELOW it, so it has to sit
+     closer to them than to the description above. It used to be 12px under
+     the description and 32px above the grid, which read as part of the
+     paragraph; those gaps are now reversed (32px above / 10px below, the
+     10px living on .discount-tabs__criteria-grid). Keep the two in that
+     ratio if either is ever retuned. */
+  margin: 20px 0 0; /* + the description's own 12px bottom margin = 32px above */
   font-family: "Manrope", var(--font-body);
   font-size: 12px;
   font-weight: 600;
@@ -4326,8 +4374,8 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__criteria-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px 24px;
-  margin-top: 32px;
+  gap: 12px 14px; /* tightened from 20/24 per owner — the boxes read as one set, not six separate cards */
+  margin-top: 10px; /* tight to the "Eligibility Criteria and Conditions" caption above — see its rule */
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
@@ -4867,7 +4915,11 @@ button { font: inherit; cursor: pointer; }
        links while ALREADY on this page only changes the URL's hash (same
        path, so the browser doesn't reload/re-run this script); without the
        hashchange listener the tab never switched in that case, only when
-       arriving fresh from another page. */
+       arriving fresh from another page.
+
+       Opening the tab is deliberately ALL this does: an auto-scroll down to
+       the tab bar was built here and then removed at the owner's request —
+       arriving on this page leaves the visitor at the top of the hero. */
     var applyDiscountHash = function () {
       var discountHash = window.location.hash.replace(/^#/, "");
       if (!discountHash) return;
@@ -5273,12 +5325,28 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
 
   <link rel="icon" type="image/svg+xml" href="/server-salad-cloud-services-web/assets/img/brand/serversalad-favicon.svg">
 
-  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <!-- Fonts: Poppins (headings) + Inter (body).
+
+       Loaded ASYNCHRONOUSLY, not render-blocking. As a plain
+       <link rel="stylesheet"> this is a third-party request that measured
+       ~800ms, and the browser cannot paint a single pixel until it returns —
+       so every navigation sat on a blank screen long enough to flash white
+       between pages. The media="print" + onload flip is the standard trick:
+       the browser fetches it at low priority without blocking paint, then
+       the onload swaps it to media="all" so it applies.
+
+       This costs nothing visually that wasn't already happening — the URL
+       carries display=swap, so text was always going to render in the
+       fallback stack first and swap when the webfonts arrived. Keep the
+       preconnects above it; they shave the handshake off that fetch.
+       <noscript> keeps the fonts working with JS disabled. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=319">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
 </head>
 <body>
 
@@ -5692,7 +5760,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=17"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
 </body>
 </html>
 ```
@@ -5713,12 +5781,28 @@ mounts, folder-with-`index.html` so the URL is
 
   <link rel="icon" type="image/svg+xml" href="/server-salad-cloud-services-web/assets/img/brand/serversalad-favicon.svg">
 
-  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <!-- Fonts: Poppins (headings) + Inter (body).
+
+       Loaded ASYNCHRONOUSLY, not render-blocking. As a plain
+       <link rel="stylesheet"> this is a third-party request that measured
+       ~800ms, and the browser cannot paint a single pixel until it returns —
+       so every navigation sat on a blank screen long enough to flash white
+       between pages. The media="print" + onload flip is the standard trick:
+       the browser fetches it at low priority without blocking paint, then
+       the onload swaps it to media="all" so it applies.
+
+       This costs nothing visually that wasn't already happening — the URL
+       carries display=swap, so text was always going to render in the
+       fallback stack first and swap when the webfonts arrived. Keep the
+       preconnects above it; they shave the handshake off that fetch.
+       <noscript> keeps the fonts working with JS disabled. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=346">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
 </head>
 <body>
 
@@ -6640,7 +6724,7 @@ mounts, folder-with-`index.html` so the URL is
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=22"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
 </body>
 </html>
 ```
@@ -6676,12 +6760,28 @@ geometry).
 
   <link rel="icon" type="image/svg+xml" href="/server-salad-cloud-services-web/assets/img/brand/serversalad-favicon.svg">
 
-  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <!-- Fonts: Poppins (headings) + Inter (body).
+
+       Loaded ASYNCHRONOUSLY, not render-blocking. As a plain
+       <link rel="stylesheet"> this is a third-party request that measured
+       ~800ms, and the browser cannot paint a single pixel until it returns —
+       so every navigation sat on a blank screen long enough to flash white
+       between pages. The media="print" + onload flip is the standard trick:
+       the browser fetches it at low priority without blocking paint, then
+       the onload swaps it to media="all" so it applies.
+
+       This costs nothing visually that wasn't already happening — the URL
+       carries display=swap, so text was always going to render in the
+       fallback stack first and swap when the webfonts arrived. Keep the
+       preconnects above it; they shave the handshake off that fetch.
+       <noscript> keeps the fonts working with JS disabled. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=346">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
 </head>
 <body>
 
@@ -6736,7 +6836,7 @@ geometry).
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Discounted Hosting for Students &amp; Academic Clubs.</h3>
             <p class="discount-tabs__panel-desc">Subsidized rates on select hosting plans for recognized school and university students, as well as academic clubs and student societies. Build portfolio projects, launch student organization portals, and deploy on reliable cPanel infrastructure with minimal friction.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
           </div>
           <!-- Sample placeholder text — owner will replace with the real
                eligibility criteria for this program. -->
@@ -6753,7 +6853,7 @@ geometry).
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Reduced Infrastructure Costs for New Businesses.</h3>
             <p class="discount-tabs__panel-desc">Special pricing on select hosting plans engineered specifically for newly established businesses. Launch your web presence with lower day-one overhead while maintaining high performance, automated backups, and total stability.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
           </div>
           <!-- Sample placeholder text — owner will replace with the real
                eligibility criteria for this program. -->
@@ -6770,7 +6870,7 @@ geometry).
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Discounted cPanel Plans for Client Developers.</h3>
             <p class="discount-tabs__panel-desc">Purpose-built hosting incentives for freelancers and web agencies managing websites on behalf of their clients. Scale your client portfolio with discounted cPanel packages designed to maximize your profit margins and simplify site management.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
           </div>
           <!-- Sample placeholder text — owner will replace with the real
                eligibility criteria for this program. -->
@@ -6791,7 +6891,7 @@ geometry).
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=22"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
 </body>
 </html>
 ```
@@ -7003,7 +7103,8 @@ After building from Parts A/B, confirm:
       markup, same as the homepage's) → Footer.
 - [ ] discount-programs page section order: Hero (centred, no product visual) →
       tab switcher (Student & Academic / Startup / Agency & Freelancer, each
-      panel = subtitle + description + "Eligibility Criteria" caption + 6-card
+      panel = subtitle + description + "Eligibility Criteria and
+      Conditions" caption + 6-card
       criteria grid) → Footer. Deep-linking a `#student-academic`/`#startup`/
       `#agency-freelancer` hash (from the mega-menu cards) opens straight on
       that tab, both on page load and via same-page `hashchange` (see B.7/C.20).
@@ -7013,8 +7114,15 @@ After building from Parts A/B, confirm:
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
 - [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **all
-      three** HTML pages (currently v=346 / v=22) — bump both on every future
+      three** HTML pages (currently v=352 / v=25) — bump both on every future
       change to that file, in every page's tag.
+- [ ] Every page's `<head>` loads the Google Fonts stylesheet **asynchronously**
+      (`rel=preload` + `media="print"` with an `onload` flip to `all`, plus a
+      `<noscript>` copy) — never as a plain render-blocking
+      `<link rel="stylesheet">`. See A.3 and C.8: as a blocking link it
+      measured ~800ms and flashed the page blank on every navigation.
+- [ ] `#site-header` reserves 109px (34px topbar + 74px nav + 1px border)
+      before the header is injected, so the page doesn't lurch when it lands.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows
       the same live number once the fetch resolves, and falls back to its
@@ -7290,6 +7398,31 @@ first thing worth reconsidering.
   `styles.css` is bumped, silently drifting an edited partial out of sync
   with the current CSS until a hard reload. This isn't tied to the `?v=N`
   convention (partial URLs don't carry one) — it forces a fresh fetch every load.
+- **The "briefly absent" cost above is mitigated, not eliminated.**
+  `#site-header` reserves the header's exact final height in CSS — 109px
+  (34px `.topbar__inner` + 74px `.nav__inner` + the nav's 1px
+  `border-bottom`), with a 980px variant where the topbar goes
+  `height: auto` — and carries the same black-over-dark background the real
+  header has. Without it the page rendered headerless and then lurched down
+  109px the instant the fetch landed. With it, first paint and the injected
+  layout are identical, so nothing moves and the reserved strip doesn't
+  flash light-then-dark; the header simply fills in. **Keep that 109px in
+  sync** if any of those three heights change.
+- ⚠️ **What this does NOT fix:** the header content is still absent for the
+  moment between first paint and the fetch resolving — inherent to
+  fetch-and-inject, since a `fetch()` always resolves after first paint.
+  Caching the partials would shorten that window but not remove it. The only
+  complete fix is putting the header in the initial HTML response (PHP
+  includes or Apache SSI — PHP is already proven in this project via
+  `api/pricing.php`, and Apache's `DirectoryIndex` here already lists
+  `index.php`, so `folder/index.html` → `folder/index.php` would keep every
+  URL identical). Raised with the owner and **not** adopted; revisit only if
+  asked.
+- **A separate, much larger flash was fixed in the `<head>`, not here.**
+  Navigating between pages used to flash blank for most of a second. That
+  was *not* the header — it was the Google Fonts stylesheet blocking first
+  paint for ~800ms (see A.3). Diagnose page-level flashing there first; this
+  section's injection cost is comparatively tiny.
 - The nav's dropdown/hamburger JS had to be restructured into `initNav()`
   (rather than running immediately at script load) because that markup may
   not exist yet if it's still arriving via the header fetch — called either
@@ -7779,13 +7912,20 @@ real. Three shapes, depending on what the element already looks like —
   - Reset to full-width, no side-anchoring, under the `860px` breakpoint —
     the left/centre/right split only makes sense at desktop widths where the
     tab bar's columns are wide enough to read as landmarks.
-- **"Eligibility Criteria" caption is a plain `<span>`, not a link** — went
-  through a naming correction (started as "Terms & Conditions", renamed to
-  "Eligibility Criteria" per owner request) and a structural correction
-  (first implemented as `<a href="#eligibility">` with an underline/hover
-  colour change, then corrected to a non-interactive caption once the owner
+- **"Eligibility Criteria and Conditions" caption is a plain `<span>`, not a
+  link.** Label history, every step an owner relabel: "Terms & Conditions" →
+  "Eligibility Criteria" → **"Eligibility Criteria and Conditions"**
+  (current). It also went through a structural correction — first
+  implemented as `<a href="#eligibility">` with an underline/hover colour
+  change, then corrected to a non-interactive caption once the owner
   clarified "that's only a caption, not a hyperlink" — `href`, underline, and
-  hover-colour rules were all removed, not just the `href`).
+  hover-colour rules were all removed, not just the `href`.
+- **The caption is spaced to belong to the boxes below it, not the paragraph
+  above it** — 32px above (its own 20px `margin-top` plus the description's
+  12px `margin-bottom`), 10px below (`.discount-tabs__criteria-grid`'s
+  `margin-top`). It was originally the other way round — 12px above, 32px
+  below — which made it read as the tail of the description. Keep the two
+  gaps in that ratio if either is ever retuned.
 - **Font-inspector colour specs that would be invisible were overridden,
   matching only their typography** — this page received several
   font-inspector screenshots specifying an exact colour that, applied
@@ -7820,6 +7960,13 @@ real. Three shapes, depending on what the element already looks like —
   background, so the dark card style would invert wrong here. 6 cards per
   panel, all currently **sample placeholder text** ("Sample criterion N —
   replace with a real eligibility requirement.") — see Part D.
+  - Grid gap is **12px rows / 14px columns**, tightened from an original
+    20px/24px per owner ("gap between each rectangle too large"). The
+    original gap was wider than the cards' own 22px inner padding, which
+    made six boxes read as separate floating cards rather than one set of
+    criteria. The gap is declared once and inherited by the 2-column
+    (≤860px) and 1-column (≤560px) breakpoints, which only change the
+    column count.
 
 ## Part D — Open Items (known inconsistencies to revisit)
 - **cpanel-hosting "Why Server Salad" is single-region by design** — see C.12.
@@ -8044,3 +8191,43 @@ real. Three shapes, depending on what the element already looks like —
   Discount Programs▾ mega-menu, whose 3 cards were converted from
   "Launching Soon" placeholders to real links once this page existed (see
   C.1).
+- ⛔ **Deep-link auto-scroll was built, then removed — do not re-add it.**
+  Arriving from a Discount Programs▾ mega-menu card used to scroll the page
+  down to the tab bar (measure `.discount-tabs__bar`, offset by the sticky
+  nav, smooth-scroll). It was built, then reworked once to fix genuine
+  glitching, then **removed entirely at the owner's request**. `js/main.js`
+  is back to its pre-scroll state, and the `ss:header-ready` event that
+  existed only to time it went with it. The deep-link still switches to the
+  right tab — that part was never the problem — it just doesn't move the
+  page. Treat "arriving here leaves the visitor at the top of the hero" as
+  intended behaviour, not a missing feature. Both the JS and the
+  `.discount-tabs` CSS comment say so at the code itself.
+- **A fixed `setTimeout` is the wrong tool for "wait until the layout has
+  settled".** The removed scroll above glitched intermittently because it
+  waited a flat 400ms and then measured, racing two things that resize these
+  pages after first paint: the async header injection (~109px) and the web
+  fonts swapping in under `display=swap`. Whether it broke depended on cache
+  state and connection speed, which is exactly why it worked "most of the
+  time". The fix — kept here as the general lesson even though the feature
+  itself is gone — was to wait on the **real signals** (a `ss:header-ready`
+  event for the injection, `document.fonts.ready` for the fonts), measure two
+  animation frames later, and cap it with a failsafe timeout so a failed
+  fetch degrades gracefully. **Any future "do X once the page has settled"
+  work should wait on signals, not a guessed delay.** Same family of mistake
+  as the scroll-driven layout thrash logged above.
+- **Page-level flashing between navigations was a render-blocking
+  third-party stylesheet, not anything in the page.** The Google Fonts
+  `<link>` measured ~800ms from the dev machine (0.853s / 0.794s / 0.742s
+  across three runs) while the local HTML served in 4ms — and as a blocking
+  link nothing can paint until it returns, so every navigation sat blank
+  long past the browser's paint-holding window. Fixed by loading it async
+  (see A.3 for the exact pattern). **Debugging lesson: when a whole page
+  flashes, measure what blocks first paint before theorising about the
+  page's own markup** — two earlier fixes here (reserving the header's
+  height, and before that the scroll timing) were aimed at the wrong thing,
+  because the symptom was assumed rather than measured. `curl -w
+  "%{time_total}"` against each `<head>` asset settles it in seconds.
+- **The shared header's height is reserved in CSS (`#site-header`, 109px)**
+  so the fetch-and-inject architecture doesn't visibly lurch the page — see
+  C.8. This is a real fix worth keeping, but note it addresses the layout
+  jump only, not the flash above.
