@@ -5409,9 +5409,9 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
     </div>
 
     <div class="topbar__group">
+      <a class="topbar__link" href="#blog">Blog</a>
       <a class="topbar__link" href="#about">About</a>
       <a class="topbar__link" href="#contact">Contact</a>
-      <a class="topbar__link" href="#blog">Blog</a>
     </div>
   </div>
 </div>
@@ -7738,9 +7738,10 @@ consistent with intent rather than just matching pixels.
 ### C.1 Navigation
 - Two rows: black topbar + dark sticky main nav. Topbar splits two groups to
   opposite edges (`justify-content: space-between`): email/phone on the left,
-  About / Contact / **Blog** on the right (Blog was moved here from the main
-  nav — see below). No VAT toggle, currency switch, status indicator, or
-  live-chat — deliberately not present.
+  **Blog** / About / Contact on the right (Blog was moved here from the main
+  nav — see below). Blog leads the group per owner request; it was originally
+  last, after About and Contact. No VAT toggle, currency switch, status
+  indicator, or live-chat — deliberately not present.
 - Main nav's whole link group is right-aligned as one unit
   (`justify-content: flex-end`), so the screen-edge→logo gap on the left
   equals the My-Account→screen-edge gap on the right (owner-specified symmetry).
@@ -8752,8 +8753,8 @@ real. Three shapes, depending on what the element already looks like —
   in the cph Workflow section ("300+ One-Click Applications", C.16) and the
   Technical Overview's Software group ("Softaculous Auto-Installer (300+
   Apps)", C.17) — keep all three in sync if the real count changes.
-- Topbar's **About** / **Contact** / **Blog** links (`#about`, `#contact`,
-  `#blog`) are still placeholder anchors — need real destination pages.
+- Topbar's **Blog** / **About** / **Contact** links (`#blog`, `#about`,
+  `#contact`) are still placeholder anchors — need real destination pages.
   Blog was moved here from the main nav (see C.1); its target page still
   doesn't exist yet either way.
 - Web Hosting▾'s cPanel Business Hosting card and the standalone
