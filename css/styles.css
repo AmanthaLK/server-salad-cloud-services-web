@@ -4033,11 +4033,14 @@ button { font: inherit; cursor: pointer; }
   margin-left: auto;
   text-align: right;
 }
-/* Per owner: panels 1 and 3's description column must line up with their
-   own half-width criteria grid below it (see .discount-tabs__criteria-grid
-   further down) — 50% instead of the shared 640px cap, so the heading/
-   description/caption never run past where that panel's boxes start/end. */
+/* Per owner: every panel's description column must line up with its own
+   criteria grid below it (see .discount-tabs__criteria-grid further down)
+   — 50% instead of the shared 640px cap, so the heading/description/
+   caption never run past where that panel's boxes start/end. Panel 2's
+   own margin-left/right: auto above already centres this 50%-wide block;
+   panels 1/3 stay flush left/right via their own rules above. */
 #discount-panel-1 .discount-tabs__panel-body,
+#discount-panel-2 .discount-tabs__panel-body,
 #discount-panel-3 .discount-tabs__panel-body {
   width: 50%;
   max-width: none;
@@ -4105,11 +4108,17 @@ button { font: inherit; cursor: pointer; }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
    (Agency & Freelancer) grid is the mirror — starts at that same midpoint
-   and ends flush right. Both this grid and .discount-tabs__bar sit in the
-   same .container, so 50% width lines up exactly with the Startup tab's
-   own centre. Panel 2's (Startup) own grid is untouched — stays full width. */
+   and ends flush right. Panel 2's (Startup) grid is the same 50% width,
+   but centred instead of pinned to either edge. All three sit in the same
+   .container as .discount-tabs__bar, so 50% width lines up exactly with
+   the Startup tab's own centre either way. */
 #discount-panel-1 .discount-tabs__criteria-grid {
   width: 50%;
+  margin-right: auto;
+}
+#discount-panel-2 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-left: auto;
   margin-right: auto;
 }
 #discount-panel-3 .discount-tabs__criteria-grid {
@@ -4145,10 +4154,11 @@ button { font: inherit; cursor: pointer; }
 
 @media (max-width: 860px) {
   .discount-tabs__criteria-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* The left-half/right-half split only makes sense lined up against the
+  /* The half-width split only makes sense lined up against the
      desktop-width tab bar above — too cramped once the grid itself drops
-     to 2 columns, so both panels go back to full width here. */
+     to 2 columns, so all three panels go back to full width here. */
   #discount-panel-1 .discount-tabs__criteria-grid,
+  #discount-panel-2 .discount-tabs__criteria-grid,
   #discount-panel-3 .discount-tabs__criteria-grid {
     width: 100%;
     margin-left: 0;
@@ -4157,6 +4167,7 @@ button { font: inherit; cursor: pointer; }
   /* Same reset for the matching description column above it (see
      .discount-tabs__panel-body's own comment). */
   #discount-panel-1 .discount-tabs__panel-body,
+  #discount-panel-2 .discount-tabs__panel-body,
   #discount-panel-3 .discount-tabs__panel-body {
     width: auto;
     max-width: 640px;
