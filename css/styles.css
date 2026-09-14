@@ -4103,7 +4103,8 @@ button { font: inherit; cursor: pointer; }
 /* Small plain-text caption under each panel's description (not a link —
    was briefly an <a>, corrected to a <span> per owner). Label history, each
    step an owner relabel: "Terms & Conditions" → "Eligibility Criteria" →
-   "Eligibility Criteria and Conditions" (current). Typography matched to an
+   "Eligibility Criteria and Conditions" → "Eligibility Criteria and
+   Conditions, Important Information" (current). Typography matched to an
    owner-supplied font-inspector spec (Manrope 600, 12px/18px); the colour is
    the dark rgb(27,27,31) declared below — NOT that spec's green, and not
    brand orange either, which an earlier version of this comment wrongly
