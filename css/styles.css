@@ -4079,6 +4079,50 @@ button { font: inherit; cursor: pointer; }
   color: rgb(27, 27, 31);
 }
 
+/* Eligibility criteria cards under each panel — same light-card look as
+   .cph-why-card (white fill, light border, soft shadow, lifts + orange
+   border on hover) since this section sits on a white background, but
+   simplified to description-only per owner: no icon, no per-card title.
+   Sample placeholder text in the HTML; owner will replace with the real
+   criteria. Full container width, independent of .discount-tabs__panel-body's
+   own max-width/alignment above it — a card grid doesn't need that
+   left/centre/right text alignment applied to it. */
+.discount-tabs__criteria-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin-top: 32px;
+}
+.discount-tabs__criteria-card {
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.discount-tabs__criteria-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+.discount-tabs__criteria-desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: rgba(27, 27, 31, .75);
+}
+
+@media (max-width: 860px) {
+  .discount-tabs__criteria-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .discount-tabs__criteria-grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
   .discount-tabs__label { font-size: 22px; line-height: 26px; }
