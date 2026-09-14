@@ -505,10 +505,48 @@
         t.setAttribute("aria-selected", active ? "true" : "false");
         t.tabIndex = active ? 0 : -1;
       });
+      /* Cross-fade the panels rather than swapping them outright: the outgoing
+         one is overlaid (see .discount-tabs__panel--leaving) and fades out
+         while the incoming one fades in beneath the pointer.
+
+         The incoming panel keeps normal flow so the container takes its height
+         straight away — panels differ in height, and letting the OUTGOING one
+         hold the height would make the page collapse and re-expand mid-fade.
+
+         Any panel still mid-exit from a previous click is cleaned up first, so
+         clicking through the tabs quickly can't leave a stale overlay behind. */
+      var stillNow = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      discountPanels.forEach(function (p) {
+        if (p.classList.contains("discount-tabs__panel--leaving")) {
+          p.classList.remove("discount-tabs__panel--leaving");
+          p.hidden = true;
+        }
+      });
+
       discountPanels.forEach(function (p) {
         var active = p.getAttribute("data-panel") === target;
-        p.classList.toggle("is-active", active);
-        p.hidden = !active;
+        if (active) {
+          p.hidden = false;
+          p.classList.add("is-active");
+          return;
+        }
+        if (!p.classList.contains("is-active")) return;
+
+        p.classList.remove("is-active");
+        if (stillNow) {
+          p.hidden = true;
+          return;
+        }
+        // let it fade out on top of the new panel, then take it out of the DOM flow
+        p.classList.add("discount-tabs__panel--leaving");
+        var finish = function () {
+          p.removeEventListener("animationend", finish);
+          p.classList.remove("discount-tabs__panel--leaving");
+          p.hidden = true;
+        };
+        p.addEventListener("animationend", finish);
       });
     };
     discountTabs.forEach(function (tab) {

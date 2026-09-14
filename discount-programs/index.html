@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=364">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=365">
 </head>
 <body>
 
@@ -82,7 +82,10 @@
         </button>
       </div>
 
-      <div class="container">
+      <!-- position:relative container: on a switch the outgoing panel is taken
+           out of flow and overlaid here so it can cross-fade with the incoming
+           one. See .discount-tabs__panel--leaving in css/styles.css. -->
+      <div class="container discount-tabs__panels">
         <div class="discount-tabs__panel is-active" id="discount-panel-1" role="tabpanel" aria-labelledby="discount-tab-1" data-panel="1">
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Discounted Hosting for Students &amp; Academic Clubs.</h3>
@@ -220,6 +223,6 @@
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=31"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=32"></script>
 </body>
 </html>

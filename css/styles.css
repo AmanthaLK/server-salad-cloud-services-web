@@ -4032,6 +4032,9 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
 
+/* Positioning context for the outgoing panel's overlay during a cross-fade. */
+.discount-tabs__panels { position: relative; }
+
 .discount-tabs__panel {
   display: none;
   padding: 64px 0;
@@ -4055,9 +4058,29 @@ button { font: inherit; cursor: pointer; }
    many boxes a panel holds. */
 .discount-tabs__panel.is-active {
   display: block;
-}
-.discount-tabs__panel.is-active .discount-tabs__panel-body {
+  position: relative;
+  z-index: 1; /* above the outgoing panel fading out beneath it */
   animation: discount-panel-in .28s cubic-bezier(.4, 0, .2, 1) both; /* shared switch timing */
+}
+
+/* The outgoing panel, mid cross-fade. js/main.js moves the old panel to this
+   state instead of hiding it outright, then hides it for real on animationend.
+
+   It's taken out of flow and overlaid on .discount-tabs__panels so the two
+   panels can occupy the same space at once. That's also why the incoming
+   panel — not this one — keeps normal flow: panels differ in height (32 boxes
+   vs 30), and letting the INCOMING one define the container's height means
+   the page settles on its final height immediately rather than collapsing
+   and re-expanding mid-fade. */
+.discount-tabs__panel--leaving {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 0;
+  pointer-events: none; /* never intercept clicks on its way out */
+  animation: discount-panel-out .28s cubic-bezier(.4, 0, .2, 1) both;
 }
 /* Opacity only — no transform. This animates a very large subtree (up to 32
    boxes), and pairing opacity with a transform on something that big adds
@@ -4066,10 +4089,15 @@ button { font: inherit; cursor: pointer; }
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+@keyframes discount-panel-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {
   /* the indicator checks prefers-reduced-motion in js/main.js itself */
-  .discount-tabs__panel.is-active .discount-tabs__panel-body { animation: none; }
+  .discount-tabs__panel.is-active,
+  .discount-tabs__panel--leaving { animation: none; }
 }
 .discount-tabs__panel-body { max-width: 640px; }
 /* Per owner: each panel's content aligns differently — panel 1 (Student &
