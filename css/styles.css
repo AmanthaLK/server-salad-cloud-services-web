@@ -3927,3 +3927,13 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .cph-overview__inner { padding: 64px 0; }
 }
+
+/* ===== discount-programs/index.html — new page, intentionally blank ===== */
+/* Placeholder for the discount-programs/ page — owner will supply the real
+   content later. Reserves enough height that the page doesn't look broken
+   (header running straight into the footer) in the meantime; explicit
+   white background per the request for a "white empty page". */
+.discount-programs-placeholder {
+  min-height: 50vh;
+  background: #fff;
+}
