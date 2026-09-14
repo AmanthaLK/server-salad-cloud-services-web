@@ -49,9 +49,11 @@ from `htdocs/server-salad-cloud-services-web`. Local URL:
   card/section title it illustrates** — never keep an upload's original name
   (camera/export names, "(1)" suffixes, stock-photo IDs, spaces).
 - **Cache-busting:** `css/styles.css` is linked with `?v=N` (currently
-  **v=319**); `js/main.js` has its own separate `?v=N` (currently **v=17**).
-  Bump the relevant one any time that file changes, in **every** page's tag,
-  so browsers fetch the latest version instead of a stale cached copy.
+  **v=346**); `js/main.js` has its own separate `?v=N` (currently **v=22**).
+  Bump the relevant one any time that file changes, in **every** page's tag —
+  now three pages (`index.html`, `cpanel-hosting/index.html`,
+  `discount-programs/index.html`) — so browsers fetch the latest version
+  instead of a stale cached copy.
 - **Brand name.** The brand name is **two words: "Server Salad"** in **all
   human-readable text** — page copy, headings, `alt`/`aria-label` text, page
   titles. The tab title is "Server Salad Cloud Services" on every page.
@@ -140,6 +142,10 @@ server-salad-cloud-services-web/
     footer.html                    <- footer, injected into every page
   cpanel-hosting/
     index.html                     <- 2nd page, /server-salad-cloud-services-web/cpanel-hosting/
+  discount-programs/
+    index.html                     <- 3rd page, /server-salad-cloud-services-web/discount-programs/
+                                       (Student & Academic / Startup / Agency
+                                       & Freelancer tab switcher — see B.7/C.20)
   api/
     pricing.php                    <- the one server-side file (live pricing)
   downloads/                       <- TEMPORARY staging only for owner-supplied
@@ -2315,7 +2321,13 @@ button { font: inherit; cursor: pointer; }
   display: block;
   margin-bottom: 22px;
   padding-top: 12px;
-  border-top: 3px solid var(--brand-orange);
+  /* Same red -> orange gradient as .cph-backups__underline (owner's "orange
+     and red mixed" gradient) instead of flat --brand-orange — border-color
+     can't take a gradient directly, so border-image stretches it across
+     this single (top-only) border side; other sides stay borderless since
+     their width is still 0. */
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--accent), var(--accent-2)) 1;
   font-family: "Cairo", var(--font-heading);
   font-size: 17px;
   font-weight: 600;
@@ -2436,7 +2448,9 @@ button { font: inherit; cursor: pointer; }
   width: 60px;
   height: 3px;
   margin: 6px 0 2px;
-  background: var(--brand-orange);
+  /* Same red -> orange gradient as .cph-backups__underline / .footer__col-title
+     above (owner's "orange and red mixed" gradient), instead of flat --brand-orange. */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 /* Same lesson as the logo backdrop above: a faint translucent circle on pure black
@@ -2572,6 +2586,19 @@ button { font: inherit; cursor: pointer; }
   width: 100%;
   height: auto;
 }
+
+/* Used on hero instances with no product-screenshot visual (see
+   discount-programs/index.html) — collapses the two-column grid to one
+   centred column instead of leaving an empty, lopsided second column. Same
+   centred-content pattern as .eco__inner/.eco__content elsewhere. */
+.cph-hero__inner--centered {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+.cph-hero__inner--centered .cph-hero__content { max-width: 700px; }
+.cph-hero__inner--centered .cph-hero__underline { margin-left: auto; margin-right: auto; }
+.cph-hero__inner--centered .cph-hero__desc { margin-left: auto; margin-right: auto; }
 
 @media (max-width: 980px) {
   .cph-hero__inner { grid-template-columns: 1fr; padding: 72px 0; }
@@ -3029,6 +3056,44 @@ button { font: inherit; cursor: pointer; }
   font-size: 14px;
   font-weight: 400;
   line-height: 21px;
+}
+
+/* Per owner: the first two feature rows (Websites, Storage) should ALSO stay
+   pinned once the header above locks into its sticky spot, not just the
+   toggle + header themselves. Same `position: sticky` mechanism as
+   .cph-table__intro/.cph-table__pkg above — each row's 4 cells (label + 3
+   vals) share one `top` offset so the whole row pins as one, stacked
+   directly under the header.
+
+   The header's own rendered height isn't fixed — it changes the moment it
+   condenses (see .is-condensed above) and again whenever the Monthly/
+   Annually toggle changes the "billed as..." line's content — so a
+   hardcoded pixel offset here would leave a gap, or an overlap, the moment
+   the header's height changes. js/main.js measures the header's actual
+   height with a ResizeObserver and writes it into --cph-pkg-header-h; a
+   ResizeObserver only fires when that box's size genuinely changes, never
+   on scroll itself, so this doesn't reintroduce the layout-thrashing
+   anti-pattern already reverted once for the header's own condense
+   animation (see the comment above .cph-table__intro). Storage then stacks
+   on top of that plus one row's own fixed height (36px = 8px+8px vertical
+   padding + 20px line-height, shared by .cph-table__label/.cph-table__val —
+   both rows are single-line, plain-text content, so this doesn't need the
+   same live-measurement treatment as the header). */
+.cph-table__row--pin-1,
+.cph-table__row--pin-2 {
+  position: sticky;
+  z-index: 14; /* above ordinary rows scrolling past underneath, below the header's 15 */
+}
+.cph-table__row--pin-1 { top: calc(129px + var(--cph-pkg-header-h, 160px)); }
+.cph-table__row--pin-2 { top: calc(129px + var(--cph-pkg-header-h, 160px) + 36px); }
+/* .cph-table__label already carries its own #fafafb background; .cph-table__val
+   doesn't (it relies on .cph-table's white background showing through), which
+   is fine while scrolling normally but would let rows scrolled past show
+   through once this cell is actually pinned — give it an explicit opaque
+   background only while pinned. */
+.cph-table__val.cph-table__row--pin-1,
+.cph-table__val.cph-table__row--pin-2 {
+  background: #fff;
 }
 /* CTA row lives at the bottom of the table now (moved per owner — used to sit
    directly under each price in the header row). Each cell matches the padding/
@@ -4107,6 +4172,240 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .cph-overview__inner { padding: 64px 0; }
 }
+
+/* ===== discount-programs/index.html: tab switcher =====
+   3 numbered tabs (01/02/03), the active one filled solid orange; clicking
+   swaps the panel below it — see the click handler in js/main.js. */
+.discount-tabs {
+  background: #fff;
+  border-top: 2px solid #1b1b1f;
+}
+.discount-tabs__bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.discount-tabs__tab {
+  position: relative; /* anchors .is-active's ::after underline bar below */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 32px;
+  border: none;
+  background: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.discount-tabs__tab:hover { background: #fafafb; }
+/* Selected state used to fill the whole tab solid orange — per owner,
+   that's now just a thin underline bar instead, same red -> orange
+   gradient as .footer__underline/.cph-backups__underline (owner's "orange
+   and red mixed" gradient). The ash-grey column/row borders this used to
+   sit against were removed per owner request, so it now sits flush with
+   the tab's own bottom edge instead of offsetting for that border. */
+.discount-tabs__tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+/* Typography matched to an owner-supplied font-inspector spec, colour
+   included (same spec given earlier for the section this switcher
+   replaced — see the reference-styling rule in README A.3: usually only
+   typography/box dimensions are matched and colour is kept as the site's
+   own, but this spec explicitly gives a colour too, so it's matched
+   exactly). */
+.discount-tabs__label {
+  font-family: "Cairo", "Manrope", sans-serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 46px;
+  color: rgb(32, 29, 44);
+  /* Faded by default so the selected tab visibly stands out; the active
+     tab's own rule below brings it back to full opacity. */
+  opacity: .4;
+  transition: opacity .18s ease;
+}
+.discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
+
+.discount-tabs__panel {
+  display: none;
+  padding: 64px 0;
+}
+/* Used to be a 2-column grid (a big heading on the left, this body on the
+   right) — the heading was removed per owner request, so the body just
+   takes the row on its own now, capped to a readable width instead of
+   stretching the full container. */
+.discount-tabs__panel.is-active { display: block; }
+.discount-tabs__panel-body { max-width: 640px; }
+/* Per owner: each panel's content aligns differently — panel 1 (Student &
+   Academic) left (the default, no override needed), panel 2 (Startup)
+   centred, panel 3 (Agency & Freelancer) right. margin-left/right: auto
+   moves the whole (max-width-capped) block within the container; text-align
+   handles the text itself inside it. */
+#discount-panel-2 .discount-tabs__panel-body {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+#discount-panel-3 .discount-tabs__panel-body {
+  margin-left: auto;
+  text-align: right;
+}
+/* Per owner: every panel's description column must line up with its own
+   criteria grid below it (see .discount-tabs__criteria-grid further down)
+   — 50% instead of the shared 640px cap, so the heading/description/
+   caption never run past where that panel's boxes start/end. Panel 2's
+   own margin-left/right: auto above already centres this 50%-wide block;
+   panels 1/3 stay flush left/right via their own rules above. */
+#discount-panel-1 .discount-tabs__panel-body,
+#discount-panel-2 .discount-tabs__panel-body,
+#discount-panel-3 .discount-tabs__panel-body {
+  width: 50%;
+  max-width: none;
+}
+/* Typography matched to an owner-supplied font-inspector spec (Cairo 600,
+   25px/25px) — see the reference-styling rule in README A.3. That spec's
+   colour was white, but this text sits on this section's white background,
+   so it's kept at the site's own dark colour instead (white would be
+   invisible here) — confirmed with the owner rather than assumed. */
+.discount-tabs__panel-subtitle {
+  margin: 0 0 16px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 25px;
+  color: rgb(27, 27, 31);
+}
+/* Typography matched to an owner-supplied font-inspector spec (Manrope 300,
+   15px/25px, colour rgba(32,29,44,.82)) — updated spec, colour included
+   this time since it's a dark tone that's actually visible on this
+   section's white background (unlike the earlier white/translucent-white
+   specs given for this element and .discount-tabs__panel-subtitle). */
+.discount-tabs__panel-desc {
+  margin: 0 0 12px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 25px;
+  color: rgba(32, 29, 44, .82);
+}
+.discount-tabs__panel-desc:last-child { margin-bottom: 0; }
+
+/* Small plain-text caption under each panel's description (not a link —
+   was briefly an <a>, corrected to a <span> per owner) — was "Terms &
+   Conditions", relabelled "Eligibility Criteria" per owner. Typography
+   matched to an owner-supplied font-inspector spec (Manrope 600, 12px/18px)
+   — colour deliberately kept as the site's own brand orange rather than
+   the spec's green, per explicit owner instruction. */
+.discount-tabs__panel-eligibility {
+  display: inline-block;
+  font-family: "Manrope", var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  /* Owner asked for the normal dark text colour already used elsewhere on
+     this panel (subtitle/label), not brand orange or the font-inspector
+     spec's green. */
+  color: rgb(27, 27, 31);
+}
+
+/* Eligibility criteria cards under each panel — same light-card look as
+   .cph-why-card (white fill, light border, soft shadow, lifts + orange
+   border on hover) since this section sits on a white background, but
+   simplified to description-only per owner: no icon, no per-card title.
+   Sample placeholder text in the HTML; owner will replace with the real
+   criteria. Independent of .discount-tabs__panel-body's own max-width/
+   alignment above it — a card grid doesn't need that left/centre/right
+   text alignment applied to it. */
+.discount-tabs__criteria-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin-top: 32px;
+}
+/* Per owner: panel 1's (Student & Academic) grid starts flush left and
+   ends at the horizontal midpoint of the Startup tab above it; panel 3's
+   (Agency & Freelancer) grid is the mirror — starts at that same midpoint
+   and ends flush right. Panel 2's (Startup) grid is the same 50% width,
+   but centred instead of pinned to either edge. All three sit in the same
+   .container as .discount-tabs__bar, so 50% width lines up exactly with
+   the Startup tab's own centre either way. */
+#discount-panel-1 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-right: auto;
+}
+#discount-panel-2 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#discount-panel-3 .discount-tabs__criteria-grid {
+  width: 50%;
+  margin-left: auto;
+}
+.discount-tabs__criteria-card {
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e6e6ec;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .04);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.discount-tabs__criteria-card:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 16px 34px rgba(50, 61, 65, .1);
+  transform: translateY(-3px);
+}
+/* Typography matched to an owner-supplied font-inspector spec (Manrope 400,
+   14px/21px) — same recurring situation as the panel subtitle/description
+   above: the spec's colour (rgba(255,255,255,.78)) is translucent white,
+   which would be invisible on these cards' white background, so kept at
+   the site's own dark colour instead. */
+.discount-tabs__criteria-desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgba(27, 27, 31, .75);
+}
+
+@media (max-width: 860px) {
+  .discount-tabs__criteria-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The half-width split only makes sense lined up against the
+     desktop-width tab bar above — too cramped once the grid itself drops
+     to 2 columns, so all three panels go back to full width here. */
+  #discount-panel-1 .discount-tabs__criteria-grid,
+  #discount-panel-2 .discount-tabs__criteria-grid,
+  #discount-panel-3 .discount-tabs__criteria-grid {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  /* Same reset for the matching description column above it (see
+     .discount-tabs__panel-body's own comment). */
+  #discount-panel-1 .discount-tabs__panel-body,
+  #discount-panel-2 .discount-tabs__panel-body,
+  #discount-panel-3 .discount-tabs__panel-body {
+    width: auto;
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 560px) {
+  .discount-tabs__criteria-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .discount-tabs__tab { padding: 20px 16px; }
+  .discount-tabs__label { font-size: 22px; line-height: 26px; }
+}
 ```
 
 ### B.2 `js/main.js`
@@ -4499,6 +4798,88 @@ button { font: inherit; cursor: pointer; }
     );
     pkgStickyObserver.observe(pkgSentinel);
   }
+
+  /* ===== Pin the top two feature rows (Websites, Storage) under the header =====
+     Per owner: once the package header above locks into its sticky spot,
+     these two rows should lock in place right beneath it too, instead of
+     scrolling away with the rest of the table — see .cph-table__row--pin-1/
+     --pin-2 in css/styles.css.
+
+     Those rows' sticky `top` has to sit right at the header's own bottom
+     edge, but the header's rendered height isn't fixed — it changes the
+     moment it condenses (see the block above) and again whenever the
+     Monthly/Annually toggle changes the "billed as..." line's content. A
+     ResizeObserver watching the header cell writes its live height into
+     --cph-pkg-header-h once per actual size change; unlike a scroll
+     handler, it never fires on scroll itself, so this doesn't reintroduce
+     the layout-thrashing problem solved above — it only recomputes when the
+     header's box genuinely resizes.
+
+     Read the height via getBoundingClientRect() inside the callback rather
+     than the ResizeObserverEntry's own contentRect — contentRect reports
+     the CONTENT box only (excludes this cell's 26px/8px vertical padding),
+     which undercounted the real on-screen row height by that padding and
+     let the header visually overlap the top of the pinned Websites row
+     below it. getBoundingClientRect() reports the full border-box height
+     actually rendered, so it matches the sticky offset the pinned rows need. */
+  var pkgHeaderMeasureEl = document.querySelector(".cph-table__pkg");
+  var pkgStickyScopeEl = document.querySelector(".cph-plans__sticky-scope");
+  if (pkgHeaderMeasureEl && pkgStickyScopeEl && "ResizeObserver" in window) {
+    var pkgHeaderResizeObserver = new ResizeObserver(function () {
+      var height = pkgHeaderMeasureEl.getBoundingClientRect().height;
+      pkgStickyScopeEl.style.setProperty("--cph-pkg-header-h", height + "px");
+    });
+    pkgHeaderResizeObserver.observe(pkgHeaderMeasureEl);
+  }
+
+  /* ===== discount-programs/index.html: tab switcher =====
+     3 tabs (.discount-tabs__tab) — clicking one shows its matching
+     .discount-tabs__panel (same data-tab/data-panel value) and hides the
+     others. Element-existence guard means this safely no-ops on every
+     other page. */
+  var discountTabs = document.querySelectorAll(".discount-tabs__tab");
+  var discountPanels = document.querySelectorAll(".discount-tabs__panel");
+  if (discountTabs.length && discountPanels.length) {
+    var activateDiscountTab = function (tab) {
+      var target = tab.getAttribute("data-tab");
+      discountTabs.forEach(function (t) {
+        var active = t === tab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.tabIndex = active ? 0 : -1;
+      });
+      discountPanels.forEach(function (p) {
+        var active = p.getAttribute("data-panel") === target;
+        p.classList.toggle("is-active", active);
+        p.hidden = !active;
+      });
+    };
+    discountTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () { activateDiscountTab(tab); });
+    });
+
+    /* Deep-link from the Discount Programs mega-menu cards (see
+       partials/header.html): each card's href carries a #hash matching one
+       tab's data-hash, so arriving from that card opens straight on its own
+       tab instead of always defaulting to the first one.
+
+       Checked on load AND on "hashchange" — clicking one of those mega-menu
+       links while ALREADY on this page only changes the URL's hash (same
+       path, so the browser doesn't reload/re-run this script); without the
+       hashchange listener the tab never switched in that case, only when
+       arriving fresh from another page. */
+    var applyDiscountHash = function () {
+      var discountHash = window.location.hash.replace(/^#/, "");
+      if (!discountHash) return;
+      var matchedDiscountTab = null;
+      discountTabs.forEach(function (t) {
+        if (t.getAttribute("data-hash") === discountHash) matchedDiscountTab = t;
+      });
+      if (matchedDiscountTab) activateDiscountTab(matchedDiscountTab);
+    };
+    applyDiscountHash();
+    window.addEventListener("hashchange", applyDiscountHash);
+  }
 })();
 ```
 
@@ -4701,7 +5082,12 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                   <div class="nav__mega-middle">
                     <div class="nav__mega-intro-divider" aria-hidden="true"></div>
                     <div class="nav__mega-cards">
-                      <div class="mega-card mega-card--soon">
+                      <!-- All 3 cards point at the discount-programs/ page, each with a
+                           #hash matching one tab's data-hash there (see
+                           discount-programs/index.html + js/main.js) — landing on the
+                           page opens straight on that card's own tab instead of always
+                           defaulting to the first one. -->
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#student-academic">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -4709,12 +5095,11 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                               <path d="M5 10.5V15c0 1.7 3.1 3 7 3s7-1.3 7-3v-4.5l-7 3.2z"/>
                             </svg>
                           </span>
-                          <span class="mega-card__title">Student &amp; Academic <strong>Programs</strong></span>
+                          <span class="mega-card__title">Student &amp; Academic <strong>Program</strong></span>
                         </span>
                         <span class="mega-card__desc">Discounted hosting on select plans for recognized students and university or school clubs.</span>
-                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
-                      </div>
-                      <div class="mega-card mega-card--soon">
+                      </a>
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#startup">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -4725,9 +5110,8 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                           <span class="mega-card__title">Startup <strong>Program</strong></span>
                         </span>
                         <span class="mega-card__desc">Reduced rates on select hosting plans designed to help newly established businesses launch their web presence.</span>
-                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
-                      </div>
-                      <div class="mega-card mega-card--soon">
+                      </a>
+                      <a class="mega-card" href="/server-salad-cloud-services-web/discount-programs/#agency-freelancer">
                         <span class="mega-card__row">
                           <span class="mega-card__icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -4738,8 +5122,7 @@ Bare fragment — no `<html>/<head>/<body>` wrapper. Mounted by `js/main.js` int
                           <span class="mega-card__title">Agency &amp; Freelancer <strong>Program</strong></span>
                         </span>
                         <span class="mega-card__desc">Discounted cPanel hosting plans for developers and agencies hosting websites on behalf of their clients.</span>
-                        <span class="mega-card__soon" aria-hidden="true">Launching Soon</span>
-                      </div>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -5335,7 +5718,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=319">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=346">
 </head>
 <body>
 
@@ -5431,15 +5814,18 @@ mounts, folder-with-`index.html` so the URL is
           <!-- Feature rows — ordered by how much weight buyers give each when
                comparing shared-hosting tiers (site count > space > traffic >
                DBs > mailboxes > the rest); see git log for the research note. -->
-          <div class="cph-table__label">Websites</div>
-          <div class="cph-table__val">1</div>
-          <div class="cph-table__val">3</div>
-          <div class="cph-table__val">10</div>
+          <!-- Websites + Storage stay pinned under the black header once it locks
+               into its sticky spot (owner request) — see .cph-table__row--pin-1/
+               --pin-2 in css/styles.css and the ResizeObserver note in js/main.js. -->
+          <div class="cph-table__label cph-table__row--pin-1">Websites</div>
+          <div class="cph-table__val cph-table__row--pin-1">1</div>
+          <div class="cph-table__val cph-table__row--pin-1">3</div>
+          <div class="cph-table__val cph-table__row--pin-1">10</div>
 
-          <div class="cph-table__label">Storage</div>
-          <div class="cph-table__val">1 GB NVMe</div>
-          <div class="cph-table__val">9 GB NVMe</div>
-          <div class="cph-table__val">30 GB NVMe</div>
+          <div class="cph-table__label cph-table__row--pin-2">Storage</div>
+          <div class="cph-table__val cph-table__row--pin-2">1 GB NVMe</div>
+          <div class="cph-table__val cph-table__row--pin-2">9 GB NVMe</div>
+          <div class="cph-table__val cph-table__row--pin-2">30 GB NVMe</div>
 
           <div class="cph-table__label">Bandwidth</div>
           <div class="cph-table__val">20 GB</div>
@@ -6254,12 +6640,163 @@ mounts, folder-with-`index.html` so the URL is
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=17"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=22"></script>
 </body>
 </html>
 ```
 
-### B.7 `api/pricing.php`
+### B.7 `discount-programs/index.html`
+Third page. Same `<head>` pattern as the other two pages (title/favicon/
+fonts/stylesheet, all root-relative), folder-with-`index.html` so the URL is
+`/server-salad-cloud-services-web/discount-programs/`. Reached from the main
+nav's **Discount Programs▾** mega-menu (see C.1) — each of its 3 cards links
+here with a `#hash` matching one tab's `data-hash` below, so landing on the
+page opens straight on that card's own tab (see B.2's `applyDiscountHash`)
+instead of always defaulting to the first one.
+
+Structure, top to bottom: a centred hero (duplicated from cpanel-hosting's
+`.cph-hero` markup, no product-screenshot visual — see the in-file comment),
+then one `.discount-tabs` section holding a 3-tab switcher (Student &
+Academic / Startup / Agency & Freelancer) and their 3 panels. Each panel has
+a subtitle + description + plain-text "Eligibility Criteria" caption (not a
+link — see C.20), then a 6-card grid of eligibility-criteria boxes. The
+criteria cards currently hold **sample placeholder text** — the owner will
+supply the real eligibility requirements per program; swap the
+`.discount-tabs__criteria-desc` text in each card when that copy arrives,
+don't restructure the grid. See C.20 for the full design rationale (tab
+switcher, per-panel alignment, font-inspector overrides, criteria-grid
+geometry).
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Salad Cloud Services</title>
+
+  <link rel="icon" type="image/svg+xml" href="/server-salad-cloud-services-web/assets/img/brand/serversalad-favicon.svg">
+
+  <!-- Fonts: Poppins (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=346">
+</head>
+<body>
+
+  <!-- Topbar + nav are a shared partial (partials/header.html), injected by
+       js/main.js so every page shares the same markup from one file. -->
+  <div id="site-header"></div>
+
+  <main>
+    <!-- ===== Hero =====
+         Duplicated from cpanel-hosting/index.html's hero (same .cph-hero*
+         classes) per owner request, as a starting point — copy still says
+         "cPanel Hosting" and will need real Discount Programs copy once the
+         owner supplies it. No product-screenshot visual for this page (owner
+         request), so .cph-hero__inner--centered collapses the two-column
+         grid to one centred column instead of leaving an empty, lopsided
+         second column — see css/styles.css. -->
+    <section class="cph-hero">
+      <div class="cph-hero__bg" aria-hidden="true"></div>
+
+      <div class="container cph-hero__inner cph-hero__inner--centered">
+        <div class="cph-hero__content">
+          <h1 class="cph-hero__title">Discount <span class="cph-hero__title-accent">Programs</span></h1>
+          <div class="cph-hero__underline" aria-hidden="true"></div>
+          <p class="cph-hero__desc">High-performance cloud hosting engineered for tomorrow's builders. We offer specialized hosting discounts to lower financial barriers for verified students, early-stage startups, and client-focused web agencies. Deploy on enterprise infrastructure with zero long-term commitments.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Discount Programs: tab switcher =====
+         Per owner reference: 3 tabs, the active one showing a gradient
+         underline (see css/styles.css); clicking a tab swaps the panel
+         below it (see js/main.js). Started with "01."/"02."/"03." numbering
+         prefixes (matching the reference image) — removed per owner
+         request, tabs are plain labels now. Panel sub-headings/descriptions
+         are owner-supplied real copy (replaced an earlier draft reusing the
+         mega-menu's shorter one-line descriptions). -->
+    <section class="discount-tabs">
+      <div class="container discount-tabs__bar" role="tablist">
+        <button class="discount-tabs__tab is-active" type="button" role="tab" id="discount-tab-1" aria-selected="true" aria-controls="discount-panel-1" data-tab="1" data-hash="student-academic">
+          <span class="discount-tabs__label">Student &amp; Academic</span>
+        </button>
+        <button class="discount-tabs__tab" type="button" role="tab" id="discount-tab-2" aria-selected="false" aria-controls="discount-panel-2" data-tab="2" data-hash="startup" tabindex="-1">
+          <span class="discount-tabs__label">Startup</span>
+        </button>
+        <button class="discount-tabs__tab" type="button" role="tab" id="discount-tab-3" aria-selected="false" aria-controls="discount-panel-3" data-tab="3" data-hash="agency-freelancer" tabindex="-1">
+          <span class="discount-tabs__label">Agency &amp; Freelancer</span>
+        </button>
+      </div>
+
+      <div class="container">
+        <div class="discount-tabs__panel is-active" id="discount-panel-1" role="tabpanel" aria-labelledby="discount-tab-1" data-panel="1">
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Discounted Hosting for Students &amp; Academic Clubs.</h3>
+            <p class="discount-tabs__panel-desc">Subsidized rates on select hosting plans for recognized school and university students, as well as academic clubs and student societies. Build portfolio projects, launch student organization portals, and deploy on reliable cPanel infrastructure with minimal friction.</p>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+          </div>
+          <!-- Sample placeholder text — owner will replace with the real
+               eligibility criteria for this program. -->
+          <div class="discount-tabs__criteria-grid">
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+          </div>
+        </div>
+        <div class="discount-tabs__panel" id="discount-panel-2" role="tabpanel" aria-labelledby="discount-tab-2" data-panel="2" hidden>
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Reduced Infrastructure Costs for New Businesses.</h3>
+            <p class="discount-tabs__panel-desc">Special pricing on select hosting plans engineered specifically for newly established businesses. Launch your web presence with lower day-one overhead while maintaining high performance, automated backups, and total stability.</p>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+          </div>
+          <!-- Sample placeholder text — owner will replace with the real
+               eligibility criteria for this program. -->
+          <div class="discount-tabs__criteria-grid">
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+          </div>
+        </div>
+        <div class="discount-tabs__panel" id="discount-panel-3" role="tabpanel" aria-labelledby="discount-tab-3" data-panel="3" hidden>
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Discounted cPanel Plans for Client Developers.</h3>
+            <p class="discount-tabs__panel-desc">Purpose-built hosting incentives for freelancers and web agencies managing websites on behalf of their clients. Scale your client portfolio with discounted cPanel packages designed to maximize your profit margins and simplify site management.</p>
+            <span class="discount-tabs__panel-eligibility">Eligibility Criteria</span>
+          </div>
+          <!-- Sample placeholder text — owner will replace with the real
+               eligibility criteria for this program. -->
+          <div class="discount-tabs__criteria-grid">
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js so
+       every page includes the same markup from one file. See README "Footer" notes. -->
+  <div id="site-footer"></div>
+
+  <script src="/server-salad-cloud-services-web/js/main.js?v=22"></script>
+</body>
+</html>
+```
+
+### B.8 `api/pricing.php`
 The one server-side file in the project. Read-only: returns just the 3 plan
 prices as JSON, nothing else from the table.
 
@@ -6364,7 +6901,7 @@ Annually toggle on the cpanel-hosting page computes annual figures
 client-side (year total = monthly × 10, since the DB only stores one monthly
 figure) rather than needing a second DB column.
 
-### B.8 Assets manifest
+### B.9 Assets manifest
 Every image referenced in B.5/B.6, where it lives, and what it is. Section
 icon SVGs (all folders except `apps/`, `brand/`, `flags/`, `graphics/`,
 `partners/`, `photos/`, `reviews/`) are single-colour, saved with
@@ -6452,9 +6989,9 @@ SVG file to change colour, change the CSS custom property or the class's
 | `workflow/sitejet-ai-builder.svg` | "Sitejet Builder Suite" |
 | `workflow/temporary-preview-url.svg` | "Temporary Preview URLs" |
 
-### B.9 Verification checklist
+### B.10 Verification checklist
 After building from Parts A/B, confirm:
-- [ ] Both pages' `<title>` reads exactly "Server Salad Cloud Services".
+- [ ] All three pages' `<title>` reads exactly "Server Salad Cloud Services".
 - [ ] `.container` is 1240px max-width, 24px gutter (16px ≤600px), on every section.
 - [ ] Homepage section order top-to-bottom: Hero → "Why Choose Server Salad" →
       Sustainability → Plans+Locations (one gradient wrapper) → Migration →
@@ -6463,12 +7000,20 @@ After building from Parts A/B, confirm:
       Features → Why Server Salad → Business Email → Backups → Security →
       Workflow → Technical Overview → Sustainability (shared `.eco*` markup,
       same as the homepage's) → Footer.
-- [ ] Light/dark alternation holds on both pages (each band contrasts the one above it).
+- [ ] discount-programs page section order: Hero (centred, no product visual) →
+      tab switcher (Student & Academic / Startup / Agency & Freelancer, each
+      panel = subtitle + description + "Eligibility Criteria" caption + 6-card
+      criteria grid) → Footer. Deep-linking a `#student-academic`/`#startup`/
+      `#agency-freelancer` hash (from the mega-menu cards) opens straight on
+      that tab, both on page load and via same-page `hashchange` (see B.7/C.20).
+- [ ] Light/dark alternation holds on the homepage and cpanel-hosting page
+      (each band contrasts the one above it); the discount-programs page is
+      deliberately all-white/light (see C.20), no dark-band alternation.
 - [ ] The hero fills the viewport on load: `min-height: calc(100vh - 108px)`
       (108 = 34px topbar + 74px nav — update this number if the header height changes).
-- [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **both**
-      HTML pages (currently v=319 / v=17) — bump both on every future change to
-      that file, in every page's tag.
+- [ ] `css/styles.css?v=N` and `js/main.js?v=N` query strings match on **all
+      three** HTML pages (currently v=346 / v=22) — bump both on every future
+      change to that file, in every page's tag.
 - [ ] `api/pricing.php` returns `{"ok":true,"prices":{"starter_salad":N,"standard_salad":N,"premium_salad":N}}`
       when curled directly; every `[data-price]` element on both pages shows
       the same live number once the fetch resolves, and falls back to its
@@ -6486,7 +7031,7 @@ After building from Parts A/B, confirm:
       animation (plans note beam, nav apps-link bounce, locations pin pulse,
       migration packet/arrow, email send/incoming mail glyphs + badge flash,
       why-map hover-zoom, backups screenshot hover cross-dissolve).
-- [ ] Every icon in Part B.8's manifest renders in `--brand-orange` (or its
+- [ ] Every icon in Part B.9's manifest renders in `--brand-orange` (or its
       section's specified colour) via the masked-SVG technique — not as a raw
       `<img>` with baked-in colour.
 - [ ] Brand name reads "Server Salad" (two words) everywhere in visible text;
@@ -6539,10 +7084,17 @@ consistent with intent rather than just matching pixels.
     pause CSS animations) and got caught mid-cycle on open — now they
     restart fresh at 0% every time it opens.
   - **Discount Programs▾**: all 3 cards are real, owner-supplied copy —
-    Student & Academic Programs, Startup Program, Agency & Freelancer
-    Program (titles + descriptions all final) — and all 3 are
-    `.mega-card--soon` (see below), since none of these programs are live
-    yet. The right-hand black box's heading ("Why We Built This:") and its
+    Student & Academic **Program** (singular — an earlier "Programs" plural
+    was corrected to match the actual discount-programs page tab), Startup
+    Program, Agency & Freelancer Program (titles + descriptions all final).
+    Unlike the Web Hosting▾ cards, these are **real `<a>` links**, not
+    `.mega-card--soon` — each points at
+    `/server-salad-cloud-services-web/discount-programs/` with a `#hash`
+    matching that program's tab (`#student-academic`/`#startup`/
+    `#agency-freelancer`), so clicking a card lands directly on its own tab
+    (see C.20). They started as "Launching Soon" placeholders and were
+    converted to live links once the discount-programs page existed — see
+    Part E. The right-hand black box's heading ("Why We Built This:") and its
     7-item list are also final, owner-supplied copy, replacing two earlier
     placeholder passes ("Program Benefits" / a shorter 4-item "Why We Built
     This" draft) — if the owner supplies yet another version, replace the
@@ -6627,7 +7179,7 @@ consistent with intent rather than just matching pixels.
   (expected, not a bug). The photo file (~8MB) is unoptimised; worth
   compressing before launch (no image tooling was available to do it here).
 - **Reused verbatim on cpanel-hosting**, as the very last section before its
-  footer (same `.eco*` classes, no page-specific CSS) — see B.9's section
+  footer (same `.eco*` classes, no page-specific CSS) — see B.10's section
   order and C.17.
 
 ### C.5 Plans + Locations
@@ -6762,7 +7314,7 @@ first thing worth reconsidering.
   fully deleted from the CSS, not just hidden) — no data on which tier
   actually sells best, same reasoning as every other unverified-claim omission.
 - **All 3 tiers' prices are live** from the same `cpanel_package_pricing`
-  table via `api/pricing.php` (see B.7) — same mechanism as the homepage.
+  table via `api/pricing.php` (see B.8) — same mechanism as the homepage.
 - Feature rows are split into two grid groups: **differentiating rows**
   (ordered by buyer priority — site count > space > traffic > databases >
   mailboxes > the long tail, not the spreadsheet's original order), then
@@ -6897,7 +7449,7 @@ first thing worth reconsidering.
 - Icon filenames were renamed to tally with their card's current title
   (`wordpress-optimized.svg`, `professional-email-included.svg`,
   `seamless-migration.svg`, `expert-support.svg`) after the copy changed —
-  see B.8's asset manifest for the current mapping.
+  see B.9's asset manifest for the current mapping.
 
 ### C.12 cpanel-hosting: Why Server Salad
 - ⚠️ **Deliberately single-region.** The homepage Locations section states
@@ -6974,7 +7526,7 @@ first thing worth reconsidering.
   the homepage) — the 30-day retention figure is owner-confirmed. Card
   copy: 4 of the 6 titles/bodies were later updated to more formal wording
   ("Automated Daily Backups", "Secure Off-Site Storage", "Granular File
-  Restores", "On-Demand Snapshots" — see B.8 for the current title mapping);
+  Restores", "On-Demand Snapshots" — see B.9 for the current title mapping);
   "30-Day Retention Window" and "Powered by JetBackup" kept their titles.
 - ⚠️ The screenshot (`graphics/jetbackup-illustration.png`) **must be a
   genuine Server Salad JetBackup panel**, not another host's customer
@@ -6998,7 +7550,7 @@ first thing worth reconsidering.
   security-stack content matching what's independently referenced elsewhere
   on the site (cPGuard already appears in the Features section and the
   feature-comparison table; CloudLinux likewise).
-- Icons live in `assets/img/security/` (see A.5/B.8) — same masked
+- Icons live in `assets/img/security/` (see A.5/B.9) — same masked
   single-colour SVG pattern as every other icon section.
 
 ### C.16 cpanel-hosting: Workflow
@@ -7010,7 +7562,7 @@ first thing worth reconsidering.
   appears in the Web Hosting▾ mega-menu app strip and in the Technical
   Overview's Software group — keep these three in sync if the real count
   changes).
-- Icons live in `assets/img/workflow/` (see A.5/B.8).
+- Icons live in `assets/img/workflow/` (see A.5/B.9).
 
 ### C.17 cpanel-hosting: Technical Overview
 - Light section (`.cph-overview`), two columns of grouped feature lists
@@ -7046,8 +7598,10 @@ real. Three shapes, depending on what the element already looks like —
   (`opacity: 0`, white background, centred "Launching Soon" label) fades in
   to `opacity: 1` on `:hover`, covering the card's normal content entirely.
   Used for: the 3 non-live homepage hero cards (cPanel Business Hosting, VPS
-  Hosting, Domains — see C.2), the Web Hosting▾ mega-menu's cPanel Business
-  Hosting card, and all 3 Discount Programs▾ mega-menu cards (see C.1).
+  Hosting, Domains — see C.2) and the Web Hosting▾ mega-menu's cPanel
+  Business Hosting card. The 3 Discount Programs▾ mega-menu cards used this
+  pattern too until the discount-programs page existed; they're now real
+  `<a>` links instead (see C.1/C.20).
 - **Compact tooltip** (`*--soon` on the link/text + a sibling `*__tooltip`
   pill, `role="tooltip"`, shown on hover/`:focus-visible`): used where the
   element is short, single-word/short-phrase text rather than a card — not
@@ -7119,12 +7673,139 @@ real. Three shapes, depending on what the element already looks like —
   backdrop both needed brightening for the same reason (a faint translucent
   fill on pure black barely registers) — now a visible border + full-white
   icon colour so they read clearly at rest, not just on hover.
+- **All 4 footer accent bars use the orange→red gradient**, not flat
+  `--brand-orange`: each `.footer__col-title`'s `border-top` is a
+  `border-image: linear-gradient(90deg, var(--accent), var(--accent-2)) 1`,
+  and `.footer__underline` (above "Follow Us") uses the same
+  `background: linear-gradient(...)` instead of its old flat orange fill —
+  the same "orange and red mixed" gradient convention used for the
+  discount-tabs active-tab underline (see C.20).
 - **Deliberately not included**: no Company Number/VAT Number block
   (inventing registration numbers would be fabricating legal data — add one
   only with the owner's real numbers), no "® registered trademark" claim, no
   awards/"trusted by" claims.
 - Copyright line uses the full legal-style name, matching the `<title>`, no
   trademark assertion.
+
+### C.20 Discount Programs page
+- **Created as an empty white page first**, populated section-by-section over
+  many owner requests — unlike the homepage/cpanel-hosting pages, there was
+  no upfront spec; treat any still-placeholder content here (the criteria
+  card text, in particular) as expected, not a bug.
+- **Hero is duplicated from cpanel-hosting's `.cph-hero` markup/classes**
+  (see B.6), not a new component — same background treatment, title/
+  underline/description structure. Two deliberate differences from the
+  cpanel-hosting hero: no product-screenshot visual (owner request — this
+  page isn't a single product, so no one image fits), and the content is
+  centred rather than two-column. `.cph-hero__inner--centered` handles the
+  second point by collapsing the two-column grid to one centred column
+  instead of leaving an empty, lopsided second column where the screenshot
+  would have gone — don't reintroduce a visual without also removing that
+  modifier class.
+- **Tab switcher** (`.discount-tabs*`, see B.1/B.2): 3 tabs across one
+  `.discount-tabs__bar` grid (`role="tablist"`), each with a `data-tab` id,
+  a `data-hash` for deep-linking, and full ARIA wiring
+  (`aria-selected`/`aria-controls`/`tabindex`). One `activateDiscountTab()`
+  function in `js/main.js` drives both a click handler on each tab and
+  hash-based activation, reused for two cases: an on-load hash check (for
+  someone landing here fresh from a mega-menu card link) **and** a
+  `hashchange` listener (for clicking a mega-menu card link while already on
+  this page — same path, different hash, which fires `hashchange` but does
+  **not** reload the page or re-run on-load scripts). Built from an
+  owner-supplied reference (Design/Programming/Support tab screenshots);
+  iterated down from that reference in three ways the owner asked for
+  explicitly, all final:
+  - Removed the reference's "01."/"02."/"03." numbering prefixes
+    (`.discount-tabs__num` deleted) — tabs are plain labels now.
+  - Removed the reference's ash-grey borders between/under tabs entirely —
+    no `.discount-tabs__bar { border-bottom }`, no `border-right` between
+    tab buttons.
+  - The active tab shows the shared orange→red gradient
+    (`linear-gradient(90deg, var(--accent), var(--accent-2))`, same
+    convention as the footer bars — see C.19) as a slim 3px underline via
+    `.discount-tabs__tab.is-active::after`, **not** the reference's full
+    background-colour hover state — that hover colour stays as an actual
+    `:hover` background, kept separate from the "is selected" signal.
+  - Non-active tab labels are dimmed via `opacity: .4` on
+    `.discount-tabs__label` (full `opacity: 1` only on `.is-active`) — the
+    owner's framing was "increase transparency of non-selected tab text",
+    implemented as inverse: the active tab is fully opaque and the other two
+    fade back, rather than each tab having its own independent opacity value.
+- **Per-tab content alignment is deliberate and differs by tab**: Student &
+  Academic panel content is **left**-aligned, Startup panel is **centre**-
+  aligned, Agency & Freelancer panel is **right**-aligned — matching the
+  tab's position in the 3-column bar above it (left tab → left content,
+  right tab → right content). Implemented via ID selectors on each panel
+  (`#discount-panel-1`/`-2`/`-3`) rather than a shared alignment class, since
+  each of the 3 needs a different value for the same properties
+  (`text-align`, `margin-left`/`margin-right: auto`) — see B.1's
+  `.discount-tabs__panel-body` rules.
+- **Panel width + criteria-grid geometry is tied to the tab bar's own column
+  boundaries**, not an arbitrary width — this was owner-specified with exact
+  positioning rules (paraphrased): the Student & Academic content/box-set
+  starts flush left and its 3rd box ends at the Startup tab's midpoint; the
+  Agency & Freelancer content/box-set starts at the Startup tab's midpoint
+  and ends flush right. Since the tab bar is a 3-column grid inside the same
+  `.container` as the panels below it, each "half" of that midpoint math
+  reduces to **50% of the container width**, anchored to one edge:
+  - `#discount-panel-1` (Student & Academic): `width: 50%` with
+    `margin-right: auto` (pinned left).
+  - `#discount-panel-3` (Agency & Freelancer): `width: 50%` with
+    `margin-left: auto` (pinned right).
+  - `#discount-panel-2` (Startup): also `width: 50%`, but with **both**
+    `margin-left: auto` and `margin-right: auto` — same width as the other
+    two, centred instead of pinned to either edge, per explicit owner
+    follow-up request ("these content also must have the same width as
+    other two, but center aligned").
+  - This same 50%-width-anchored-by-margin pattern is applied twice per
+    panel: once to `.discount-tabs__panel-body` (subtitle/description/
+    eligibility caption) and once to `.discount-tabs__criteria-grid` (the
+    6-card grid) — both share the panel's own alignment so the text column
+    and the box grid below it line up on the same edge.
+  - Reset to full-width, no side-anchoring, under the `860px` breakpoint —
+    the left/centre/right split only makes sense at desktop widths where the
+    tab bar's columns are wide enough to read as landmarks.
+- **"Eligibility Criteria" caption is a plain `<span>`, not a link** — went
+  through a naming correction (started as "Terms & Conditions", renamed to
+  "Eligibility Criteria" per owner request) and a structural correction
+  (first implemented as `<a href="#eligibility">` with an underline/hover
+  colour change, then corrected to a non-interactive caption once the owner
+  clarified "that's only a caption, not a hyperlink" — `href`, underline, and
+  hover-colour rules were all removed, not just the `href`).
+- **Font-inspector colour specs that would be invisible were overridden,
+  matching only their typography** — this page received several
+  font-inspector screenshots specifying an exact colour that, applied
+  literally, would put white/near-white text on this page's white section
+  backgrounds (unlike A.3's general reference-styling rule, which is about
+  *not* copying colour by default, these specific specs were followed for
+  everything **except** colour because they'd otherwise be unreadable, not
+  just "not asked for"). Confirmed once via `AskUserQuestion` ("keep current
+  dark colour" vs. "apply white exactly as given" — owner picked the dark
+  option) and applied silently to every later identical case on this same
+  page without re-asking:
+  - `.discount-tabs__panel-subtitle`: Cairo 600, but `rgb(27, 27, 31)` kept
+    instead of the spec's white.
+  - `.discount-tabs__panel-desc`: went through two font-inspector revisions
+    (a Manrope 400/`rgba(255,255,255,.78)` pass, then a corrected Manrope
+    300/`rgba(32,29,44,.82)` pass) — the final spec's colour was already
+    dark enough to use as-is, no override needed for this one.
+  - `.discount-tabs__criteria-desc`: same invisible-white-spec situation,
+    dark colour kept.
+  - `.discount-tabs__panel-eligibility`: the given spec's colour
+    (`rgb(95,227,154)`, a green) was visible against white, so it wasn't an
+    invisibility case — this one was instead corrected on direct owner
+    request ("colour should be normal black previously used") from an
+    intermediate orange back to `rgb(27, 27, 31)`, matching the panel
+    subtitle/label's dark colour. Every such override is documented inline
+    in `css/styles.css` at the rule itself, not just here.
+- **Eligibility-criteria card grid** (`.discount-tabs__criteria-grid` /
+  `.discount-tabs__criteria-card`): light-card component, deliberately reused
+  from `.cph-why-card`'s look (white fill, `#e6e6ec` border, soft
+  `box-shadow`, lifts + orange border on `:hover`) rather than the
+  homepage's dark `.feature` card — this page's sections sit on a white
+  background, so the dark card style would invert wrong here. 6 cards per
+  panel, all currently **sample placeholder text** ("Sample criterion N —
+  replace with a real eligibility requirement.") — see Part D.
 
 ## Part D — Open Items (known inconsistencies to revisit)
 - **cpanel-hosting "Why Server Salad" is single-region by design** — see C.12.
@@ -7198,13 +7879,29 @@ real. Three shapes, depending on what the element already looks like —
   `#blog`) are still placeholder anchors — need real destination pages.
   Blog was moved here from the main nav (see C.1); its target page still
   doesn't exist yet either way.
-- All 3 Discount Programs▾ mega-menu cards, all Web Hosting▾'s cPanel
-  Business Hosting card, and the standalone Servers/Domains nav items are
-  now **"Launching Soon"** (see C.18) rather than placeholder links — no
-  action needed until each product/program actually goes live, at which
-  point swap that element back to a real `<a href>` and drop the
-  `--soon`/`__soon` markup for it specifically (don't blanket-remove the
-  pattern from elements that are still genuinely not live).
+- Web Hosting▾'s cPanel Business Hosting card and the standalone
+  Servers/Domains nav items are still **"Launching Soon"** (see C.18) rather
+  than placeholder links — no action needed until each product actually goes
+  live, at which point swap that element back to a real `<a href>` and drop
+  the `--soon`/`__soon` markup for it specifically (don't blanket-remove the
+  pattern from elements that are still genuinely not live). The 3 Discount
+  Programs▾ cards already made this transition — they're real links to the
+  discount-programs page now (see C.1/C.20).
+- **discount-programs page's 6-per-panel eligibility-criteria cards hold
+  sample placeholder text** ("Sample criterion N — replace with a real
+  eligibility requirement.") for all 3 programs — see C.20. Swap in the
+  owner's real per-program eligibility requirements when supplied; keep the
+  6-card grid structure unless told the count itself should change.
+- **discount-programs page's hero copy is generic/placeholder-style**
+  ("engineered for tomorrow's builders" / "zero long-term commitments") —
+  it's owner-supplied final copy, not a draft, but worth a pass once the
+  programs themselves are live to confirm the framing still fits.
+- **discount-programs page has no Sustainability/eco section or any
+  homepage-style dark band** — currently ends straight from the tab panels
+  into the footer, unlike the other two pages which both end with the
+  shared `.eco*` section. Ask whether one should be added for visual
+  consistency, or whether this page is meant to stay a focused, single-
+  purpose page without it.
 - The hero's 3rd card is titled "VPS Hosting" but the nav item above it
   still says "Servers" (see C.1) — worth aligning the wording once the
   product is real; low priority since neither currently links anywhere.
@@ -7301,3 +7998,29 @@ real. Three shapes, depending on what the element already looks like —
   (`.footer { border-top: 1px solid #fff; }`) was also added between the
   footer and whatever section precedes it, after an initial low-opacity
   version wasn't visible enough and was replaced with pure white.
+- **cpanel-hosting Plans table: Websites/Storage feature rows now stay
+  pinned under the sticky package header while scrolling** (`.cph-table__row
+  --pin-1`/`--pin-2`), using a JS-measured `--cph-pkg-header-h` custom
+  property (`ResizeObserver`-driven, same pattern as the earlier
+  condense-on-scroll header) rather than a hardcoded pixel offset. Hit one
+  real bug along the way: `ResizeObserverEntry.contentRect` reports only the
+  content box (excludes padding/border), so the header's padding wasn't
+  counted and the pinned row rendered ~52px too high, partially hidden
+  behind the header — fixed by reading
+  `element.getBoundingClientRect().height` inside the observer callback
+  instead. A follow-up "small gap above the sticky header" fix (bleeding
+  each header cell's background 4px upward) was implemented, then **fully
+  reverted** on explicit owner request — that gap is not currently
+  "fixed" in the live CSS, on purpose.
+- **Discount Programs page** (`discount-programs/index.html`, new this
+  round) was built from an empty white page up through many small,
+  sequential owner requests rather than one upfront spec — see C.20 for the
+  complete design rationale (hero duplication + centring, the tab-switcher
+  component and its per-panel left/centre/right alignment, the eligibility-
+  criteria-caption naming/link correction, the font-inspector colour
+  overrides where the literal spec colour would've been invisible on this
+  page's white sections, and the criteria-grid width/alignment geometry
+  tied to the tab bar's own column boundaries). Reached from the nav's
+  Discount Programs▾ mega-menu, whose 3 cards were converted from
+  "Launching Soon" placeholders to real links once this page existed (see
+  C.1).
