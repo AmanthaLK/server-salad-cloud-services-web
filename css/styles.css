@@ -3984,12 +3984,18 @@ button { font: inherit; cursor: pointer; }
   font-weight: 500;
   color: rgba(27, 27, 31, .55);
 }
+/* Typography matched to an owner-supplied font-inspector spec, colour
+   included (same spec given earlier for the section this switcher
+   replaced — see the reference-styling rule in README A.3: usually only
+   typography/box dimensions are matched and colour is kept as the site's
+   own, but this spec explicitly gives a colour too, so it's matched
+   exactly). */
 .discount-tabs__label {
-  font-family: "Cairo", var(--font-heading);
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 32px;
-  color: rgb(27, 27, 31);
+  font-family: "Cairo", "Manrope", sans-serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 46px;
+  color: rgb(32, 29, 44);
 }
 
 .discount-tabs__panel {
@@ -4031,7 +4037,7 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
   .discount-tabs__num { font-size: 12px; }
-  .discount-tabs__label { font-size: 18px; line-height: 24px; }
+  .discount-tabs__label { font-size: 22px; line-height: 26px; }
   .discount-tabs__panel.is-active { grid-template-columns: 1fr; gap: 24px; }
   .discount-tabs__panel-title { font-size: 30px; line-height: 36px; }
 }
