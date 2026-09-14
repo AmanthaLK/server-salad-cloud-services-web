@@ -4033,25 +4033,18 @@ button { font: inherit; cursor: pointer; }
      smooth regardless of what the panel swap is doing. js/main.js writes the
      transform as translate3d for the same reason. */
   will-change: transform;
-  /* No transition until .is-ready is added, so the very first placement on
-     page load snaps into position instead of sliding in from the left. */
+  /* No `transition` here on purpose — see the note below. The first
+     placement on page load is made with animation suppressed in js/main.js,
+     so the bar lands under the active tab rather than sliding in from the
+     left edge. */
 }
-/* Everything that moves on a tab switch — this bar, the tab labels' opacity
-   and the incoming panel — deliberately shares ONE duration and curve
-   (.28s, the standard ease-in-out). They used to run at .4s, .18s and .4s
-   respectively, so the labels finished brightening while the bar was still
-   travelling and the switch read as laggy and out of step. Change all three
-   together or they'll drift apart again.
-
-   ONLY `transform` is transitioned — never `width`. An earlier version
-   animated both, and because the tabs differ by fractions of a pixel the
-   width transition really did fire, forcing a layout + repaint on every
-   single frame of the slide. That's what made the bar stutter. Width is now
-   set instantly (it only changes on resize anyway) and movement is pure
-   transform, which the compositor can handle without touching layout. */
-.discount-tabs__indicator.is-ready {
-  transition: transform .28s cubic-bezier(.4, 0, .2, 1);
-}
+/* NOTE: this bar has deliberately NO `transition`. Its movement is animated
+   explicitly from js/main.js via element.animate() — three attempts at
+   driving it from a CSS transition all ended with the bar snapping between
+   tabs instead of sliding. Adding a transition back here would double up
+   against that animation and fight it. Duration and easing live in
+   js/main.js and are kept equal to the .28s used by the tab labels and the
+   panel fade below, so the whole switch moves as one. */
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
    replaced — see the reference-styling rule in README A.3: usually only
@@ -4096,7 +4089,7 @@ button { font: inherit; cursor: pointer; }
 }
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {
-  .discount-tabs__indicator.is-ready { transition: none; }
+  /* the indicator checks prefers-reduced-motion in js/main.js itself */
   .discount-tabs__panel.is-active { animation: none; }
 }
 .discount-tabs__panel-body { max-width: 640px; }

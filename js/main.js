@@ -452,27 +452,48 @@
     var discountBar = document.querySelector(".discount-tabs__bar");
     var discountIndicator = document.querySelector(".discount-tabs__indicator");
 
-    var moveDiscountIndicator = function (tab) {
+    /* Where the bar currently sits, tracked rather than read back off the
+       element — reading computed style would force a layout and can return a
+       matrix mid-animation. */
+    var discountIndicatorX = null;
+
+    var moveDiscountIndicator = function (tab, animate) {
       if (!discountIndicator || !discountBar || !tab) return;
       var barRect = discountBar.getBoundingClientRect();
       var tabRect = tab.getBoundingClientRect();
+      var x = tabRect.left - barRect.left;
 
-      /* Width is written but NOT transitioned (see the CSS): tabs differ by
-         fractions of a pixel, so animating it fired a layout + repaint every
-         frame and made the slide stutter. Only the transform moves.
-
-         translate3d rather than translateX so the bar keeps its own
-         compositor layer — switching tabs swaps a 32-box panel, which is a
-         heavy main-thread layout, and the slide has to stay independent of
-         that to run smoothly. */
+      /* Width is set instantly, never animated: tabs differ by fractions of a
+         pixel, and animating a layout property repaints every frame. */
       discountIndicator.style.width = tabRect.width + "px";
-      discountIndicator.style.transform =
-        "translate3d(" + (tabRect.left - barRect.left) + "px, 0, 0)";
+
+      var from = discountIndicatorX;
+      discountIndicatorX = x;
+      var to = "translate3d(" + x + "px, 0, 0)";
+
+      /* Animated EXPLICITLY rather than by leaving a CSS transition to notice
+         the change. Three earlier attempts drove this off a `transition:
+         transform` and the bar kept snapping between tabs instead of
+         travelling — the transition simply wasn't firing on the inline style
+         change. element.animate() states the start and end outright, so it
+         cannot silently no-op the way a transition can. The final inline
+         style is set as well, so the bar stays put once the animation ends
+         without needing a fill mode. */
+      var still = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (animate && !still && from !== null && from !== x && discountIndicator.animate) {
+        discountIndicator.animate(
+          [{ transform: "translate3d(" + from + "px, 0, 0)" }, { transform: to }],
+          { duration: 280, easing: "cubic-bezier(.4, 0, .2, 1)" }
+        );
+      }
+      discountIndicator.style.transform = to;
     };
 
     var activateDiscountTab = function (tab) {
       var target = tab.getAttribute("data-tab");
-      moveDiscountIndicator(tab);
+      moveDiscountIndicator(tab, true);
       discountTabs.forEach(function (t) {
         var active = t === tab;
         t.classList.toggle("is-active", active);
@@ -489,25 +510,21 @@
       tab.addEventListener("click", function () { activateDiscountTab(tab); });
     });
 
-    /* Place the bar under whichever tab starts active, then switch the
-       transition on a frame later — otherwise it would visibly slide in from
-       the left edge on first load. Re-measured on resize because the tabs
-       change width with the viewport. */
+    /* Place the bar under whichever tab starts active. The `animate` flag is
+       false here and on resize, so it lands in place rather than sliding in
+       from the left edge. Re-measured on resize because the tabs change width
+       with the viewport. */
     var initialDiscountTab = null;
     discountTabs.forEach(function (t) {
       if (!initialDiscountTab && t.classList.contains("is-active")) initialDiscountTab = t;
     });
-    moveDiscountIndicator(initialDiscountTab || discountTabs[0]);
-    requestAnimationFrame(function () {
-      if (discountIndicator) discountIndicator.classList.add("is-ready");
-    });
-
+    moveDiscountIndicator(initialDiscountTab || discountTabs[0], false);
     window.addEventListener("resize", function () {
       var current = null;
       discountTabs.forEach(function (t) {
         if (!current && t.classList.contains("is-active")) current = t;
       });
-      moveDiscountIndicator(current || discountTabs[0]);
+      moveDiscountIndicator(current || discountTabs[0], false);
     });
 
     /* Deep-link from the Discount Programs mega-menu cards (see
