@@ -386,4 +386,29 @@
     );
     pkgStickyObserver.observe(pkgSentinel);
   }
+
+  /* ===== Pin the top two feature rows (Websites, Storage) under the header =====
+     Per owner: once the package header above locks into its sticky spot,
+     these two rows should lock in place right beneath it too, instead of
+     scrolling away with the rest of the table — see .cph-table__row--pin-1/
+     --pin-2 in css/styles.css.
+
+     Those rows' sticky `top` has to sit right at the header's own bottom
+     edge, but the header's rendered height isn't fixed — it changes the
+     moment it condenses (see the block above) and again whenever the
+     Monthly/Annually toggle changes the "billed as..." line's content. A
+     ResizeObserver watching the header cell writes its live height into
+     --cph-pkg-header-h once per actual size change; unlike a scroll
+     handler, it never fires on scroll itself, so this doesn't reintroduce
+     the layout-thrashing problem solved above — it only recomputes when the
+     header's box genuinely resizes. */
+  var pkgHeaderMeasureEl = document.querySelector(".cph-table__pkg");
+  var pkgStickyScopeEl = document.querySelector(".cph-plans__sticky-scope");
+  if (pkgHeaderMeasureEl && pkgStickyScopeEl && "ResizeObserver" in window) {
+    var pkgHeaderResizeObserver = new ResizeObserver(function (entries) {
+      var height = entries[0].contentRect.height;
+      pkgStickyScopeEl.style.setProperty("--cph-pkg-header-h", height + "px");
+    });
+    pkgHeaderResizeObserver.observe(pkgHeaderMeasureEl);
+  }
 })();

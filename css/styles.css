@@ -2812,6 +2812,44 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
   line-height: 21px;
 }
+
+/* Per owner: the first two feature rows (Websites, Storage) should ALSO stay
+   pinned once the header above locks into its sticky spot, not just the
+   toggle + header themselves. Same `position: sticky` mechanism as
+   .cph-table__intro/.cph-table__pkg above — each row's 4 cells (label + 3
+   vals) share one `top` offset so the whole row pins as one, stacked
+   directly under the header.
+
+   The header's own rendered height isn't fixed — it changes the moment it
+   condenses (see .is-condensed above) and again whenever the Monthly/
+   Annually toggle changes the "billed as..." line's content — so a
+   hardcoded pixel offset here would leave a gap, or an overlap, the moment
+   the header's height changes. js/main.js measures the header's actual
+   height with a ResizeObserver and writes it into --cph-pkg-header-h; a
+   ResizeObserver only fires when that box's size genuinely changes, never
+   on scroll itself, so this doesn't reintroduce the layout-thrashing
+   anti-pattern already reverted once for the header's own condense
+   animation (see the comment above .cph-table__intro). Storage then stacks
+   on top of that plus one row's own fixed height (36px = 8px+8px vertical
+   padding + 20px line-height, shared by .cph-table__label/.cph-table__val —
+   both rows are single-line, plain-text content, so this doesn't need the
+   same live-measurement treatment as the header). */
+.cph-table__row--pin-1,
+.cph-table__row--pin-2 {
+  position: sticky;
+  z-index: 14; /* above ordinary rows scrolling past underneath, below the header's 15 */
+}
+.cph-table__row--pin-1 { top: calc(129px + var(--cph-pkg-header-h, 160px)); }
+.cph-table__row--pin-2 { top: calc(129px + var(--cph-pkg-header-h, 160px) + 36px); }
+/* .cph-table__label already carries its own #fafafb background; .cph-table__val
+   doesn't (it relies on .cph-table's white background showing through), which
+   is fine while scrolling normally but would let rows scrolled past show
+   through once this cell is actually pinned — give it an explicit opaque
+   background only while pinned. */
+.cph-table__val.cph-table__row--pin-1,
+.cph-table__val.cph-table__row--pin-2 {
+  background: #fff;
+}
 /* CTA row lives at the bottom of the table now (moved per owner — used to sit
    directly under each price in the header row). Each cell matches the padding/
    border rhythm of an ordinary .cph-table__val row so it reads as one more row,
