@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=325">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=326">
 </head>
 <body>
 
@@ -41,13 +41,53 @@
       </div>
     </section>
 
-    <!-- ===== Student & Academic Program =====
-         White section; heading typography matched to an owner-supplied
-         font-inspector spec (Cairo 600, 40px/46px, colour rgb(32,29,44)) —
-         see .discount-section__title in css/styles.css. -->
-    <section class="discount-section">
-      <div class="container discount-section__head">
-        <h2 class="discount-section__title">Student and Academic Program</h2>
+    <!-- ===== Discount Programs: tab switcher =====
+         Per owner reference: 3 numbered tabs (01/02/03), the active one
+         filled solid orange; clicking a tab swaps the panel below it (see
+         js/main.js). Tab labels/descriptions reuse the same real copy
+         already used for these programs in the Web Hosting/Discount
+         Programs mega-menu (see partials/header.html) — the panel
+         sub-headings are just short titles derived from that same real
+         text, not new claims. Replaces the earlier plain
+         "Student and Academic Program" heading-only placeholder. -->
+    <section class="discount-tabs">
+      <div class="container discount-tabs__bar" role="tablist">
+        <button class="discount-tabs__tab is-active" type="button" role="tab" id="discount-tab-1" aria-selected="true" aria-controls="discount-panel-1" data-tab="1">
+          <span class="discount-tabs__num">01.</span>
+          <span class="discount-tabs__label">Student &amp; Academic</span>
+        </button>
+        <button class="discount-tabs__tab" type="button" role="tab" id="discount-tab-2" aria-selected="false" aria-controls="discount-panel-2" data-tab="2" tabindex="-1">
+          <span class="discount-tabs__num">02.</span>
+          <span class="discount-tabs__label">Startup</span>
+        </button>
+        <button class="discount-tabs__tab" type="button" role="tab" id="discount-tab-3" aria-selected="false" aria-controls="discount-panel-3" data-tab="3" tabindex="-1">
+          <span class="discount-tabs__num">03.</span>
+          <span class="discount-tabs__label">Agency &amp; Freelancer</span>
+        </button>
+      </div>
+
+      <div class="container">
+        <div class="discount-tabs__panel is-active" id="discount-panel-1" role="tabpanel" aria-labelledby="discount-tab-1" data-panel="1">
+          <h2 class="discount-tabs__panel-title">Student &amp; Academic<br>Program.</h2>
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Discounted Hosting for Students &amp; Academic Clubs.</h3>
+            <p class="discount-tabs__panel-desc">Discounted hosting on select plans for recognized students and university or school clubs.</p>
+          </div>
+        </div>
+        <div class="discount-tabs__panel" id="discount-panel-2" role="tabpanel" aria-labelledby="discount-tab-2" data-panel="2" hidden>
+          <h2 class="discount-tabs__panel-title">Startup<br>Program.</h2>
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Reduced Rates for Early-Stage Startups.</h3>
+            <p class="discount-tabs__panel-desc">Reduced rates on select hosting plans designed to help newly established businesses launch their web presence.</p>
+          </div>
+        </div>
+        <div class="discount-tabs__panel" id="discount-panel-3" role="tabpanel" aria-labelledby="discount-tab-3" data-panel="3" hidden>
+          <h2 class="discount-tabs__panel-title">Agency &amp; Freelancer<br>Program.</h2>
+          <div class="discount-tabs__panel-body">
+            <h3 class="discount-tabs__panel-subtitle">Discounted Plans for Agencies &amp; Freelancers.</h3>
+            <p class="discount-tabs__panel-desc">Discounted cPanel hosting plans for developers and agencies hosting websites on behalf of their clients.</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -56,6 +96,6 @@
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=19"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=20"></script>
 </body>
 </html>

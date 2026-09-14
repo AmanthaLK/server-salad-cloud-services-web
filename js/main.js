@@ -419,4 +419,30 @@
     });
     pkgHeaderResizeObserver.observe(pkgHeaderMeasureEl);
   }
+
+  /* ===== discount-programs/index.html: tab switcher =====
+     3 numbered tabs (.discount-tabs__tab) — clicking one shows its matching
+     .discount-tabs__panel (same data-tab/data-panel value) and hides the
+     others. Plain click-to-toggle, no scroll/resize involved. Element-
+     existence guard means this safely no-ops on every other page. */
+  var discountTabs = document.querySelectorAll(".discount-tabs__tab");
+  var discountPanels = document.querySelectorAll(".discount-tabs__panel");
+  if (discountTabs.length && discountPanels.length) {
+    discountTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var target = tab.getAttribute("data-tab");
+        discountTabs.forEach(function (t) {
+          var active = t === tab;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+          t.tabIndex = active ? 0 : -1;
+        });
+        discountPanels.forEach(function (p) {
+          var active = p.getAttribute("data-panel") === target;
+          p.classList.toggle("is-active", active);
+          p.hidden = !active;
+        });
+      });
+    });
+  }
 })();

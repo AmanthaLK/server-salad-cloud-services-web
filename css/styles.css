@@ -3949,24 +3949,89 @@ button { font: inherit; cursor: pointer; }
   .cph-overview__inner { padding: 64px 0; }
 }
 
-/* ===== discount-programs/index.html: Student & Academic Program ===== */
-.discount-section {
+/* ===== discount-programs/index.html: tab switcher =====
+   3 numbered tabs (01/02/03), the active one filled solid orange; clicking
+   swaps the panel below it — see the click handler in js/main.js. */
+.discount-tabs {
   background: #fff;
+  border-top: 2px solid #1b1b1f;
 }
-.discount-section__head {
-  padding: 88px 0;
-  text-align: center;
+.discount-tabs__bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #e3e3e8;
 }
-/* Typography matched to an owner-supplied font-inspector spec, colour
-   included (see the reference-styling rule in README A.3 — usually only
-   typography/box dimensions are matched from a reference and colour is
-   kept as the site's own, but this spec explicitly gave a colour too, so
-   it's matched exactly rather than substituted). */
-.discount-section__title {
+.discount-tabs__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 28px 32px;
+  border: none;
+  border-right: 1px solid #e3e3e8;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.discount-tabs__tab:last-child { border-right: none; }
+.discount-tabs__tab:hover { background: #fafafb; }
+.discount-tabs__tab.is-active { background: var(--brand-orange); }
+.discount-tabs__tab.is-active:hover { background: var(--brand-orange); }
+.discount-tabs__num {
+  font-family: "Manrope", var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(27, 27, 31, .55);
+}
+.discount-tabs__label {
+  font-family: "Cairo", var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 32px;
+  color: rgb(27, 27, 31);
+}
+
+.discount-tabs__panel {
+  display: none;
+  padding: 64px 0;
+}
+.discount-tabs__panel.is-active {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.discount-tabs__panel-title {
   margin: 0;
-  font-family: "Cairo", "Manrope", sans-serif;
-  font-weight: 600;
+  font-family: "Cairo", var(--font-heading);
   font-size: 40px;
+  font-weight: 700;
   line-height: 46px;
-  color: rgb(32, 29, 44);
+  color: rgb(27, 27, 31);
+}
+.discount-tabs__panel-subtitle {
+  margin: 0 0 16px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  color: rgb(27, 27, 31);
+}
+.discount-tabs__panel-desc {
+  margin: 0 0 12px;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(27, 27, 31, .7);
+}
+.discount-tabs__panel-desc:last-child { margin-bottom: 0; }
+
+@media (max-width: 760px) {
+  .discount-tabs__tab { padding: 20px 16px; }
+  .discount-tabs__num { font-size: 12px; }
+  .discount-tabs__label { font-size: 18px; line-height: 24px; }
+  .discount-tabs__panel.is-active { grid-template-columns: 1fr; gap: 24px; }
+  .discount-tabs__panel-title { font-size: 30px; line-height: 36px; }
 }
