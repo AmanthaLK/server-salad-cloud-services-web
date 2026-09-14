@@ -4136,7 +4136,7 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__criteria-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px 24px;
+  gap: 12px 14px; /* tightened from 20/24 per owner — the boxes read as one set, not six separate cards */
   margin-top: 10px; /* tight to the "Eligibility Criteria" caption above — see its rule */
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
