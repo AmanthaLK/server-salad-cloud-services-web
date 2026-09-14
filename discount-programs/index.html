@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=374">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=375">
 </head>
 <body>
 
@@ -65,19 +65,7 @@
          request, tabs are plain labels now. Panel sub-headings/descriptions
          are owner-supplied real copy (replaced an earlier draft reusing the
          mega-menu's shorter one-line descriptions). -->
-    <!-- data-active-tab is set here as well as by js/main.js so the Student &
-         Academic background is already correct on first paint, with no flash. -->
-    <section class="discount-tabs" data-active-tab="1">
-      <!-- One background layer per tab, each fading in only while its own tab
-           is active (owner request) — see .discount-tabs__bg in css/styles.css.
-           Separate layers rather than one element swapping background-image,
-           so moving between two tabs that both have a photo cross-fades them
-           instead of cutting. All three tabs have one; a fourth would need a
-           --4 layer here and a matching rule in the CSS. -->
-      <div class="discount-tabs__bg discount-tabs__bg--1" aria-hidden="true"></div>
-      <div class="discount-tabs__bg discount-tabs__bg--2" aria-hidden="true"></div>
-      <div class="discount-tabs__bg discount-tabs__bg--3" aria-hidden="true"></div>
-
+    <section class="discount-tabs">
       <div class="container discount-tabs__bar" role="tablist">
         <!-- One shared underline that slides between tabs, rather than a bar
              per tab appearing/disappearing — js/main.js measures the active
@@ -238,6 +226,6 @@
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=33"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=34"></script>
 </body>
 </html>

@@ -496,15 +496,9 @@
       discountIndicator.style.transform = to;
     };
 
-    var discountSection = document.querySelector(".discount-tabs");
-
     var activateDiscountTab = function (tab) {
       var target = tab.getAttribute("data-tab");
       moveDiscountIndicator(tab, true);
-      /* Drives the Student & Academic background photo (see
-         .discount-tabs__bg). Kept as an attribute on the section rather than a
-         class so any future per-tab backdrop is just another CSS rule. */
-      if (discountSection) discountSection.setAttribute("data-active-tab", target);
       discountTabs.forEach(function (t) {
         var active = t === tab;
         t.classList.toggle("is-active", active);
