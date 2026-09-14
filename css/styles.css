@@ -4177,7 +4177,12 @@ button { font: inherit; cursor: pointer; }
   display: inline-flex;
   width: auto;
   max-width: 100%;
-  margin: 16px 0 0;
+  /* No top margin of its own: the description's 12px bottom margin is the
+     whole gap. Per owner the button belongs WITH the paragraph above it, so
+     that 12px has to stay smaller than the 20px below it that separates the
+     button from the criteria caption — the button reads as the end of the
+     description, not as the start of the criteria block. */
+  margin: 0;
   padding: 12px 32px;
   border-radius: 8px;
   font-family: "Montserrat", var(--font-heading);
@@ -4206,12 +4211,11 @@ button { font: inherit; cursor: pointer; }
      places it correctly per panel. */
   display: block;
   /* Per owner: this caption labels the boxes BELOW it, so it has to sit
-     closer to them than to the description above. It used to be 12px under
-     the description and 32px above the grid, which read as part of the
-     paragraph; those gaps are now reversed (32px above / 10px below, the
-     10px living on .discount-tabs__criteria-grid). Keep the two in that
-     ratio if either is ever retuned. */
-  margin: 20px 0 0; /* + the description's own 12px bottom margin = 32px above */
+     closer to them than to whatever is above. 20px above (this margin, off
+     the "Claim Your Discount" button) against 10px below (which lives on
+     .discount-tabs__criteria-grid). Keep the two in that ratio if either is
+     ever retuned. */
+  margin: 20px 0 0;
   font-family: "Manrope", var(--font-body);
   font-size: 12px;
   font-weight: 600;
