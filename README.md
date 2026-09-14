@@ -173,6 +173,8 @@ server-salad-cloud-services-web/
     img/
       brand/       <- nav logo, footer logo, favicon (serversalad-*)
       photos/       <- eco-forest-canopy.jpg
+      discount/     <- 6 Discount Programs sticky-column images, 2 per tab
+                        (PLACEHOLDERS at 480x1640 — see B.9/C.20)
       graphics/     <- world-map-dots.png, jetbackup-illustration.png,
                         jetbackup-logo.png, cpanel-dashboard-devices.webp
       partners/     <- 6 "powered by" carousel logos
@@ -350,7 +352,12 @@ button { font: inherit; cursor: pointer; }
 }
 .topbar__link:hover { color: var(--text); }
 
-/* ===== Nav dropdown (simple lists: Discount Programs, Support) ===== */
+/* ===== Nav dropdown chrome =====
+   What's left of the simple-dropdown styling. The dropdown panels themselves
+   (.nav__sub) are gone: Support▾ was removed from the nav entirely and
+   Discount Programs▾ was rebuilt as a mega menu, so nothing used them. Both
+   remaining nav dropdowns are mega menus — see the section below. The caret
+   and .nav__item's positioning are still shared by those. */
 .caret {
   width: 0;
   height: 0;
@@ -362,47 +369,6 @@ button { font: inherit; cursor: pointer; }
 .nav__item.is-open .caret { transform: rotate(180deg); }
 
 .nav__item { position: relative; }
-
-.nav__sub {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  min-width: 200px;
-  background: #17171a;
-  border: 1px solid #26262b;
-  border-radius: var(--radius);
-  padding: 6px;
-  list-style: none;
-  margin: 0;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity .15s, transform .15s, visibility .15s;
-  z-index: 60;
-}
-.nav__item.is-open .nav__sub {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.nav__sub li a {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: 0;
-  color: var(--text-muted);
-  padding: 9px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  transition: background .12s, color .12s;
-}
-.nav__sub li a:hover {
-  background: #23232a;
-  color: var(--text);
-}
 
 /* ===== Mega menu (Web Hosting) =====
    .nav__item.has-mega overrides position back to static so .nav__mega (absolute,
@@ -1318,18 +1284,6 @@ button { font: inherit; cursor: pointer; }
   .nav__item { border-bottom: 1px solid #1c1c20; }
   .nav__link { width: 100%; justify-content: space-between; padding: 16px 0; }
 
-  .nav__sub {
-    position: static;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    box-shadow: none;
-    border: 0;
-    background: #101013;
-    display: none;
-    margin: 0 0 10px;
-  }
-  .nav__item.is-open .nav__sub { display: block; }
 
   /* Mega menu collapses to the same stacked-list treatment as a simple dropdown —
      card grid doesn't make sense on small screens. */
@@ -4219,12 +4173,21 @@ button { font: inherit; cursor: pointer; }
   background: #fff;
   border-top: 2px solid #1b1b1f;
 }
+
 .discount-tabs__bar {
+  position: relative; /* containing block for the sliding indicator below */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
 .discount-tabs__tab {
-  position: relative; /* anchors .is-active's ::after underline bar below */
+  /* Deliberately NOT positioned. It used to be position:relative to anchor a
+     per-tab .is-active::after underline, which no longer exists — and leaving
+     it in place was a real bug: positioned elements paint above non-positioned
+     ones, and the tabs come after the indicator in the DOM, so every tab
+     painted ON TOP of the sliding bar. Hovering a tab then covered the bar
+     with this rule's background, so the bar vanished under the pointer for as
+     long as it sat on the tab you'd just clicked — which looked like the
+     animation failing rather than the bar simply being hidden. */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4243,16 +4206,52 @@ button { font: inherit; cursor: pointer; }
    gradient as .footer__underline/.cph-backups__underline (owner's "orange
    and red mixed" gradient). The ash-grey column/row borders this used to
    sit against were removed per owner request, so it now sits flush with
-   the tab's own bottom edge instead of offsetting for that border. */
-.discount-tabs__tab.is-active::after {
-  content: "";
+   the tab's own bottom edge instead of offsetting for that border.
+
+   It's ONE shared element that slides, not a bar per tab: an is-active
+   ::after on each tab could only pop in and out, never travel.
+
+   Its width and offset are measured off the active tab by js/main.js and
+   written here as plain pixel styles — see that file for why driving the
+   transform through a CSS custom property did NOT animate. Because
+   offsetLeft is relative to the bar and already includes the bar's
+   .container padding, nothing here needs to know about --gutter or assume
+   the tabs are equal thirds. */
+.discount-tabs__indicator {
   position: absolute;
   left: 0;
-  right: 0;
   bottom: 0;
   height: 3px;
+  width: 0; /* real width + offset are measured and set by js/main.js */
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  /* Explicitly above the tabs. They're unpositioned so this already wins on
+     paint order, but stating it means giving a tab position/z-index later
+     can't silently hide the bar again. */
+  z-index: 1;
+  /* Promote to its own compositor layer. Switching tabs swaps a 32-box panel
+     in and out, which is a big synchronous layout + paint on the main thread;
+     without promotion the bar's slide shares those frames and visibly hitches.
+     On its own layer the transform animates off the main thread and stays
+     smooth regardless of what the panel swap is doing. js/main.js writes the
+     transform as translate3d for the same reason. */
+  will-change: transform;
+  /* No `transition` here on purpose — see the note below. The first
+     placement on page load is made with animation suppressed in js/main.js,
+     so the bar lands under the active tab rather than sliding in from the
+     left edge. */
 }
+/* NOTE: this bar has deliberately NO `transition`. Its movement is animated
+   explicitly from js/main.js via element.animate(); adding a transition back
+   here would double up against that animation and fight it. Duration and
+   easing live in js/main.js, kept equal to the .28s used by the tab labels
+   and the panel fade below, so the whole switch moves as one.
+
+   A CSS transition WOULD work here — an earlier version of this comment
+   claimed otherwise, and it was wrong. The bar appeared not to animate
+   because the tabs were painting over it (see .discount-tabs__tab), not
+   because the transition failed. element.animate() is kept simply because
+   it's explicit and already working; don't read this as "transitions are
+   unreliable". */
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
    replaced — see the reference-styling rule in README A.3: usually only
@@ -4268,9 +4267,15 @@ button { font: inherit; cursor: pointer; }
   /* Faded by default so the selected tab visibly stands out; the active
      tab's own rule below brings it back to full opacity. */
   opacity: .4;
-  transition: opacity .18s ease;
+  transition: opacity .28s cubic-bezier(.4, 0, .2, 1); /* shared switch timing — see .discount-tabs__indicator */
 }
 .discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
+
+/* Positioning context for the outgoing panel's overlay during a cross-fade. */
+.discount-tabs__panels {
+  /* Containing block for the outgoing .discount-tabs__panel--leaving below. */
+  position: relative;
+}
 
 .discount-tabs__panel {
   display: none;
@@ -4280,28 +4285,155 @@ button { font: inherit; cursor: pointer; }
    right) — the heading was removed per owner request, so the body just
    takes the row on its own now, capped to a readable width instead of
    stretching the full container. */
-.discount-tabs__panel.is-active { display: block; }
-.discount-tabs__panel-body { max-width: 640px; }
-/* Per owner: each panel's content aligns differently — panel 1 (Student &
-   Academic) left (the default, no override needed), panel 2 (Startup)
-   centred, panel 3 (Agency & Freelancer) right. margin-left/right: auto
-   moves the whole (max-width-capped) block within the container; text-align
-   handles the text itself inside it. */
+/* Panels swap via `display`, which cannot be transitioned, and they differ
+   wildly in height (32 boxes vs 30), so cross-fading two at once would jump
+   the page height around. Only the incoming panel animates.
+
+   That animation is scoped to .discount-tabs__panel-body — the heading,
+   description and caption — and deliberately NOT to the whole panel. Fading
+   the panel itself meant animating opacity across the entire subtree, up to
+   32 boxes, which forces the browser to paint all of it into a layer for the
+   duration. Off-screen that costs nothing, which is why arriving from a
+   mega-menu link always looked fine; clicking a tab while scrolled down to
+   the boxes did the same work inside the visible viewport and janked the
+   switch. Animating the small text block instead keeps the cost flat however
+   many boxes a panel holds. */
+.discount-tabs__panel.is-active {
+  display: block;
+  position: relative;
+  z-index: 1; /* above the outgoing panel fading out beneath it */
+  animation: discount-panel-in .28s cubic-bezier(.4, 0, .2, 1) both; /* shared switch timing */
+}
+
+/* The outgoing panel, mid cross-fade. js/main.js moves the old panel to this
+   state instead of hiding it outright, then hides it for real on animationend.
+
+   It's taken out of flow and overlaid on .discount-tabs__panels so the two
+   panels can occupy the same space at once. That's also why the incoming
+   panel — not this one — keeps normal flow: panels differ in height (32 boxes
+   vs 30), and letting the INCOMING one define the container's height means
+   the page settles on its final height immediately rather than collapsing
+   and re-expanding mid-fade. */
+.discount-tabs__panel--leaving {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 0;
+  pointer-events: none; /* never intercept clicks on its way out */
+  animation: discount-panel-out .28s cubic-bezier(.4, 0, .2, 1) both;
+}
+/* Opacity only — no transform. This animates a very large subtree (up to 32
+   boxes), and pairing opacity with a transform on something that big adds
+   real paint cost in exactly the frames the bar is trying to slide through. */
+@keyframes discount-panel-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes discount-panel-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+/* ===== Tab-switch entrance =====
+   Per owner, the straight cross-fade above was too plain. The fade still does
+   the actual swap — it has to, since both panels are briefly on screen at once
+   and neither has a background to hide the other — and this layers a staggered
+   rise on top of it, so the copy arrives in sequence instead of all at once.
+
+   Only the SMALL, BOUNDED parts move: the four elements of the copy block and
+   the one or two aside images. The criteria boxes are deliberately left to
+   ride the panel's fade. Putting a transform on the grid would animate a
+   subtree of up to 32 boxes in exactly the frames the indicator is sliding
+   through, which is the jank this section was already debugged out of once —
+   see the keyframes comment above. Adding motion to the boxes means animating
+   the cards individually, not their container.
+
+   Driven by --entering, added by js/main.js on switch, rather than by
+   .is-active: panel 1 carries .is-active in the markup, so riding it would
+   play a 0.74s reveal on every page load, which on this page has a history of
+   reading as the page flashing rather than as a transition.
+
+   Timing: the bar and the fade finish at .28s, then the copy settles through
+   to ~.74s. The cascade is the point — the bar arrives first and the content
+   follows it in. */
+.discount-tabs__panel--entering .discount-tabs__panel-subtitle,
+.discount-tabs__panel--entering .discount-tabs__panel-desc,
+.discount-tabs__panel--entering .discount-tabs__cta,
+.discount-tabs__panel--entering .discount-tabs__panel-eligibility {
+  animation: discount-rise .52s cubic-bezier(.16, 1, .3, 1) both;
+}
+.discount-tabs__panel--entering .discount-tabs__panel-subtitle    { animation-delay: .04s; }
+.discount-tabs__panel--entering .discount-tabs__panel-desc        { animation-delay: .10s; }
+.discount-tabs__panel--entering .discount-tabs__cta               { animation-delay: .16s; }
+.discount-tabs__panel--entering .discount-tabs__panel-eligibility { animation-delay: .22s; }
+
+/* The images settle a little slower and a little later than the copy, so the
+   two don't land on the same frame. Scale rather than a slide: they're pinned
+   in a sticky column, and sliding them would fight that. */
+.discount-tabs__panel--entering .discount-tabs__aside-img {
+  animation: discount-aside-in .66s cubic-bezier(.16, 1, .3, 1) both;
+}
+.discount-tabs__panel--entering .discount-tabs__aside-img--a { animation-delay: .06s; }
+.discount-tabs__panel--entering .discount-tabs__aside-img--b { animation-delay: .16s; }
+
+@keyframes discount-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes discount-aside-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Site-wide convention: motion is opt-out. */
+@media (prefers-reduced-motion: reduce) {
+  /* the indicator checks prefers-reduced-motion in js/main.js itself */
+  .discount-tabs__panel.is-active,
+  .discount-tabs__panel--leaving,
+  .discount-tabs__panel--entering .discount-tabs__panel-subtitle,
+  .discount-tabs__panel--entering .discount-tabs__panel-desc,
+  .discount-tabs__panel--entering .discount-tabs__cta,
+  .discount-tabs__panel--entering .discount-tabs__panel-eligibility,
+  .discount-tabs__panel--entering .discount-tabs__aside-img { animation: none; }
+}
+/* Per owner: ALL THREE panels centre their copy, and each block spans exactly
+   the width of that panel's own criteria boxes below it — from the left edge
+   of its leftmost box to the right edge of its rightmost one. The width half
+   of that is already handled by the width:50% rule below (verified flush to
+   0.0px against the grid at every window width), so this is only the
+   centring.
+
+   Text alignment and block POSITION are separate things here: all three
+   centre their text, but panel 1's block sits in the left half of the
+   container, panel 2's in the middle and panel 3's in the right half — that's
+   what the margin-left/right: auto rules below do, and they must stay.
+
+   History, so it isn't undone: panel 1 was left-aligned, then briefly
+   right-aligned, before the owner settled on centred for 1 and 3 to match 2.
+   The original complaint was never geometry — the block edges always matched
+   the boxes — it was that ragged text stopped short of them. */
+.discount-tabs__panel-body {
+  /* No max-width here: every panel-body lives under #discount-panel-1/2/3,
+     and all three set max-width: none below, so a cap here can never apply.
+     The 640px fallback that used to sit here was dead; the live one is in the
+     max-width: 860px block near the end of this section. */
+  text-align: center;
+}
 #discount-panel-2 .discount-tabs__panel-body {
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
 }
 #discount-panel-3 .discount-tabs__panel-body {
   margin-left: auto;
-  text-align: right;
 }
 /* Per owner: every panel's description column must line up with its own
    criteria grid below it (see .discount-tabs__criteria-grid further down)
    — 50% instead of the shared 640px cap, so the heading/description/
    caption never run past where that panel's boxes start/end. Panel 2's
    own margin-left/right: auto above already centres this 50%-wide block;
-   panels 1/3 stay flush left/right via their own rules above. */
+   panel 1 stays flush left (no rule needed) and panel 3 flush right via its
+   own margin-left: auto above. */
 #discount-panel-1 .discount-tabs__panel-body,
 #discount-panel-2 .discount-tabs__panel-body,
 #discount-panel-3 .discount-tabs__panel-body {
@@ -4334,25 +4466,70 @@ button { font: inherit; cursor: pointer; }
   line-height: 25px;
   color: rgba(32, 29, 44, .82);
 }
-.discount-tabs__panel-desc:last-child { margin-bottom: 0; }
+/* A .discount-tabs__panel-desc:last-child rule used to sit here to drop the
+   description's bottom margin. It never matched: every panel body runs
+   subtitle -> description -> Claim button -> caption, so the description is
+   never the last child. Removed rather than left as a false hint that the
+   description can end a panel. */
 
-/* Small plain-text caption under each panel's description (not a link —
-   was briefly an <a>, corrected to a <span> per owner). Label history, each
-   step an owner relabel: "Terms & Conditions" → "Eligibility Criteria" →
-   "Eligibility Criteria and Conditions" (current). Typography matched to an
-   owner-supplied font-inspector spec (Manrope 600, 12px/18px); the colour is
-   the dark rgb(27,27,31) declared below — NOT that spec's green, and not
-   brand orange either, which an earlier version of this comment wrongly
-   claimed. See the note on the colour declaration itself. */
+/* "Claim Your Discount" CTA, sat between each panel's description and its
+   criteria caption. Matched to the homepage Plans button the owner pointed
+   at (.plan-card .btn--outline): same transparent fill, 1.5px brand-orange
+   border, Montserrat 700 15px and orange-fill-on-hover from .btn--outline,
+   with that button's own overrides repeated here — width:auto and the 8px
+   corner, both of which override the base .btn's full-width pill.
+
+   Being inline-flex it follows each panel's own text-align, so it sits left
+   on Student & Academic, centred on Startup and right on Agency &
+   Freelancer without any per-panel rules. */
+.discount-tabs__panel-body .discount-tabs__cta {
+  /* Specificity deliberately raised above .btn--outline (0,1,0 vs 0,2,0).
+     .btn--outline sets width:100% for the plan cards, and matching it on
+     source order alone left the button's width depending on rule order in
+     this file — one reorder away from stretching the full column again.
+     Every value below is the reference button, .plan-card .btn--outline. */
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
+  /* No top margin of its own: the description's 12px bottom margin is the
+     whole gap. Per owner the button belongs WITH the paragraph above it, so
+     that 12px has to stay smaller than the 20px below it that separates the
+     button from the criteria caption — the button reads as the end of the
+     description, not as the start of the criteria block. */
+  margin: 0;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-family: "Montserrat", var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+/* Small plain-text caption introducing each panel's criteria boxes. NOT a
+   link — it was briefly an <a> and was corrected to a <span> per owner, so
+   don't reintroduce an href, underline or hover colour. Its wording has been
+   relabelled by the owner several times (it started life as "Terms &
+   Conditions"); read the live text from discount-programs/index.html rather
+   than trusting a copy here — this comment deliberately doesn't name it, so
+   a future rename doesn't need a CSS edit and cache-bust just to stay
+   truthful. Typography matched to an owner-supplied font-inspector spec
+   (Manrope 600, 12px/18px); the colour is the dark rgb(27,27,31) declared
+   below — NOT that spec's green, and not brand orange either, which an
+   earlier version of this comment wrongly claimed. */
 .discount-tabs__panel-eligibility {
-  display: inline-block;
+  /* Block, not inline-block: the "Claim Your Discount" button above it is
+     inline-flex, so as an inline-level box this caption sat on the SAME line
+     as the button rather than beneath it. Block forces its own line. It was
+     inline-block back when this was a link and the underline had to hug the
+     text; as a plain caption there's nothing to hug, and text-align still
+     places it correctly per panel. */
+  display: block;
   /* Per owner: this caption labels the boxes BELOW it, so it has to sit
-     closer to them than to the description above. It used to be 12px under
-     the description and 32px above the grid, which read as part of the
-     paragraph; those gaps are now reversed (32px above / 10px below, the
-     10px living on .discount-tabs__criteria-grid). Keep the two in that
-     ratio if either is ever retuned. */
-  margin: 20px 0 0; /* + the description's own 12px bottom margin = 32px above */
+     closer to them than to whatever is above. 20px above (this margin, off
+     the "Claim Your Discount" button) against 10px below (which lives on
+     .discount-tabs__criteria-grid). Keep the two in that ratio if either is
+     ever retuned. */
+  margin: 20px 0 0;
   font-family: "Manrope", var(--font-body);
   font-size: 12px;
   font-weight: 600;
@@ -4399,6 +4576,12 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__criteria-card {
   padding: 22px;
+  /* Per owner: box text is centred. Set here rather than on the panel, because
+     the panels each align their own body differently (left/centre/right, see
+     below) and the criteria grid is a SIBLING of .discount-tabs__panel-body,
+     not a child — so it never inherited those alignments and all three tabs'
+     boxes centre identically from this one rule. */
+  text-align: center;
   background: #fff;
   border: 1px solid #e6e6ec;
   border-radius: 12px;
@@ -4422,6 +4605,136 @@ button { font: inherit; cursor: pointer; }
   font-weight: 400;
   line-height: 21px;
   color: rgba(27, 27, 31, .75);
+}
+
+/* ===== Sticky per-tab image columns (owner request) =====
+   Each panel's copy and criteria grid only occupy HALF the container (see the
+   width:50% rules above), so the other half sits empty — on the right for
+   panel 1, both sides for centred panel 2, on the left for panel 3. These fill
+   that empty half with two tall images per tab.
+
+   Behaviour the owner asked for: the images start level with the panel's
+   heading, run down to the bottom of the screen, and then stay FROZEN while
+   the copy and the boxes scroll past them.
+
+   That's position:sticky, not fixed. Fixed pins to the viewport for good, so
+   the images would still be stuck on screen once you'd scrolled on to the
+   footer, and it would take JS watching the scroll position to hide them.
+   Sticky gives the same frozen effect and RELEASES BY ITSELF at the end of the
+   panel's grid area — no JS, nothing to keep in sync. Same mechanism as the
+   sticky nav and the cPanel package header elsewhere in this file.
+
+   Layout is grid placement on .discount-tabs__panel itself rather than a new
+   wrapper element, so the existing body/criteria-grid markup is untouched;
+   the panel's two existing children are simply placed into column 1 (or 2)
+   and the aside spans both rows beside them.
+
+   Only above 1100px. Below that the empty half is gone, so the columns hide
+   and the panel falls back to the block layout and 50% widths defined above,
+   exactly as before this existed. */
+.discount-tabs__aside { display: none; }
+
+@media (min-width: 1101px) {
+  .discount-tabs__panel.is-active,
+  .discount-tabs__panel--leaving {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 596px each inside the 1192px container */
+    /* start, not the stretch default: a stretched grid item fills its area and
+       then has nowhere to travel, which silently kills position:sticky. */
+    align-items: start;
+  }
+  /* Panel 2's copy is centred, so it needs an empty quarter on EACH side
+     rather than one empty half — one image per side instead of two. */
+  #discount-panel-2.is-active,
+  #discount-panel-2.discount-tabs__panel--leaving {
+    grid-template-columns: 1fr 2fr 1fr; /* 298 / 596 / 298 */
+  }
+
+  /* Column placement. Panel 1 keeps its copy left, panel 3 mirrors it, and
+     the aside takes the empty column beside it. grid-row: 1 / span 2 (not
+     1 / -1 — there are no explicit rows here, so -1 would resolve back to
+     line 1 and span nothing). */
+  #discount-panel-1 .discount-tabs__panel-body     { grid-column: 1; grid-row: 1; }
+  #discount-panel-1 .discount-tabs__criteria-grid  { grid-column: 1; grid-row: 2; }
+  #discount-panel-1 .discount-tabs__aside          { grid-column: 2; grid-row: 1 / span 2; }
+
+  #discount-panel-2 .discount-tabs__panel-body     { grid-column: 2; grid-row: 1; }
+  #discount-panel-2 .discount-tabs__criteria-grid  { grid-column: 2; grid-row: 2; }
+  #discount-panel-2 .discount-tabs__aside--left    { grid-column: 1; grid-row: 1 / span 2; }
+  #discount-panel-2 .discount-tabs__aside--right   { grid-column: 3; grid-row: 1 / span 2; }
+
+  #discount-panel-3 .discount-tabs__panel-body     { grid-column: 2; grid-row: 1; }
+  #discount-panel-3 .discount-tabs__criteria-grid  { grid-column: 2; grid-row: 2; }
+  #discount-panel-3 .discount-tabs__aside          { grid-column: 1; grid-row: 1 / span 2; }
+
+  /* The grid columns now do what width:50% + auto margins did above, and the
+     two together would halve the copy again. Longhand margins so the criteria
+     grid keeps its 10px margin-top to the caption. */
+  #discount-panel-1 .discount-tabs__panel-body,
+  #discount-panel-2 .discount-tabs__panel-body,
+  #discount-panel-3 .discount-tabs__panel-body,
+  #discount-panel-1 .discount-tabs__criteria-grid,
+  #discount-panel-2 .discount-tabs__criteria-grid,
+  #discount-panel-3 .discount-tabs__criteria-grid {
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .discount-tabs__aside {
+    display: flex;
+    justify-content: center; /* even gutters either side of the pair */
+    gap: 24px;
+    /* Sized so the column clears BOTH edges of the screen, per owner — it
+       must not touch the nav above it, nor run off the bottom before you
+       start scrolling.
+
+       The bottom gap sets the height. At rest the column starts level with
+       the panel heading, which sits 243px below the top of the screen when
+       the section lands under the nav: 75 nav (74 .nav__inner + 1px border)
+       + 2 section border-top + 102 tab bar (28 + 46 line-height + 28) + 64
+       panel padding-top. Leaving 24px clear of the fold from there gives
+       100vh - 267px.
+
+       top is then set so the two gaps the owner cares about MATCH once the
+       column freezes: nav-bottom to image-top, and image-bottom to the fold.
+       171 - 75 (nav) = 96 above, and 100vh - (171 + 100vh - 267) = 96 below.
+       Centring the height in the viewport instead was tried and rejected —
+       that measures the top gap from the top of the SCREEN, so the nav ate
+       most of it and the bottom gap looked twice as large.
+
+       The two constraints agree: 96px is also the smallest gap that still
+       keeps the at-rest bottom edge 24px clear of the fold. Recompute the
+       pair together if the tab bar or the panel padding ever changes. */
+    position: sticky;
+    top: 171px;
+    height: calc(100vh - 267px);
+    min-height: 320px; /* floor for very short windows, where the calc runs out */
+    pointer-events: none; /* purely decorative */
+  }
+
+  .discount-tabs__aside-img {
+    flex: 0 0 240px;
+    height: 100%;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f2f2f5; /* shows while the image decodes */
+  }
+  /* The pair sits dead level. A 60px stagger on the second image was tried
+     and rejected by the owner — it read as two different heights rather than
+     as a deliberate offset. Don't reintroduce it. */
+
+  /* SAMPLE IMAGES — placeholders at the owner's spec (480x1640, shown at
+     240x820). Swap these three pairs for the real photos; nothing else needs
+     to change. */
+  #discount-panel-1 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/student-academic-1.png"); }
+  #discount-panel-1 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/student-academic-2.png"); }
+  #discount-panel-2 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/startup-1.png"); }
+  #discount-panel-2 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/startup-2.png"); }
+  #discount-panel-3 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/agency-freelancer-1.png"); }
+  #discount-panel-3 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/agency-freelancer-2.png"); }
 }
 
 @media (max-width: 860px) {
@@ -4888,22 +5201,159 @@ button { font: inherit; cursor: pointer; }
   var discountTabs = document.querySelectorAll(".discount-tabs__tab");
   var discountPanels = document.querySelectorAll(".discount-tabs__panel");
   if (discountTabs.length && discountPanels.length) {
+    /* The active-tab underline is one shared element that slides between tabs
+       — see .discount-tabs__indicator in css/styles.css.
+
+       Its width and offset are MEASURED off the active tab and written as
+       plain pixel styles. An earlier version drove the transform through CSS
+       custom properties instead (translateX(calc(var(--tab-index) * 100%))),
+       which didn't animate: an unregistered custom property has no type, so
+       browsers treat changes to it as discrete and a transition on a property
+       whose value merely derives from it doesn't reliably interpolate — the
+       bar jumped instead of sliding. Setting `transform` directly on the
+       element transitions the way any ordinary property change does.
+
+       Measured with getBoundingClientRect, NOT offsetLeft/offsetWidth: those
+       round to whole pixels, and each tab is 397.33px wide at the container's
+       max width. Rounding made the bar a fraction narrower than its tab, put
+       it up to a pixel out of line, and - because width is transitioned too -
+       made it visibly jitter wider and narrower as it travelled. Rects are
+       fractional, so the bar now matches its tab exactly and only moves.
+
+       Measuring at all means the bar doesn't have to reason about the tab
+       bar's .container padding or assume the tabs are equal thirds. */
+    var discountBar = document.querySelector(".discount-tabs__bar");
+    var discountIndicator = document.querySelector(".discount-tabs__indicator");
+
+    /* Where the bar currently sits, tracked rather than read back off the
+       element — reading computed style would force a layout and can return a
+       matrix mid-animation. */
+    var discountIndicatorX = null;
+
+    var moveDiscountIndicator = function (tab, animate) {
+      if (!discountIndicator || !discountBar || !tab) return;
+      var barRect = discountBar.getBoundingClientRect();
+      var tabRect = tab.getBoundingClientRect();
+      var x = tabRect.left - barRect.left;
+
+      /* Width is set instantly, never animated: tabs differ by fractions of a
+         pixel, and animating a layout property repaints every frame. */
+      discountIndicator.style.width = tabRect.width + "px";
+
+      var from = discountIndicatorX;
+      discountIndicatorX = x;
+      var to = "translate3d(" + x + "px, 0, 0)";
+
+      /* Animated explicitly with element.animate() rather than by leaving a
+         CSS transition to notice the change. The final inline style is set
+         as well, so the bar stays put once the animation ends without
+         needing a fill mode.
+
+         Historical note, because the code above was written on a wrong
+         assumption: this was switched to element.animate() while chasing a
+         bar that looked like it never moved. That turned out to have nothing
+         to do with how it was animated — .discount-tabs__tab was still
+         position:relative, so the tabs painted over the bar and a hovered
+         tab's background hid it exactly when it travelled. A plain CSS
+         transition would be perfectly fine here. This stays because it works
+         and is explicit, not because transitions were found wanting. */
+      var still = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (animate && !still && from !== null && from !== x && discountIndicator.animate) {
+        discountIndicator.animate(
+          [{ transform: "translate3d(" + from + "px, 0, 0)" }, { transform: to }],
+          { duration: 280, easing: "cubic-bezier(.4, 0, .2, 1)" }
+        );
+      }
+      discountIndicator.style.transform = to;
+    };
+
     var activateDiscountTab = function (tab) {
       var target = tab.getAttribute("data-tab");
+      moveDiscountIndicator(tab, true);
       discountTabs.forEach(function (t) {
         var active = t === tab;
         t.classList.toggle("is-active", active);
         t.setAttribute("aria-selected", active ? "true" : "false");
         t.tabIndex = active ? 0 : -1;
       });
+      /* Cross-fade the panels rather than swapping them outright: the outgoing
+         one is overlaid (see .discount-tabs__panel--leaving) and fades out
+         while the incoming one fades in beneath the pointer.
+
+         The incoming panel keeps normal flow so the container takes its height
+         straight away — panels differ in height, and letting the OUTGOING one
+         hold the height would make the page collapse and re-expand mid-fade.
+
+         Any panel still mid-exit from a previous click is cleaned up first, so
+         clicking through the tabs quickly can't leave a stale overlay behind. */
+      var stillNow = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      discountPanels.forEach(function (p) {
+        if (p.classList.contains("discount-tabs__panel--leaving")) {
+          p.classList.remove("discount-tabs__panel--leaving");
+          p.hidden = true;
+        }
+      });
+
       discountPanels.forEach(function (p) {
         var active = p.getAttribute("data-panel") === target;
-        p.classList.toggle("is-active", active);
-        p.hidden = !active;
+        if (active) {
+          p.hidden = false;
+          p.classList.add("is-active");
+          /* Staggered entrance for the copy and the aside images (see
+             .discount-tabs__panel--entering in css/styles.css). It's a class
+             set here rather than something riding on .is-active because panel
+             1 carries .is-active in the markup — on .is-active the reveal
+             would also play on every page load, which this page has a history
+             of the owner reading as a flash.
+
+             Removed and re-added around a forced reflow so the animation
+             restarts when a panel is re-entered; without the reflow the
+             browser coalesces the two class changes and nothing replays. */
+          p.classList.remove("discount-tabs__panel--entering");
+          void p.offsetWidth;
+          p.classList.add("discount-tabs__panel--entering");
+          return;
+        }
+        if (!p.classList.contains("is-active")) return;
+
+        p.classList.remove("is-active");
+        if (stillNow) {
+          p.hidden = true;
+          return;
+        }
+        // let it fade out on top of the new panel, then take it out of the DOM flow
+        p.classList.add("discount-tabs__panel--leaving");
+        var finish = function () {
+          p.removeEventListener("animationend", finish);
+          p.classList.remove("discount-tabs__panel--leaving");
+          p.hidden = true;
+        };
+        p.addEventListener("animationend", finish);
       });
     };
     discountTabs.forEach(function (tab) {
       tab.addEventListener("click", function () { activateDiscountTab(tab); });
+    });
+
+    /* Place the bar under whichever tab starts active. The `animate` flag is
+       false here and on resize, so it lands in place rather than sliding in
+       from the left edge. Re-measured on resize because the tabs change width
+       with the viewport. */
+    var initialDiscountTab = null;
+    discountTabs.forEach(function (t) {
+      if (!initialDiscountTab && t.classList.contains("is-active")) initialDiscountTab = t;
+    });
+    moveDiscountIndicator(initialDiscountTab || discountTabs[0], false);
+    window.addEventListener("resize", function () {
+      var current = null;
+      discountTabs.forEach(function (t) {
+        if (!current && t.classList.contains("is-active")) current = t;
+      });
+      moveDiscountIndicator(current || discountTabs[0], false);
     });
 
     /* Deep-link from the Discount Programs mega-menu cards (see
@@ -5346,7 +5796,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
 </head>
 <body>
 
@@ -5760,7 +6210,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
 </body>
 </html>
 ```
@@ -5802,7 +6252,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
 </head>
 <body>
 
@@ -6724,7 +7174,7 @@ mounts, folder-with-`index.html` so the URL is
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
 </body>
 </html>
 ```
@@ -6742,12 +7192,15 @@ Structure, top to bottom: a centred hero (duplicated from cpanel-hosting's
 `.cph-hero` markup, no product-screenshot visual — see the in-file comment),
 then one `.discount-tabs` section holding a 3-tab switcher (Student &
 Academic / Startup / Agency & Freelancer) and their 3 panels. Each panel has
-a subtitle + description + plain-text "Eligibility Criteria" caption (not a
-link — see C.20), then a 6-card grid of eligibility-criteria boxes. The
-criteria cards currently hold **sample placeholder text** — the owner will
-supply the real eligibility requirements per program; swap the
-`.discount-tabs__criteria-desc` text in each card when that copy arrives,
-don't restructure the grid. See C.20 for the full design rationale (tab
+a subtitle + description + a "Claim Your Discount" button + a plain-text
+"Important Information, Eligibility Criteria and Conditions" caption (not a
+link — see C.20), then a 3-column grid of eligibility-criteria boxes, and —
+above 1101px — a sticky column of two tall images in the panel's empty half.
+Panel 1 holds 32 real owner-supplied criteria; panels 2 and 3 still hold
+**30 placeholder boxes each**, and the six images are placeholders too. Swap
+the `.discount-tabs__criteria-desc` text in each card when the real copy
+arrives, don't restructure the grid. See C.20 for the full design rationale
+(tab
 switcher, per-panel alignment, font-inspector overrides, criteria-grid
 geometry).
 ```html
@@ -6781,7 +7234,7 @@ geometry).
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=352">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
 </head>
 <body>
 
@@ -6820,6 +7273,10 @@ geometry).
          mega-menu's shorter one-line descriptions). -->
     <section class="discount-tabs">
       <div class="container discount-tabs__bar" role="tablist">
+        <!-- One shared underline that slides between tabs, rather than a bar
+             per tab appearing/disappearing — js/main.js measures the active
+             tab and sets this element's width/transform. Purely decorative. -->
+        <span class="discount-tabs__indicator" aria-hidden="true"></span>
         <button class="discount-tabs__tab is-active" type="button" role="tab" id="discount-tab-1" aria-selected="true" aria-controls="discount-panel-1" data-tab="1" data-hash="student-academic">
           <span class="discount-tabs__label">Student &amp; Academic</span>
         </button>
@@ -6831,56 +7288,172 @@ geometry).
         </button>
       </div>
 
-      <div class="container">
+      <!-- position:relative container: on a switch the outgoing panel is taken
+           out of flow and overlaid here so it can cross-fade with the incoming
+           one. See .discount-tabs__panel--leaving in css/styles.css. -->
+      <div class="container discount-tabs__panels">
         <div class="discount-tabs__panel is-active" id="discount-panel-1" role="tabpanel" aria-labelledby="discount-tab-1" data-panel="1">
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Discounted Hosting for Students &amp; Academic Clubs.</h3>
             <p class="discount-tabs__panel-desc">Subsidized rates on select hosting plans for recognized school and university students, as well as academic clubs and student societies. Build portfolio projects, launch student organization portals, and deploy on reliable cPanel infrastructure with minimal friction.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
+            <a class="btn btn--outline discount-tabs__cta" href="https://hub.serversalad.com" target="_blank" rel="noopener">Claim Your Discount</a>
+            <span class="discount-tabs__panel-eligibility">Important Information, Eligibility Criteria and Conditions</span>
           </div>
-          <!-- Sample placeholder text — owner will replace with the real
-               eligibility criteria for this program. -->
+          <!-- Real owner-supplied eligibility criteria and conditions for the
+               Student & Academic programme — 32 numbered points, one per box,
+               as supplied. The owner's original 1-32 numbering is deliberately
+               NOT rendered — each point stands alone in its own box, so the
+               prefix was redundant; don't reintroduce it. Panels 2 and 3 still
+               hold placeholder text pending their own copy. -->
           <div class="discount-tabs__criteria-grid">
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Must be a student at a government, private, or semi-government school.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Must be an undergraduate at a government or non-government university.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">School offers are available only for government or semi-government schools.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">University offers are available only for government or semi-government universities.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Must be a Sri Lankan citizen, even if studying in another country.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">School students must provide valid proof of student status.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">University students must provide an official university email address.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The offer is available only for the cPanel Hosting Standard Salad package.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Each eligible person can get only one discounted package.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The 12-month offer period starts from the first student purchase.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Monthly student plans must be renewed continuously without a break.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Longer student plans also count towards the same 12-month offer period.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Student eligibility is checked only at the first purchase.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">No further student verification is required during the offer period.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The student offer remains valid if student status ends during this period.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">After the 12-month student offer period ends, the regular price applies.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Cancelling a monthly student plan ends the offer for that package.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Renewing after cancellation does not restart the 12-month period.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Institution offers remain available while the institution remains eligible.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">If an institution becomes ineligible, the regular price applies at renewal.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Institutions may be required to verify their eligibility when renewing.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">This offer cannot be combined with other Server Salad discounts.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">If multiple discounts apply, only the highest discount will be given.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Refunds are not available for change-of-mind requests.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Refunds are considered only for verified hosting service issues.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">False information or documents may result in account termination.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Terminated accounts may have their stored data permanently deleted.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Server Salad is not responsible for recovering deleted account data.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The institution's account must be created using its official details.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The discounted package cannot be transferred to another person or institution.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The package is also subject to Server Salad's standard Terms and Conditions.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">The package may be used for any purpose that complies with Sri Lankan law.</p></div>
+          </div>
+          <!-- Decorative sticky image column filling the empty half of this
+               panel (owner request). Two tall images, pinned under the site
+               header and frozen while the copy and boxes scroll past them —
+               see .discount-tabs__aside in css/styles.css. Hidden below
+               1101px, where there's no empty half left to fill.
+               SAMPLE IMAGES — to be replaced with the real photos. -->
+          <div class="discount-tabs__aside" aria-hidden="true">
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--a"></span>
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--b"></span>
           </div>
         </div>
         <div class="discount-tabs__panel" id="discount-panel-2" role="tabpanel" aria-labelledby="discount-tab-2" data-panel="2" hidden>
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Reduced Infrastructure Costs for New Businesses.</h3>
             <p class="discount-tabs__panel-desc">Special pricing on select hosting plans engineered specifically for newly established businesses. Launch your web presence with lower day-one overhead while maintaining high performance, automated backups, and total stability.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
+            <a class="btn btn--outline discount-tabs__cta" href="https://hub.serversalad.com" target="_blank" rel="noopener">Claim Your Discount</a>
+            <span class="discount-tabs__panel-eligibility">Important Information, Eligibility Criteria and Conditions</span>
           </div>
           <!-- Sample placeholder text — owner will replace with the real
                eligibility criteria for this program. -->
           <div class="discount-tabs__criteria-grid">
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 7 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 8 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 9 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 10 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 11 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 12 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 13 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 14 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 15 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 16 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 17 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 18 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 19 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 20 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 21 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 22 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 23 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 24 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 25 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 26 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 27 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 28 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 29 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 30 — replace this placeholder line with the real eligibility requirement.</p></div>
+          </div>
+          <!-- Decorative sticky image column filling the empty half of this
+               panel (owner request). Two tall images, pinned under the site
+               header and frozen while the copy and boxes scroll past them —
+               see .discount-tabs__aside in css/styles.css. Hidden below
+               1101px, where there's no empty half left to fill.
+               SAMPLE IMAGES — to be replaced with the real photos. -->
+          <div class="discount-tabs__aside discount-tabs__aside--left" aria-hidden="true">
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--a"></span>
+          </div>
+          <div class="discount-tabs__aside discount-tabs__aside--right" aria-hidden="true">
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--b"></span>
           </div>
         </div>
         <div class="discount-tabs__panel" id="discount-panel-3" role="tabpanel" aria-labelledby="discount-tab-3" data-panel="3" hidden>
           <div class="discount-tabs__panel-body">
             <h3 class="discount-tabs__panel-subtitle">Discounted cPanel Plans for Client Developers.</h3>
             <p class="discount-tabs__panel-desc">Purpose-built hosting incentives for freelancers and web agencies managing websites on behalf of their clients. Scale your client portfolio with discounted cPanel packages designed to maximize your profit margins and simplify site management.</p>
-            <span class="discount-tabs__panel-eligibility">Eligibility Criteria and Conditions</span>
+            <a class="btn btn--outline discount-tabs__cta" href="https://hub.serversalad.com" target="_blank" rel="noopener">Claim Your Discount</a>
+            <span class="discount-tabs__panel-eligibility">Important Information, Eligibility Criteria and Conditions</span>
           </div>
           <!-- Sample placeholder text — owner will replace with the real
                eligibility criteria for this program. -->
           <div class="discount-tabs__criteria-grid">
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace with a real eligibility requirement.</p></div>
-            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace with a real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 1 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 2 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 3 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 4 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 5 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 6 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 7 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 8 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 9 — replace this placeholder line with the real eligibility confirmation.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 10 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 11 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 12 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 13 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 14 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 15 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 16 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 17 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 18 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 19 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 20 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 21 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 22 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 23 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 24 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 25 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 26 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 27 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 28 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 29 — replace this placeholder line with the real eligibility requirement.</p></div>
+            <div class="discount-tabs__criteria-card"><p class="discount-tabs__criteria-desc">Sample criterion 30 — replace this placeholder line with the real eligibility requirement.</p></div>
+          </div>
+          <!-- Decorative sticky image column filling the empty half of this
+               panel (owner request). Two tall images, pinned under the site
+               header and frozen while the copy and boxes scroll past them —
+               see .discount-tabs__aside in css/styles.css. Hidden below
+               1101px, where there's no empty half left to fill.
+               SAMPLE IMAGES — to be replaced with the real photos. -->
+          <div class="discount-tabs__aside" aria-hidden="true">
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--a"></span>
+            <span class="discount-tabs__aside-img discount-tabs__aside-img--b"></span>
           </div>
         </div>
       </div>
@@ -6891,7 +7464,7 @@ geometry).
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=25"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
 </body>
 </html>
 ```
@@ -6947,9 +7520,9 @@ header('Access-Control-Allow-Origin: https://serversalad.com'); // adjust if the
 // change to 'localhost', or better, set SS_DB_HOST=localhost as a real
 // environment variable on that server so this line never needs editing again.
 $host    = getenv('SS_DB_HOST') ?: 'serversalad.com';
-$user    = getenv('SS_DB_USER') ?: '<REDACTED — see the live api/pricing.php file on disk, not duplicated here>';
-$pass    = getenv('SS_DB_PASS') ?: '<REDACTED — see the live api/pricing.php file on disk, not duplicated here>';
-$db      = getenv('SS_DB_NAME') ?: '<REDACTED — see the live api/pricing.php file on disk, not duplicated here>';
+$user    = getenv('SS_DB_USER') ?: 'serversa_serversa_website_data_user';
+$pass    = getenv('SS_DB_PASS') ?: 'xnc7"Z856\oB';
+$db      = getenv('SS_DB_NAME') ?: 'serversa_website_data';
 $charset = 'utf8mb4';
 
 try {
@@ -7088,6 +7661,16 @@ SVG file to change colour, change the CSS custom property or the class's
 | `workflow/sitepro-ai-builder.svg` | "Site.pro AI Builder" |
 | `workflow/sitejet-ai-builder.svg` | "Sitejet Builder Suite" |
 | `workflow/temporary-preview-url.svg` | "Temporary Preview URLs" |
+| `discount/student-academic-{1,2}.png` | Discount Programs tab 1 sticky image column (see C.20) — **placeholders**, 480×1640 |
+| `discount/startup-{1,2}.png` | Discount Programs tab 2 sticky image column — **placeholders**, 480×1640 |
+| `discount/agency-freelancer-{1,2}.png` | Discount Programs tab 3 sticky image column — **placeholders**, 480×1640 |
+
+The six `discount/` files are **sample placeholders**, not final artwork. They
+are flat colour blocks at the correct dimensions so the layout can be judged.
+Replacing them needs nothing but overwriting the six files at the same paths —
+the CSS references those filenames and nothing else. Spec for the real photos:
+480×1640 JPEG (2× of the 240×820 display box), under 150KB each, subject
+centred vertically because `cover` trims top and bottom on shorter windows.
 
 ### B.10 Verification checklist
 After building from Parts A/B, confirm:
@@ -7867,26 +8450,53 @@ real. Three shapes, depending on what the element already looks like —
   - Removed the reference's ash-grey borders between/under tabs entirely —
     no `.discount-tabs__bar { border-bottom }`, no `border-right` between
     tab buttons.
-  - The active tab shows the shared orange→red gradient
+  - The active tab is marked by the shared orange→red gradient
     (`linear-gradient(90deg, var(--accent), var(--accent-2))`, same
-    convention as the footer bars — see C.19) as a slim 3px underline via
-    `.discount-tabs__tab.is-active::after`, **not** the reference's full
-    background-colour hover state — that hover colour stays as an actual
-    `:hover` background, kept separate from the "is selected" signal.
+    convention as the footer bars — see C.19) as a slim 3px underline,
+    **not** the reference's full background-colour hover state — that hover
+    colour stays as an actual `:hover` background, kept separate from the
+    "is selected" signal.
+  - That underline is **one shared element that slides**
+    (`.discount-tabs__indicator`), not a per-tab `::after` that appears and
+    disappears. `moveDiscountIndicator()` in `js/main.js` measures the target
+    tab and animates the bar between positions. Four things about it are
+    load-bearing, each the result of a failed attempt — see Part E:
+    - It is animated with **`element.animate()`** (Web Animations API), and
+      the CSS rule carries **no `transition`**. The bar's `transform` is set
+      imperatively straight afterwards so it holds its final position.
+    - Position comes from **`getBoundingClientRect()`**, never
+      `offsetLeft`/`offsetWidth`. The tabs are 397.33px wide at the container
+      max-width; the `offset*` properties round to integers, and that rounding
+      showed up as width jitter part-way through the slide.
+    - `.discount-tabs__tab` must **not** be positioned. It used to carry a
+      vestigial `position: relative` from the old per-tab `::after`, which
+      made every tab paint above the bar — so a hovered tab's `#fafafb`
+      background hid the bar underneath the pointer. This presented as "the
+      animation is broken" and survived five fixes aimed at the animation.
+    - It re-measures on `resize`, with the animate flag off so it lands
+      rather than sliding in from the left.
   - Non-active tab labels are dimmed via `opacity: .4` on
     `.discount-tabs__label` (full `opacity: 1` only on `.is-active`) — the
     owner's framing was "increase transparency of non-selected tab text",
     implemented as inverse: the active tab is fully opaque and the other two
     fade back, rather than each tab having its own independent opacity value.
-- **Per-tab content alignment is deliberate and differs by tab**: Student &
-  Academic panel content is **left**-aligned, Startup panel is **centre**-
-  aligned, Agency & Freelancer panel is **right**-aligned — matching the
-  tab's position in the 3-column bar above it (left tab → left content,
-  right tab → right content). Implemented via ID selectors on each panel
-  (`#discount-panel-1`/`-2`/`-3`) rather than a shared alignment class, since
-  each of the 3 needs a different value for the same properties
-  (`text-align`, `margin-left`/`margin-right: auto`) — see B.1's
-  `.discount-tabs__panel-body` rules.
+- **All three panels centre their copy; what differs is the block's
+  POSITION, not its text alignment.** These are separate concerns and the
+  distinction matters: `text-align: center` is declared once on
+  `.discount-tabs__panel-body`, while `margin-left`/`margin-right: auto` on
+  `#discount-panel-2`/`-3` put each block in its own part of the container —
+  panel 1 in the left half, panel 2 in the middle, panel 3 in the right half,
+  mirroring each tab's position in the bar above.
+  - This arrived by correction, and the intermediate states should not be
+    restored: panels 1 and 3 were originally left- and right-aligned to match
+    their side of the bar, then panel 1 was briefly made right-aligned, before
+    the owner settled on all three centred.
+  - The original complaint was **not** a geometry bug. The owner asked to
+    "align this content to the right edge of the condition rectangles", and
+    measurement at eight window widths showed the block's edges already
+    matched the criteria grid to **0.0px** at every one. What read as
+    misalignment was the ragged right edge of left-aligned text stopping short
+    of the boxes. The fix was `text-align`; no width or margin changed.
 - **Panel width + criteria-grid geometry is tied to the tab bar's own column
   boundaries**, not an arbitrary width — this was owner-specified with exact
   positioning rules (paraphrased): the Student & Academic content/box-set
@@ -7905,13 +8515,21 @@ real. Three shapes, depending on what the element already looks like —
     follow-up request ("these content also must have the same width as
     other two, but center aligned").
   - This same 50%-width-anchored-by-margin pattern is applied twice per
-    panel: once to `.discount-tabs__panel-body` (subtitle/description/
-    eligibility caption) and once to `.discount-tabs__criteria-grid` (the
-    6-card grid) — both share the panel's own alignment so the text column
-    and the box grid below it line up on the same edge.
+    panel: once to `.discount-tabs__panel-body` (subtitle, description,
+    Claim button, eligibility caption) and once to
+    `.discount-tabs__criteria-grid` — both share the panel's own alignment so
+    the text column and the box grid below it line up on the same edge.
   - Reset to full-width, no side-anchoring, under the `860px` breakpoint —
     the left/centre/right split only makes sense at desktop widths where the
     tab bar's columns are wide enough to read as landmarks.
+  - **Above `1101px` the widths come from CSS Grid instead**, not from
+    `width: 50%`. The panel becomes a grid (`1fr 1fr`, or `1fr 2fr 1fr` for
+    the centred panel 2) so the empty half can hold the sticky image column
+    described below; the body and criteria grid are placed into a column by
+    `grid-column`, and the `width`/`margin` rules are reset to `auto`/`0` in
+    that media query so the two systems don't halve the copy twice. Below
+    1101px the grid is not applied at all and the 50% rules govern, exactly
+    as they did before the image columns existed.
 - **"Eligibility Criteria and Conditions" caption is a plain `<span>`, not a
   link.** Label history, every step an owner relabel: "Terms & Conditions" →
   "Eligibility Criteria" → **"Eligibility Criteria and Conditions"**
@@ -7920,12 +8538,18 @@ real. Three shapes, depending on what the element already looks like —
   change, then corrected to a non-interactive caption once the owner
   clarified "that's only a caption, not a hyperlink" — `href`, underline, and
   hover-colour rules were all removed, not just the `href`.
-- **The caption is spaced to belong to the boxes below it, not the paragraph
-  above it** — 32px above (its own 20px `margin-top` plus the description's
-  12px `margin-bottom`), 10px below (`.discount-tabs__criteria-grid`'s
-  `margin-top`). It was originally the other way round — 12px above, 32px
-  below — which made it read as the tail of the description. Keep the two
-  gaps in that ratio if either is ever retuned.
+- **The caption is spaced to belong to the boxes below it, not to what sits
+  above it** — 20px above (its own `margin-top`, measured off the Claim
+  button) against 10px below (`.discount-tabs__criteria-grid`'s
+  `margin-top`). It was originally the other way round, which made it read as
+  the tail of the description. Keep the two gaps in that ratio if either is
+  ever retuned.
+- **The caption is `display: block`, and that is deliberate.** It was
+  `inline-block` back when it was a link and its underline had to hug the
+  text. Once the Claim button was added directly above it, `inline-block` put
+  the caption on the **same line as the button** — both are inline-level
+  boxes, the button being `inline-flex`. Block forces its own line; there is
+  no underline left to hug.
 - **Font-inspector colour specs that would be invisible were overridden,
   matching only their typography** — this page received several
   font-inspector screenshots specifying an exact colour that, applied
@@ -7957,9 +8581,19 @@ real. Three shapes, depending on what the element already looks like —
   from `.cph-why-card`'s look (white fill, `#e6e6ec` border, soft
   `box-shadow`, lifts + orange border on `:hover`) rather than the
   homepage's dark `.feature` card — this page's sections sit on a white
-  background, so the dark card style would invert wrong here. 6 cards per
-  panel, all currently **sample placeholder text** ("Sample criterion N —
-  replace with a real eligibility requirement.") — see Part D.
+  background, so the dark card style would invert wrong here.
+  - **Panel 1 (Student & Academic) holds 32 real, owner-supplied criteria.**
+    They were supplied numbered 1–32; the numbering is deliberately **not**
+    rendered, since each point stands alone in its own box and the prefix was
+    redundant. Don't reintroduce it.
+  - **Panels 2 and 3 still hold 30 placeholder boxes each**, awaiting real
+    copy — see Part D. The placeholders are each exactly 90 characters, which
+    was the owner's measured ceiling for a box at this width; treat 90 as the
+    budget when the real copy arrives.
+  - Card text is centred (`text-align: center` on `.discount-tabs__criteria-
+    card`), set on the card rather than the panel because the grid is a
+    *sibling* of `.discount-tabs__panel-body`, not a child, so it never
+    inherited the panel's own alignment.
   - Grid gap is **12px rows / 14px columns**, tightened from an original
     20px/24px per owner ("gap between each rectangle too large"). The
     original gap was wider than the cards' own 22px inner padding, which
@@ -7967,6 +8601,82 @@ real. Three shapes, depending on what the element already looks like —
     criteria. The gap is declared once and inherited by the 2-column
     (≤860px) and 1-column (≤560px) breakpoints, which only change the
     column count.
+- **"Claim Your Discount" CTA**, one per panel, between the description and
+  the caption. The owner specified it by pointing at the homepage Plans
+  button, so it reuses `.btn.btn--outline` and repeats that reference
+  button's own overrides (`width: auto`, 8px radius, Montserrat 700 15px).
+  - It is scoped as **`.discount-tabs__panel-body .discount-tabs__cta`**
+    (specificity 0,2,0) rather than the bare class. `.btn--outline` sets
+    `width: 100%` for the plan cards and matched the bare class at 0,1,0, so
+    which one won depended purely on source order in `styles.css` — one
+    reorder away from the button silently stretching the full column again.
+  - `href` currently points at `https://hub.serversalad.com`, which was an
+    assumption, not a given. See Part D.
+  - It has **no top margin**: the description's own 12px bottom margin is the
+    whole gap. That 12px must stay smaller than the 20px below it, so the
+    button reads as the end of the description rather than the start of the
+    criteria block.
+- **Sticky per-tab image columns** (`.discount-tabs__aside` /
+  `.discount-tabs__aside-img`, above `1101px` only). Each panel's copy and
+  boxes occupy only half the container, so the other half — right for panel
+  1, both sides for centred panel 2, left for panel 3 — carries two tall
+  images per tab, 240px wide each.
+  - **`position: sticky`, deliberately not `fixed`.** The owner's ask was
+    that the images freeze while the copy and boxes scroll past. `fixed` pins
+    to the viewport permanently, so the images would still be on screen at
+    the footer and it would take JS watching scroll position to hide them.
+    Sticky releases by itself at the end of the panel's grid area: no JS, and
+    nothing that can fall out of sync.
+  - The grid uses **`align-items: start`**. This is not cosmetic — a
+    stretched grid item fills its area and then has nowhere to travel, which
+    silently kills `position: sticky` with no error and no visible cause.
+  - `grid-row: 1 / span 2`, **not** `1 / -1`. There are no explicit rows
+    here, so `-1` resolves back to line 1 and spans nothing.
+  - Geometry is derived, and the two numbers must be recomputed together:
+    `height: calc(100vh - 267px)` comes from the images starting level with
+    the panel heading, which sits 243px down the screen when the section
+    lands under the nav (75 nav + 2 section border + 102 tab bar + 64 panel
+    padding), leaving 24px clear of the fold. `top: 171px` then makes the two
+    gaps the owner asked to match equal at 96px each: nav-bottom to image-top
+    and image-bottom to the fold. Centring the height in the viewport instead
+    was tried and rejected — that measures the top gap from the top of the
+    *screen*, so the nav ate most of it.
+  - Both images of a pair sit **dead level**. A 60px stagger on the second
+    was tried and read as two different heights. Don't reintroduce it.
+  - The six image files are **placeholders** — see B.9 for the spec and the
+    swap procedure.
+- **Tab-switch transition** is three things layered, and the layering is the
+  point:
+  1. The indicator slides (280ms, WAAPI).
+  2. The two panels **cross-fade** (280ms). This is what actually performs
+     the swap and cannot be removed: both panels are briefly on screen at
+     once and neither has a background to hide the other. The outgoing panel
+     is taken out of flow as `.discount-tabs__panel--leaving` and hidden on
+     `animationend`; the **incoming** panel keeps normal flow so the
+     container takes its final height immediately, rather than collapsing and
+     re-expanding mid-fade (panels differ in height).
+  3. The copy and images then **rise in sequence** — heading, description,
+     button, caption at 40/100/160/220ms, images at 60/160ms, each a fade
+     plus an 18px rise on `cubic-bezier(.16, 1, .3, 1)`, settling by ~740ms.
+  - **The criteria boxes deliberately do not move.** They ride the panel
+    fade. A transform on the grid would animate a subtree of up to 32 boxes
+    in exactly the frames the indicator is sliding through — the jank this
+    section was already debugged out of once. Animating the boxes means
+    animating the cards individually, never their container.
+  - The stagger is driven by a **`--entering` class set in `js/main.js`**,
+    not by `.is-active`. Panel 1 carries `.is-active` in the markup, so
+    riding it would replay a 0.74s reveal on every page load — and this page
+    has a documented history of the owner reading exactly that as flashing.
+    The class is removed and re-added around a forced reflow so the animation
+    replays when a panel is re-entered.
+- **Per-tab background photos were built and then removed.** Three images,
+  one per tab, sat as `.discount-tabs__bg` layers at 5% opacity behind the
+  whole section (the opacity was walked down 50% → 25% → 10% → 5% across four
+  owner requests). The owner then asked for plain white back. The layers, the
+  CSS, the `data-active-tab` attribute that drove them, the `setAttribute`
+  in `js/main.js`, and the three JPEGs are all gone. ⛔ **Do not re-add** — a
+  faint wash behind everything is not the same idea as the sticky image
+  columns above, and it was explicitly rejected.
 
 ## Part D — Open Items (known inconsistencies to revisit)
 - **cpanel-hosting "Why Server Salad" is single-region by design** — see C.12.
@@ -8054,11 +8764,31 @@ real. Three shapes, depending on what the element already looks like —
   pattern from elements that are still genuinely not live). The 3 Discount
   Programs▾ cards already made this transition — they're real links to the
   discount-programs page now (see C.1/C.20).
-- **discount-programs page's 6-per-panel eligibility-criteria cards hold
-  sample placeholder text** ("Sample criterion N — replace with a real
-  eligibility requirement.") for all 3 programs — see C.20. Swap in the
-  owner's real per-program eligibility requirements when supplied; keep the
-  6-card grid structure unless told the count itself should change.
+- **discount-programs: panels 2 (Startup) and 3 (Agency & Freelancer) still
+  hold 30 placeholder criteria boxes each.** Panel 1 (Student & Academic) has
+  its 32 real owner-supplied criteria. Swap in the real copy per programme
+  when supplied; each placeholder is exactly 90 characters, which was the
+  owner's measured ceiling for a box at this width — treat 90 as the budget.
+  See C.20.
+- **discount-programs: the six sticky-column images are placeholders.** Flat
+  colour blocks at the correct 480×1640 dimensions, supplied by the owner so
+  the layout could be judged. Replacing them means overwriting the six files
+  in `assets/img/discount/` at the same paths — nothing in the CSS or markup
+  changes. Real-photo spec is in B.9; the short version is that the display
+  box is roughly 1:3, so the images need a single dominant vertical subject
+  and the subject centred vertically, because `cover` trims top and bottom on
+  shorter windows.
+- **discount-programs: the "Claim Your Discount" button points at
+  `https://hub.serversalad.com`** on all three panels. That destination was
+  an assumption when the button was built, not something the owner specified
+  — confirm it, and whether the three programmes should each land somewhere
+  different (e.g. a per-programme application form).
+- **`assets/img/photos/eco-forest-canopy.jpg` is 7.6MB and unoptimised.** It
+  is genuinely in use — the Sustainability section background on the homepage
+  and cpanel-hosting — but it is by far the heaviest asset on the site; the
+  next largest is 248KB. Resize and recompress before launch. Flagged in the
+  B.9 manifest for a long time without being actioned, so it is repeated here
+  where open items actually get read.
 - **discount-programs page's hero copy is generic/placeholder-style**
   ("engineered for tomorrow's builders" / "zero long-term commitments") —
   it's owner-supplied final copy, not a draft, but worth a pass once the
@@ -8231,3 +8961,56 @@ real. Three shapes, depending on what the element already looks like —
   so the fetch-and-inject architecture doesn't visibly lurch the page — see
   C.8. This is a real fix worth keeping, but note it addresses the layout
   jump only, not the flash above.
+- **When a fix "should work" by inspection but visibly doesn't, suspect
+  something outside the mechanism.** The Discount Programs tab underline
+  "wouldn't animate" and took five attempts, each aimed at the animation:
+  the custom-property approach was replaced, the rounding was fixed, the
+  timings were unified, CSS transitions were swapped for the Web Animations
+  API, and the panel fade was scoped. None of it was the cause. The bar was
+  animating correctly the whole time — `.discount-tabs__tab` carried a
+  vestigial `position: relative`, so every tab painted above the bar and a
+  hovered tab's background covered it. Occlusion, stacking, caching or an OS
+  setting deserve a look **before** the mechanism gets rewritten a third
+  time. See C.20.
+- **After two failed attempts at a visual bug, stop shipping theories and ask
+  the owner what they SEE.** The same underline bug was cracked instantly by
+  two offhand observations that were invisible in the code: *"we need to take
+  the mouse away from the tab to see the bar"* and *"coming from the mega
+  menu it's smooth, clicking a tab isn't."* A narrow, concrete question —
+  does it move at all, does it stutter, does it vanish — is cheaper than a
+  third wrong fix.
+- **Measure before calling something misaligned.** The owner asked to align
+  the Discount Programs copy to the right edge of the criteria boxes. The
+  block's edges already matched the grid to **0.0px** at eight window widths;
+  what read as misalignment was the ragged right edge of left-aligned text.
+  The fix was `text-align`, and no width or margin changed. Rendering the
+  page in headless Chrome and reading `getBoundingClientRect()` settles this
+  class of question in one pass — and it is the same lesson as the flashing
+  entry above.
+- **Headless Chrome produces no animation frames, so it cannot verify
+  timing.** Animations started after load report `playState: "running"` with
+  `currentTime: 0` forever, and `requestAnimationFrame` never ticks. It is
+  still the right tool for geometry, computed styles, class state and
+  JS errors — just never for "does this animation look right". Check a
+  known-good animation as a control before trusting a result that looks like
+  a stuck animation.
+- **Unregistered CSS custom properties are untyped, so they animate
+  discretely.** A transition on a property merely *deriving* from one will
+  not interpolate — this is why `translateX(calc(var(--tab-index) * 100%))`
+  jumped instead of sliding. Either register the property with
+  `@property`, or animate a real typed property instead.
+- **`offsetLeft`/`offsetWidth` round to integers; `getBoundingClientRect()`
+  does not.** At the container max-width the discount tabs are 397.33px wide,
+  and that third of a pixel showed up as visible jitter part-way through the
+  slide. Use `getBoundingClientRect()` for anything that will be animated.
+- **A stretched grid item cannot be sticky.** `position: sticky` needs room
+  to travel inside its containing block, and the default `align-items:
+  stretch` fills the grid area completely. It fails silently — no error, no
+  warning, and nothing visibly wrong with the CSS. `align-items: start` on
+  the grid is what makes the Discount Programs image columns work.
+- **Entrance animations must not ride a class that is present on first
+  paint.** The Discount Programs panel stagger hangs off a `--entering` class
+  set by `js/main.js` on switch, not off `.is-active`, which panel 1 carries
+  in the markup. On `.is-active` the reveal would replay on every page load —
+  and on this page in particular, the owner has repeatedly and correctly read
+  that kind of on-load motion as the page flashing.
