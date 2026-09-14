@@ -401,12 +401,20 @@
      --cph-pkg-header-h once per actual size change; unlike a scroll
      handler, it never fires on scroll itself, so this doesn't reintroduce
      the layout-thrashing problem solved above — it only recomputes when the
-     header's box genuinely resizes. */
+     header's box genuinely resizes.
+
+     Read the height via getBoundingClientRect() inside the callback rather
+     than the ResizeObserverEntry's own contentRect — contentRect reports
+     the CONTENT box only (excludes this cell's 26px/8px vertical padding),
+     which undercounted the real on-screen row height by that padding and
+     let the header visually overlap the top of the pinned Websites row
+     below it. getBoundingClientRect() reports the full border-box height
+     actually rendered, so it matches the sticky offset the pinned rows need. */
   var pkgHeaderMeasureEl = document.querySelector(".cph-table__pkg");
   var pkgStickyScopeEl = document.querySelector(".cph-plans__sticky-scope");
   if (pkgHeaderMeasureEl && pkgStickyScopeEl && "ResizeObserver" in window) {
-    var pkgHeaderResizeObserver = new ResizeObserver(function (entries) {
-      var height = entries[0].contentRect.height;
+    var pkgHeaderResizeObserver = new ResizeObserver(function () {
+      var height = pkgHeaderMeasureEl.getBoundingClientRect().height;
       pkgStickyScopeEl.style.setProperty("--cph-pkg-header-h", height + "px");
     });
     pkgHeaderResizeObserver.observe(pkgHeaderMeasureEl);
