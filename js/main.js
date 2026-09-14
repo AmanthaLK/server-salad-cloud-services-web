@@ -455,17 +455,56 @@
        links while ALREADY on this page only changes the URL's hash (same
        path, so the browser doesn't reload/re-run this script); without the
        hashchange listener the tab never switched in that case, only when
-       arriving fresh from another page. */
-    var applyDiscountHash = function () {
+       arriving fresh from another page.
+
+       Arriving that way also scrolls the tab bar up under the sticky nav
+       (owner request: land ON the tabs, not at the top of the hero). The
+       browser can't do that part itself — the #hash here matches a tab's
+       data-hash ATTRIBUTE, not any element's id, so there's no native
+       anchor target to jump to and the page would just stay put. */
+    var NAV_STUCK_H = 75;   // .nav is position:sticky/top:0 — same height .cph-billing-toggle's sticky top encodes
+    var TAB_SCROLL_GAP = 8; // breathing room so the bar isn't flush against the nav
+
+    /* Position is measured live on every call, never cached: the topbar+nav
+       arrive asynchronously (the shared-header fetch at the top of this
+       file) and push the whole page down once they land, so anything
+       measured before that would scroll to the wrong place. */
+    var scrollToDiscountTabs = function () {
+      var bar = document.querySelector(".discount-tabs__bar");
+      if (!bar) return;
+      var top = bar.getBoundingClientRect().top + window.pageYOffset - NAV_STUCK_H - TAB_SCROLL_GAP;
+      var reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
+    };
+
+    // Returns whether the hash actually matched a tab, so the caller can
+    // decide what to do next. Scrolls only when asked — a plain visit with
+    // no hash must never yank the visitor past the full-viewport hero.
+    var applyDiscountHash = function (scroll) {
       var discountHash = window.location.hash.replace(/^#/, "");
-      if (!discountHash) return;
+      if (!discountHash) return false;
       var matchedDiscountTab = null;
       discountTabs.forEach(function (t) {
         if (t.getAttribute("data-hash") === discountHash) matchedDiscountTab = t;
       });
-      if (matchedDiscountTab) activateDiscountTab(matchedDiscountTab);
+      if (!matchedDiscountTab) return false;
+      activateDiscountTab(matchedDiscountTab);
+      if (scroll) scrollToDiscountTabs();
+      return true;
     };
-    applyDiscountHash();
-    window.addEventListener("hashchange", applyDiscountHash);
+
+    /* Fresh arrival from another page: switch the tab immediately (no flash
+       of the wrong panel), but delay the scroll ~400ms so the injected
+       header and web fonts have settled before the bar's position is
+       measured — still well inside the ~0.5s the owner asked for. */
+    if (applyDiscountHash(false)) {
+      setTimeout(scrollToDiscountTabs, 400);
+    }
+
+    /* Already on this page — clicking a mega-menu card from here only
+       changes the hash, and the layout is long settled, so switch and
+       scroll straight away with no delay. */
+    window.addEventListener("hashchange", function () { applyDiscountHash(true); });
   }
 })();
