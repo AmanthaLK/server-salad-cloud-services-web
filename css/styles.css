@@ -4073,11 +4073,22 @@ button { font: inherit; cursor: pointer; }
    takes the row on its own now, capped to a readable width instead of
    stretching the full container. */
 /* Panels swap via `display`, which cannot be transitioned, and they differ
-   wildly in height (32 boxes vs 30), so cross-fading two at once would
-   jump the page height around. Instead the INCOMING panel animates in on
-   its own — adding .is-active restarts this animation every switch. */
+   wildly in height (32 boxes vs 30), so cross-fading two at once would jump
+   the page height around. Only the incoming panel animates.
+
+   That animation is scoped to .discount-tabs__panel-body — the heading,
+   description and caption — and deliberately NOT to the whole panel. Fading
+   the panel itself meant animating opacity across the entire subtree, up to
+   32 boxes, which forces the browser to paint all of it into a layer for the
+   duration. Off-screen that costs nothing, which is why arriving from a
+   mega-menu link always looked fine; clicking a tab while scrolled down to
+   the boxes did the same work inside the visible viewport and janked the
+   switch. Animating the small text block instead keeps the cost flat however
+   many boxes a panel holds. */
 .discount-tabs__panel.is-active {
   display: block;
+}
+.discount-tabs__panel.is-active .discount-tabs__panel-body {
   animation: discount-panel-in .28s cubic-bezier(.4, 0, .2, 1) both; /* shared switch timing */
 }
 /* Opacity only — no transform. This animates a very large subtree (up to 32
@@ -4090,7 +4101,7 @@ button { font: inherit; cursor: pointer; }
 /* Site-wide convention: motion is opt-out. */
 @media (prefers-reduced-motion: reduce) {
   /* the indicator checks prefers-reduced-motion in js/main.js itself */
-  .discount-tabs__panel.is-active { animation: none; }
+  .discount-tabs__panel.is-active .discount-tabs__panel-body { animation: none; }
 }
 .discount-tabs__panel-body { max-width: 640px; }
 /* Per owner: each panel's content aligns differently — panel 1 (Student &
