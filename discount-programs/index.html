@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=321">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=322">
 </head>
 <body>
 
@@ -21,11 +21,27 @@
   <div id="site-header"></div>
 
   <main>
-    <!-- Intentionally blank — owner will supply the real Discount Programs
-         page content later. This placeholder just keeps the page from
-         looking broken (header running straight into the footer) until
-         then; see .discount-programs-placeholder in css/styles.css. -->
-    <section class="discount-programs-placeholder"></section>
+    <!-- ===== Hero =====
+         Duplicated verbatim from cpanel-hosting/index.html's hero (same
+         .cph-hero* classes, no new CSS needed) per owner request, as a
+         starting point — copy/image still says "cPanel Hosting" and will
+         need real Discount Programs copy once the owner supplies it. -->
+    <section class="cph-hero">
+      <div class="cph-hero__bg" aria-hidden="true"></div>
+
+      <div class="container cph-hero__inner">
+        <div class="cph-hero__content">
+          <h1 class="cph-hero__title">cPanel <span class="cph-hero__title-accent">Hosting</span></h1>
+          <div class="cph-hero__underline" aria-hidden="true"></div>
+          <p class="cph-hero__desc">High-speed, secure NVMe hosting featuring full cPanel control. Purpose-built for freelancers, startups, SMEs, educational institutions, personal blogs, and growing online stores.</p>
+          <p class="cph-hero__desc">Every plan is powered by high-performance multi-core CPUs, equipped with LiteSpeed Cache, Python, Node.js, free SSL, proactive cPGuard protection, and a risk-free money-back guarantee.</p>
+        </div>
+
+        <div class="cph-hero__visual">
+          <img src="/server-salad-cloud-services-web/assets/img/graphics/cpanel-dashboard-devices.webp" alt="The cPanel dashboard shown on a desktop monitor, tablet, and phone" width="1950" height="1184">
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js so
