@@ -3932,11 +3932,36 @@ button { font: inherit; cursor: pointer; }
    #hash from a mega-menu card opens that tab, but does not scroll the page
    (an auto-scroll to this bar was built and then removed per the owner). */
 .discount-tabs {
+  position: relative; /* containing block for the background layer below */
   background: #fff;
   border-top: 2px solid #1b1b1f;
 }
+
+/* Background photo for the Student & Academic tab only (owner request). It's
+   a separate layer rather than a background on .discount-tabs itself so the
+   opacity applies to the PHOTO alone — putting opacity on the section would
+   fade the tabs and all the copy with it.
+
+   Sits at 50% over the section's white, so it reads as a wash rather than a
+   photo, and fades with the same .28s timing as the rest of the switch.
+   data-active-tab is written by js/main.js and is also present in the markup,
+   so the correct state is there on first paint. */
+.discount-tabs__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url(/server-salad-cloud-services-web/assets/img/photos/graduated-students-illustration.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s cubic-bezier(.4, 0, .2, 1); /* shared switch timing */
+}
+.discount-tabs[data-active-tab="1"] .discount-tabs__bg { opacity: .5; }
 .discount-tabs__bar {
   position: relative; /* containing block for the sliding indicator below */
+  z-index: 1; /* above .discount-tabs__bg */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
@@ -4033,7 +4058,10 @@ button { font: inherit; cursor: pointer; }
 .discount-tabs__tab.is-active .discount-tabs__label { opacity: 1; }
 
 /* Positioning context for the outgoing panel's overlay during a cross-fade. */
-.discount-tabs__panels { position: relative; }
+.discount-tabs__panels {
+  position: relative;
+  z-index: 1; /* above .discount-tabs__bg */
+}
 
 .discount-tabs__panel {
   display: none;
@@ -4098,6 +4126,7 @@ button { font: inherit; cursor: pointer; }
   /* the indicator checks prefers-reduced-motion in js/main.js itself */
   .discount-tabs__panel.is-active,
   .discount-tabs__panel--leaving { animation: none; }
+  .discount-tabs__bg { transition: none; }
 }
 .discount-tabs__panel-body { max-width: 640px; }
 /* Per owner: each panel's content aligns differently — panel 1 (Student &
