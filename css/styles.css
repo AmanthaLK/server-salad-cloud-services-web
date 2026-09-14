@@ -4032,12 +4032,17 @@ button { font: inherit; cursor: pointer; }
   line-height: 25px;
   color: rgb(27, 27, 31);
 }
+/* Typography matched to an owner-supplied font-inspector spec (Manrope 400,
+   14px/21px) — same situation as .discount-tabs__panel-subtitle above: the
+   spec's colour (rgba(255,255,255,.78)) is a translucent white, which would
+   be near-invisible on this section's white background, so kept at the
+   site's own dark colour instead. */
 .discount-tabs__panel-desc {
   margin: 0 0 12px;
   font-family: "Manrope", var(--font-body);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 21px;
   color: rgba(27, 27, 31, .7);
 }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
