@@ -4315,6 +4315,14 @@ button { font: inherit; cursor: pointer; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px 14px; /* tightened from 20/24 per owner — the boxes read as one set, not six separate cards */
   margin-top: 10px; /* tight to the "Eligibility Criteria and Conditions" caption above — see its rule */
+  /* Per owner: every box is the same size, not just the ones sharing a row.
+     Auto rows default to max-content, which sizes EACH ROW to its own tallest
+     card — so a row of short criteria came out shorter than a row of long
+     ones. 1fr in a grid with no fixed height resolves every row to the height
+     of the tallest across the whole grid, which is what makes all 32 boxes
+     match. The cards stretch to fill their row by default; the vertical
+     centring of the text inside them is on the card itself below. */
+  grid-auto-rows: 1fr;
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
@@ -4338,11 +4346,19 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__criteria-card {
   padding: 22px;
-  /* Per owner: box text is centred. Set here rather than on the panel, because
-     the panels each align their own body differently (left/centre/right, see
-     below) and the criteria grid is a SIBLING of .discount-tabs__panel-body,
-     not a child — so it never inherited those alignments and all three tabs'
-     boxes centre identically from this one rule. */
+  /* Per owner: box text is centred both ways. text-align handles the
+     horizontal; the flex centring handles the vertical, which matters now
+     that every box is the same height (see grid-auto-rows above) — without
+     it a two-line criterion sat at the top of a box sized for a four-line
+     one, leaving an obvious gap underneath.
+
+     text-align is set here rather than on the panel because the criteria grid
+     is a SIBLING of .discount-tabs__panel-body, not a child, so it never
+     inherited the panel's own alignment — all three tabs' boxes centre
+     identically from this one rule. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   background: #fff;
   border: 1px solid #e6e6ec;
