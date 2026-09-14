@@ -4019,6 +4019,20 @@ button { font: inherit; cursor: pointer; }
    stretching the full container. */
 .discount-tabs__panel.is-active { display: block; }
 .discount-tabs__panel-body { max-width: 640px; }
+/* Per owner: each panel's content aligns differently — panel 1 (Student &
+   Academic) left (the default, no override needed), panel 2 (Startup)
+   centred, panel 3 (Agency & Freelancer) right. margin-left/right: auto
+   moves the whole (max-width-capped) block within the container; text-align
+   handles the text itself inside it. */
+#discount-panel-2 .discount-tabs__panel-body {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+#discount-panel-3 .discount-tabs__panel-body {
+  margin-left: auto;
+  text-align: right;
+}
 /* Typography matched to an owner-supplied font-inspector spec (Cairo 600,
    25px/25px) — see the reference-styling rule in README A.3. That spec's
    colour was white, but this text sits on this section's white background,
