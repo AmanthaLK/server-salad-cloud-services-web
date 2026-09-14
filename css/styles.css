@@ -4100,15 +4100,17 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__panel-desc:last-child { margin-bottom: 0; }
 
-/* Small plain-text caption under each panel's description (not a link —
-   was briefly an <a>, corrected to a <span> per owner). Label history, each
-   step an owner relabel: "Terms & Conditions" → "Eligibility Criteria" →
-   "Eligibility Criteria and Conditions" → "Eligibility Criteria and
-   Conditions, Important Information" (current). Typography matched to an
-   owner-supplied font-inspector spec (Manrope 600, 12px/18px); the colour is
-   the dark rgb(27,27,31) declared below — NOT that spec's green, and not
-   brand orange either, which an earlier version of this comment wrongly
-   claimed. See the note on the colour declaration itself. */
+/* Small plain-text caption introducing each panel's criteria boxes. NOT a
+   link — it was briefly an <a> and was corrected to a <span> per owner, so
+   don't reintroduce an href, underline or hover colour. Its wording has been
+   relabelled by the owner several times (it started life as "Terms &
+   Conditions"); read the live text from discount-programs/index.html rather
+   than trusting a copy here — this comment deliberately doesn't name it, so
+   a future rename doesn't need a CSS edit and cache-bust just to stay
+   truthful. Typography matched to an owner-supplied font-inspector spec
+   (Manrope 600, 12px/18px); the colour is the dark rgb(27,27,31) declared
+   below — NOT that spec's green, and not brand orange either, which an
+   earlier version of this comment wrongly claimed. */
 .discount-tabs__panel-eligibility {
   display: inline-block;
   /* Per owner: this caption labels the boxes BELOW it, so it has to sit
