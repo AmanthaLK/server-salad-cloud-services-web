@@ -3953,7 +3953,8 @@ button { font: inherit; cursor: pointer; }
    3 tabs, the active one marked by a gradient underline (not a fill) and a
    full-opacity label while the other two fade back; clicking swaps the
    panel below it — see the click handler in js/main.js. Arriving with a
-   #hash from a mega-menu card also scrolls this bar up under the nav. */
+   #hash from a mega-menu card opens that tab, but does not scroll the page
+   (an auto-scroll to this bar was built and then removed per the owner). */
 .discount-tabs {
   background: #fff;
   border-top: 2px solid #1b1b1f;

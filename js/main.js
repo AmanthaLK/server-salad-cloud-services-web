@@ -87,11 +87,6 @@
       .then(function (html) {
         headerMount.outerHTML = html;
         initNav();
-        // Injecting the header pushes everything below it down ~108px. Anything
-        // that measures page positions has to wait for that to land rather than
-        // guess at a delay — see the discount-tabs deep-link scroll at the
-        // bottom of this file.
-        document.dispatchEvent(new CustomEvent("ss:header-ready"));
       })
       .catch(function (err) { console.error("Could not load shared header:", err); });
   } else {
@@ -462,118 +457,19 @@
        hashchange listener the tab never switched in that case, only when
        arriving fresh from another page.
 
-       Arriving that way also scrolls the tab bar up under the sticky nav
-       (owner request: land ON the tabs, not at the top of the hero). The
-       browser can't do that part itself — the #hash here matches a tab's
-       data-hash ATTRIBUTE, not any element's id, so there's no native
-       anchor target to jump to and the page would just stay put. */
-    var NAV_STUCK_H = 75;   // .nav is position:sticky/top:0 — same height .cph-billing-toggle's sticky top encodes
-    var TAB_SCROLL_GAP = 8; // breathing room so the bar isn't flush against the nav
-
-    /* Position is measured live on every call, never cached: the topbar+nav
-       arrive asynchronously (the shared-header fetch at the top of this
-       file) and push the whole page down once they land, so anything
-       measured before that would scroll to the wrong place. */
-    var scrollToDiscountTabs = function () {
-      var bar = document.querySelector(".discount-tabs__bar");
-      if (!bar) return;
-      var top = bar.getBoundingClientRect().top + window.pageYOffset - NAV_STUCK_H - TAB_SCROLL_GAP;
-      var reduceMotion = window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
-    };
-
-    // Returns whether the hash actually matched a tab, so the caller can
-    // decide what to do next. Scrolls only when asked — a plain visit with
-    // no hash must never yank the visitor past the full-viewport hero.
-    var applyDiscountHash = function (scroll) {
+       Opening the tab is deliberately ALL this does: an auto-scroll down to
+       the tab bar was built here and then removed at the owner's request —
+       arriving on this page leaves the visitor at the top of the hero. */
+    var applyDiscountHash = function () {
       var discountHash = window.location.hash.replace(/^#/, "");
-      if (!discountHash) return false;
+      if (!discountHash) return;
       var matchedDiscountTab = null;
       discountTabs.forEach(function (t) {
         if (t.getAttribute("data-hash") === discountHash) matchedDiscountTab = t;
       });
-      if (!matchedDiscountTab) return false;
-      activateDiscountTab(matchedDiscountTab);
-      if (scroll) scrollToDiscountTabs();
-      return true;
+      if (matchedDiscountTab) activateDiscountTab(matchedDiscountTab);
     };
-
-    /* Fresh arrival from another page: switch the tab immediately (no flash
-       of the wrong panel), then scroll once the layout has actually stopped
-       moving.
-
-       An earlier version just waited a flat 400ms and scrolled. That raced
-       two things that resize this page after first paint, so it glitched
-       whenever either landed mid-animation:
-         1. the shared header (fetched async above) — pushes everything below
-            it down ~108px the moment it's injected;
-         2. the web fonts (Cairo/Manrope/...) — swap in under
-            `display=swap` and re-flow the hero text sitting above the tabs.
-       Either one moves the tab bar after its position has been measured, so
-       the smooth scroll ends up aimed at stale coordinates and visibly
-       jumps. Waiting for both signals instead of a guessed delay is what
-       makes this smooth every time rather than most of the time. */
-    var MIN_DWELL = 300;      // let the hero read for a beat before moving, even when everything's cached
-    var SETTLE_TIMEOUT = 1500; // hard cap: a failed header fetch must not mean "never scroll"
-
-    var scrollWhenSettled = function () {
-      var startedAt = Date.now();
-      var remaining = 2; // header + fonts
-      var done = false;
-
-      var finish = function () {
-        if (done) return;
-        done = true;
-        clearTimeout(failsafe);
-        // Hold the minimum dwell, then measure on a fresh frame so the
-        // browser has finished laying out whatever just landed.
-        setTimeout(function () {
-          requestAnimationFrame(function () {
-            requestAnimationFrame(scrollToDiscountTabs);
-          });
-        }, Math.max(0, MIN_DWELL - (Date.now() - startedAt)));
-      };
-
-      var step = function () {
-        remaining -= 1;
-        if (remaining <= 0) finish();
-      };
-
-      // If the visitor starts scrolling on their own while we wait, back off
-      // entirely — yanking the page out from under someone who's already
-      // moving is the one thing worse than not scrolling at all.
-      var cancel = function () {
-        if (done) return;
-        done = true;
-        clearTimeout(failsafe);
-      };
-      window.addEventListener("wheel", cancel, { once: true, passive: true });
-      window.addEventListener("touchstart", cancel, { once: true, passive: true });
-      window.addEventListener("keydown", cancel, { once: true });
-
-      var failsafe = setTimeout(finish, SETTLE_TIMEOUT);
-
-      // 1. Shared header injected (see the fetch near the top of this file).
-      //    Already in the DOM if this page was opened with the header cached.
-      if (document.querySelector(".nav")) step();
-      else document.addEventListener("ss:header-ready", step, { once: true });
-
-      // 2. Web fonts done swapping.
-      if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
-        document.fonts.ready.then(step);
-      } else {
-        step();
-      }
-    };
-
-    if (applyDiscountHash(false)) {
-      scrollWhenSettled();
-    }
-
-    /* Already on this page — clicking a mega-menu card from here only
-       changes the hash, and the layout is long settled, so switch and
-       scroll straight away with no delay. */
-    window.addEventListener("hashchange", function () { applyDiscountHash(true); });
+    applyDiscountHash();
+    window.addEventListener("hashchange", applyDiscountHash);
   }
 })();
