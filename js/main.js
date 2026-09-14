@@ -87,6 +87,11 @@
       .then(function (html) {
         headerMount.outerHTML = html;
         initNav();
+        // Injecting the header pushes everything below it down ~108px. Anything
+        // that measures page positions has to wait for that to land rather than
+        // guess at a delay — see the discount-tabs deep-link scroll at the
+        // bottom of this file.
+        document.dispatchEvent(new CustomEvent("ss:header-ready"));
       })
       .catch(function (err) { console.error("Could not load shared header:", err); });
   } else {
@@ -495,11 +500,75 @@
     };
 
     /* Fresh arrival from another page: switch the tab immediately (no flash
-       of the wrong panel), but delay the scroll ~400ms so the injected
-       header and web fonts have settled before the bar's position is
-       measured — still well inside the ~0.5s the owner asked for. */
+       of the wrong panel), then scroll once the layout has actually stopped
+       moving.
+
+       An earlier version just waited a flat 400ms and scrolled. That raced
+       two things that resize this page after first paint, so it glitched
+       whenever either landed mid-animation:
+         1. the shared header (fetched async above) — pushes everything below
+            it down ~108px the moment it's injected;
+         2. the web fonts (Cairo/Manrope/...) — swap in under
+            `display=swap` and re-flow the hero text sitting above the tabs.
+       Either one moves the tab bar after its position has been measured, so
+       the smooth scroll ends up aimed at stale coordinates and visibly
+       jumps. Waiting for both signals instead of a guessed delay is what
+       makes this smooth every time rather than most of the time. */
+    var MIN_DWELL = 300;      // let the hero read for a beat before moving, even when everything's cached
+    var SETTLE_TIMEOUT = 1500; // hard cap: a failed header fetch must not mean "never scroll"
+
+    var scrollWhenSettled = function () {
+      var startedAt = Date.now();
+      var remaining = 2; // header + fonts
+      var done = false;
+
+      var finish = function () {
+        if (done) return;
+        done = true;
+        clearTimeout(failsafe);
+        // Hold the minimum dwell, then measure on a fresh frame so the
+        // browser has finished laying out whatever just landed.
+        setTimeout(function () {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(scrollToDiscountTabs);
+          });
+        }, Math.max(0, MIN_DWELL - (Date.now() - startedAt)));
+      };
+
+      var step = function () {
+        remaining -= 1;
+        if (remaining <= 0) finish();
+      };
+
+      // If the visitor starts scrolling on their own while we wait, back off
+      // entirely — yanking the page out from under someone who's already
+      // moving is the one thing worse than not scrolling at all.
+      var cancel = function () {
+        if (done) return;
+        done = true;
+        clearTimeout(failsafe);
+      };
+      window.addEventListener("wheel", cancel, { once: true, passive: true });
+      window.addEventListener("touchstart", cancel, { once: true, passive: true });
+      window.addEventListener("keydown", cancel, { once: true });
+
+      var failsafe = setTimeout(finish, SETTLE_TIMEOUT);
+
+      // 1. Shared header injected (see the fetch near the top of this file).
+      //    Already in the DOM if this page was opened with the header cached.
+      if (document.querySelector(".nav")) step();
+      else document.addEventListener("ss:header-ready", step, { once: true });
+
+      // 2. Web fonts done swapping.
+      if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+        document.fonts.ready.then(step);
+      } else {
+        step();
+      }
+    };
+
     if (applyDiscountHash(false)) {
-      setTimeout(scrollToDiscountTabs, 400);
+      scrollWhenSettled();
     }
 
     /* Already on this page — clicking a mega-menu card from here only
