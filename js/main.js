@@ -471,14 +471,19 @@
       discountIndicatorX = x;
       var to = "translate3d(" + x + "px, 0, 0)";
 
-      /* Animated EXPLICITLY rather than by leaving a CSS transition to notice
-         the change. Three earlier attempts drove this off a `transition:
-         transform` and the bar kept snapping between tabs instead of
-         travelling — the transition simply wasn't firing on the inline style
-         change. element.animate() states the start and end outright, so it
-         cannot silently no-op the way a transition can. The final inline
-         style is set as well, so the bar stays put once the animation ends
-         without needing a fill mode. */
+      /* Animated explicitly with element.animate() rather than by leaving a
+         CSS transition to notice the change. The final inline style is set
+         as well, so the bar stays put once the animation ends without
+         needing a fill mode.
+
+         Historical note, because the code above was written on a wrong
+         assumption: this was switched to element.animate() while chasing a
+         bar that looked like it never moved. That turned out to have nothing
+         to do with how it was animated — .discount-tabs__tab was still
+         position:relative, so the tabs painted over the bar and a hovered
+         tab's background hid it exactly when it travelled. A plain CSS
+         transition would be perfectly fine here. This stays because it works
+         and is explicit, not because transitions were found wanting. */
       var still = window.matchMedia &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

@@ -4050,12 +4050,17 @@ button { font: inherit; cursor: pointer; }
      left edge. */
 }
 /* NOTE: this bar has deliberately NO `transition`. Its movement is animated
-   explicitly from js/main.js via element.animate() — three attempts at
-   driving it from a CSS transition all ended with the bar snapping between
-   tabs instead of sliding. Adding a transition back here would double up
-   against that animation and fight it. Duration and easing live in
-   js/main.js and are kept equal to the .28s used by the tab labels and the
-   panel fade below, so the whole switch moves as one. */
+   explicitly from js/main.js via element.animate(); adding a transition back
+   here would double up against that animation and fight it. Duration and
+   easing live in js/main.js, kept equal to the .28s used by the tab labels
+   and the panel fade below, so the whole switch moves as one.
+
+   A CSS transition WOULD work here — an earlier version of this comment
+   claimed otherwise, and it was wrong. The bar appeared not to animate
+   because the tabs were painting over it (see .discount-tabs__tab), not
+   because the transition failed. element.animate() is kept simply because
+   it's explicit and already working; don't read this as "transitions are
+   unreliable". */
 /* Typography matched to an owner-supplied font-inspector spec, colour
    included (same spec given earlier for the section this switcher
    replaced — see the reference-styling rule in README A.3: usually only
