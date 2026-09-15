@@ -174,7 +174,7 @@ server-salad-cloud-services-web/
       brand/       <- nav logo, footer logo, favicon (serversalad-*)
       photos/       <- eco-forest-canopy.jpg
       discount/     <- 6 Discount Programs sticky-column images, 2 per tab
-                        (PLACEHOLDERS at 480x1640 — see B.9/C.20)
+                        (PLACEHOLDERS — see B.9/C.20 for the current spec)
       graphics/     <- world-map-dots.png, jetbackup-illustration.png,
                         jetbackup-logo.png, cpanel-dashboard-devices.webp
       partners/     <- 6 "powered by" carousel logos
@@ -4701,30 +4701,26 @@ button { font: inherit; cursor: pointer; }
     display: flex;
     justify-content: center; /* even gutters either side of the pair */
     gap: 24px;
-    /* Sized so the column clears BOTH edges of the screen, per owner — it
-       must not touch the nav above it, nor run off the bottom before you
-       start scrolling.
+    /* Sized so the column clears both edges of the screen by an equal gap —
+       nav-bottom to image-top, and image-bottom to the fold — once it's
+       frozen. General formula, G being that gap:
+         top    = navHeight + G
+         height = 100vh - navHeight - 2G
+       (derived by requiring top - navHeight == 100vh - (top + height)).
+       navHeight is 75px (74 .nav__inner + 1px border).
 
-       The bottom gap sets the height. At rest the column starts level with
-       the panel heading, which sits 243px below the top of the screen when
-       the section lands under the nav: 75 nav (74 .nav__inner + 1px border)
-       + 2 section border-top + 102 tab bar (28 + 46 line-height + 28) + 64
-       panel padding-top. Leaving 24px clear of the fold from there gives
-       100vh - 267px.
+       G is 24px, matching the site's own --gutter — tightened down from an
+       earlier 96px per owner request ("reduce the gap"). top: 99px,
+       height: calc(100vh - 123px).
 
-       top is then set so the two gaps the owner cares about MATCH once the
-       column freezes: nav-bottom to image-top, and image-bottom to the fold.
-       171 - 75 (nav) = 96 above, and 100vh - (171 + 100vh - 267) = 96 below.
-       Centring the height in the viewport instead was tried and rejected —
-       that measures the top gap from the top of the SCREEN, so the nav ate
-       most of it and the bottom gap looked twice as large.
-
-       The two constraints agree: 96px is also the smallest gap that still
-       keeps the at-rest bottom edge 24px clear of the fold. Recompute the
-       pair together if the tab bar or the panel padding ever changes. */
+       Centring the height in the viewport instead of using this formula was
+       tried and rejected early on — that measures the top gap from the top
+       of the SCREEN, so the nav ate most of it and the bottom gap looked
+       twice as large. Recompute both numbers together (from G and
+       navHeight) if either the gap or the nav's height ever changes. */
     position: sticky;
-    top: 171px;
-    height: calc(100vh - 267px);
+    top: 99px;
+    height: calc(100vh - 123px);
     min-height: 320px; /* floor for very short windows, where the calc runs out */
     pointer-events: none; /* purely decorative */
   }
@@ -4742,8 +4738,14 @@ button { font: inherit; cursor: pointer; }
      and rejected by the owner — it read as two different heights rather than
      as a deliberate offset. Don't reintroduce it. */
 
-  /* SAMPLE IMAGES — placeholders at the owner's spec (480x1640, shown at
-     240x820). Swap these three pairs for the real photos; nothing else needs
+  /* SAMPLE IMAGES — placeholders. Display box is 240px wide by
+     calc(100vh - 123px) tall (roughly 240x900-960 on a typical desktop
+     window; taller on a taller window, since the column's height tracks the
+     viewport — see the geometry comment above). Supply real photos at
+     480x1920 (2x, for a ~1080px-tall window) — `background-size: cover`
+     crops any extra height on a shorter window and upscales slightly (still
+     cropping to fit the width) on a taller one, so exact height isn't
+     critical. Swap these three pairs for the real files; nothing else needs
      to change. */
   #discount-panel-1 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/student-academic-1.png"); }
   #discount-panel-1 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/student-academic-2.png"); }
@@ -5909,7 +5911,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
 </head>
 <body>
 
@@ -6323,7 +6325,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=36"></script>
 </body>
 </html>
 ```
@@ -6365,7 +6367,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
 </head>
 <body>
 
@@ -7287,7 +7289,7 @@ mounts, folder-with-`index.html` so the URL is
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=36"></script>
 </body>
 </html>
 ```
@@ -7347,7 +7349,7 @@ geometry).
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=385">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
 </head>
 <body>
 
@@ -7577,7 +7579,7 @@ geometry).
        every page includes the same markup from one file. See README "Footer" notes. -->
   <div id="site-footer"></div>
 
-  <script src="/server-salad-cloud-services-web/js/main.js?v=35"></script>
+  <script src="/server-salad-cloud-services-web/js/main.js?v=36"></script>
 </body>
 </html>
 ```
@@ -7774,16 +7776,23 @@ SVG file to change colour, change the CSS custom property or the class's
 | `workflow/sitepro-ai-builder.svg` | "Site.pro AI Builder" |
 | `workflow/sitejet-ai-builder.svg` | "Sitejet Builder Suite" |
 | `workflow/temporary-preview-url.svg` | "Temporary Preview URLs" |
-| `discount/student-academic-{1,2}.png` | Discount Programs tab 1 sticky image column (see C.20) — **placeholders**, 480×1640 |
-| `discount/startup-{1,2}.png` | Discount Programs tab 2 sticky image column — **placeholders**, 480×1640 |
-| `discount/agency-freelancer-{1,2}.png` | Discount Programs tab 3 sticky image column — **placeholders**, 480×1640 |
+| `discount/student-academic-{1,2}.png` | Discount Programs tab 1 sticky image column (see C.20) — **placeholders** |
+| `discount/startup-{1,2}.png` | Discount Programs tab 2 sticky image column — **placeholders** |
+| `discount/agency-freelancer-{1,2}.png` | Discount Programs tab 3 sticky image column — **placeholders** |
 
-The six `discount/` files are **sample placeholders**, not final artwork. They
-are flat colour blocks at the correct dimensions so the layout can be judged.
-Replacing them needs nothing but overwriting the six files at the same paths —
-the CSS references those filenames and nothing else. Spec for the real photos:
-480×1640 JPEG (2× of the 240×820 display box), under 150KB each, subject
-centred vertically because `cover` trims top and bottom on shorter windows.
+The six `discount/` files are **sample placeholders**, not final artwork —
+flat colour blocks sized so the layout could be judged (480×1640, from the
+column's original geometry). Replacing them needs nothing but overwriting the
+six files at the same paths — the CSS references those filenames and nothing
+else, and the display box is `background-size: cover` regardless of the
+source file's exact dimensions.
+
+Spec for the real photos, current geometry (the column's gap to the nav/fold
+was tightened from 96px to 24px per owner request, which made the box taller
+— see C.20): supply at **480×1920 JPEG** (2× of the ~240×960 display box on a
+~1080px-tall window — the box's actual height tracks the viewport, so this is
+a representative size, not exact), under 150KB each, subject centred
+vertically because `cover` trims top and bottom on a shorter window.
 
 ### B.10 Verification checklist
 After building from Parts A/B, confirm:
@@ -8746,15 +8755,17 @@ real. Three shapes, depending on what the element already looks like —
     silently kills `position: sticky` with no error and no visible cause.
   - `grid-row: 1 / span 2`, **not** `1 / -1`. There are no explicit rows
     here, so `-1` resolves back to line 1 and spans nothing.
-  - Geometry is derived, and the two numbers must be recomputed together:
-    `height: calc(100vh - 267px)` comes from the images starting level with
-    the panel heading, which sits 243px down the screen when the section
-    lands under the nav (75 nav + 2 section border + 102 tab bar + 64 panel
-    padding), leaving 24px clear of the fold. `top: 171px` then makes the two
-    gaps the owner asked to match equal at 96px each: nav-bottom to image-top
-    and image-bottom to the fold. Centring the height in the viewport instead
-    was tried and rejected — that measures the top gap from the top of the
-    *screen*, so the nav ate most of it.
+  - Geometry is derived from one gap value `G` via
+    `top = navHeight + G` and `height = 100vh - navHeight - 2G`
+    (`navHeight` is 75px) — this makes the gap above (nav-bottom to
+    image-top) equal the gap below (image-bottom to the fold) once the
+    column freezes. Centring the height in the viewport instead was tried
+    and rejected early on — that measures the top gap from the top of the
+    *screen*, so the nav ate most of it and the bottom gap looked twice as
+    large. `G` started at 96px, then was tightened to **24px** (matching the
+    site's own `--gutter`) per owner request — currently `top: 99px`,
+    `height: calc(100vh - 123px)`. Recompute both numbers together from `G`
+    and `navHeight` if either the gap or the nav's height ever changes.
   - Both images of a pair sit **dead level**. A 60px stagger on the second
     was tried and read as two different heights. Don't reintroduce it.
   - The six image files are **placeholders** — see B.9 for the spec and the
@@ -8927,13 +8938,14 @@ real. Three shapes, depending on what the element already looks like —
   owner's measured ceiling for a box at this width — treat 90 as the budget.
   See C.20.
 - **discount-programs: the six sticky-column images are placeholders.** Flat
-  colour blocks at the correct 480×1640 dimensions, supplied by the owner so
-  the layout could be judged. Replacing them means overwriting the six files
-  in `assets/img/discount/` at the same paths — nothing in the CSS or markup
-  changes. Real-photo spec is in B.9; the short version is that the display
-  box is roughly 1:3, so the images need a single dominant vertical subject
-  and the subject centred vertically, because `cover` trims top and bottom on
-  shorter windows.
+  colour blocks (480×1640, sized for the column's ORIGINAL, taller-gap
+  geometry — since they're solid colour the mismatch with the current
+  geometry doesn't show). Replacing them means overwriting the six files in
+  `assets/img/discount/` at the same paths — nothing in the CSS or markup
+  changes. Real-photo spec is in B.9, current size 480×1920; the short
+  version is that the display box is a narrow vertical strip, so the images
+  need a single dominant vertical subject, centred vertically, because
+  `cover` trims top and bottom on a shorter window.
 - **discount-programs: the "Claim Your Discount" button points at
   `https://hub.serversalad.com`** on all three panels. That destination was
   an assumption when the button was built, not something the owner specified
