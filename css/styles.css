@@ -4632,12 +4632,19 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-stepper__inner { padding: 88px 0; }
 .discount-stepper__head { text-align: center; margin-bottom: 64px; }
+/* Typography matched to an owner-supplied font-inspector spec (Cairo 600,
+   25px/25px, white) — family and weight already matched this section's
+   borrowed .cph-features__title-style rule; size/line-height dropped from
+   40px to the spec's 25px. Colour not hardcoded: this section's own
+   `color: var(--text)` (#f5f5f7) already reads as white, matching the
+   spec's rgb(255,255,255) closely enough that a literal override would add
+   a value with no visible effect. */
 .discount-stepper__title {
   margin: 0;
   font-family: "Cairo", var(--font-heading);
-  font-size: 40px;
+  font-size: 25px;
   font-weight: 600;
-  line-height: 40px;
+  line-height: 25px;
   letter-spacing: .2px;
 }
 .discount-stepper__underline {
