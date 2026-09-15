@@ -193,6 +193,35 @@
       .catch(function (err) { console.error("Could not load shared footer:", err); });
   }
 
+  /* ===== Back to top button (every page) =====
+     Created and appended here rather than added to each page's HTML — see
+     .back-to-top in css/styles.css for the full reasoning. This one function
+     covers every current page (and any future one) with no per-page markup.
+
+     Guarded by nothing: unlike the header/footer mounts and the discount-tabs
+     block below, there's no matching element to check for, since this button
+     doesn't exist in any page's HTML at all — it's created unconditionally
+     for every page that loads this script. */
+  var backToTop = document.createElement("button");
+  backToTop.type = "button";
+  backToTop.className = "back-to-top";
+  backToTop.setAttribute("aria-label", "Back to top");
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(backToTop);
+
+  var BACK_TO_TOP_THRESHOLD = 400; // px scrolled before the button appears
+  var updateBackToTop = function () {
+    backToTop.classList.toggle("is-visible", window.scrollY > BACK_TO_TOP_THRESHOLD);
+  };
+  window.addEventListener("scroll", updateBackToTop, { passive: true });
+  updateBackToTop(); // covers a page that loads already scrolled (e.g. a mid-page #hash)
+
+  backToTop.addEventListener("click", function () {
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
   /* ===== Live pricing + Monthly/Annually toggle =====
      Fetches real MONTHLY prices from api/pricing.php (the one server-side piece
      in this project — see README "Pricing API"). Only touches elements that

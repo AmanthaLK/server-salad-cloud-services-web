@@ -4553,6 +4553,14 @@ button { font: inherit; cursor: pointer; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px 14px; /* tightened from 20/24 per owner — the boxes read as one set, not six separate cards */
   margin-top: 10px; /* tight to the "Eligibility Criteria and Conditions" caption above — see its rule */
+  /* Per owner: every box is the same size, not just the ones sharing a row.
+     Auto rows default to max-content, which sizes EACH ROW to its own tallest
+     card — so a row of short criteria came out shorter than a row of long
+     ones. 1fr in a grid with no fixed height resolves every row to the height
+     of the tallest across the whole grid, which is what makes all 32 boxes
+     match. The cards stretch to fill their row by default; the vertical
+     centring of the text inside them is on the card itself below. */
+  grid-auto-rows: 1fr;
 }
 /* Per owner: panel 1's (Student & Academic) grid starts flush left and
    ends at the horizontal midpoint of the Startup tab above it; panel 3's
@@ -4576,11 +4584,19 @@ button { font: inherit; cursor: pointer; }
 }
 .discount-tabs__criteria-card {
   padding: 22px;
-  /* Per owner: box text is centred. Set here rather than on the panel, because
-     the panels each align their own body differently (left/centre/right, see
-     below) and the criteria grid is a SIBLING of .discount-tabs__panel-body,
-     not a child — so it never inherited those alignments and all three tabs'
-     boxes centre identically from this one rule. */
+  /* Per owner: box text is centred both ways. text-align handles the
+     horizontal; the flex centring handles the vertical, which matters now
+     that every box is the same height (see grid-auto-rows above) — without
+     it a two-line criterion sat at the top of a box sized for a four-line
+     one, leaving an obvious gap underneath.
+
+     text-align is set here rather than on the panel because the criteria grid
+     is a SIBLING of .discount-tabs__panel-body, not a child, so it never
+     inherited the panel's own alignment — all three tabs' boxes centre
+     identically from this one rule. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   background: #fff;
   border: 1px solid #e6e6ec;
@@ -4766,6 +4782,57 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 760px) {
   .discount-tabs__tab { padding: 20px 16px; }
   .discount-tabs__label { font-size: 22px; line-height: 26px; }
+}
+
+/* ===== Back to top button (every page) =====
+   Created and appended by js/main.js rather than added to each page's HTML
+   -- same "one shared piece of chrome, every page" goal as the header/footer
+   partials, but simpler: there's no markup to fetch, just one element to
+   create, so a plain DOM insertion covers every current page and any future
+   one without an HTML edit.
+
+   Fixed bottom-right, hidden until the visitor has scrolled roughly one
+   viewport down (see the threshold in js/main.js), then fades/slides in.
+   z-index 40: below the sticky nav (50) and its mega menus (60), since
+   those already occupy the top of the screen and this sits at the bottom,
+   but still above ordinary page content. */
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .22);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s, background .15s ease;
+}
+.back-to-top:hover { background: #e06f16; }
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top svg { width: 20px; height: 20px; }
+
+@media (max-width: 600px) {
+  .back-to-top { right: 16px; bottom: 16px; width: 40px; height: 40px; }
+}
+
+/* Site-wide convention: motion is opt-out. The scroll-to-top itself is also
+   instant instead of smooth when this is set — see js/main.js. */
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top { transition: opacity .15s ease, visibility .15s ease; transform: none; }
 }
 ```
 
@@ -4965,6 +5032,35 @@ button { font: inherit; cursor: pointer; }
       .then(function (html) { footerMount.outerHTML = html; })
       .catch(function (err) { console.error("Could not load shared footer:", err); });
   }
+
+  /* ===== Back to top button (every page) =====
+     Created and appended here rather than added to each page's HTML — see
+     .back-to-top in css/styles.css for the full reasoning. This one function
+     covers every current page (and any future one) with no per-page markup.
+
+     Guarded by nothing: unlike the header/footer mounts and the discount-tabs
+     block below, there's no matching element to check for, since this button
+     doesn't exist in any page's HTML at all — it's created unconditionally
+     for every page that loads this script. */
+  var backToTop = document.createElement("button");
+  backToTop.type = "button";
+  backToTop.className = "back-to-top";
+  backToTop.setAttribute("aria-label", "Back to top");
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(backToTop);
+
+  var BACK_TO_TOP_THRESHOLD = 400; // px scrolled before the button appears
+  var updateBackToTop = function () {
+    backToTop.classList.toggle("is-visible", window.scrollY > BACK_TO_TOP_THRESHOLD);
+  };
+  window.addEventListener("scroll", updateBackToTop, { passive: true });
+  updateBackToTop(); // covers a page that loads already scrolled (e.g. a mid-page #hash)
+
+  backToTop.addEventListener("click", function () {
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
 
   /* ===== Live pricing + Monthly/Annually toggle =====
      Fetches real MONTHLY prices from api/pricing.php (the one server-side piece
@@ -8678,6 +8774,31 @@ real. Three shapes, depending on what the element already looks like —
   in `js/main.js`, and the three JPEGs are all gone. ⛔ **Do not re-add** — a
   faint wash behind everything is not the same idea as the sticky image
   columns above, and it was explicitly rejected.
+
+### C.21 Back to top button (every page)
+- **Created and appended by `js/main.js`, not markup in any page's HTML.**
+  Unlike the header/footer (real content fetched from `partials/*.html`), this
+  button has no content to fetch — it's the same handful of DOM nodes on every
+  page — so a plain `document.createElement` + `appendChild` covers every
+  current page, and any future one, without an HTML edit. It has no matching
+  mount-point element to guard on, unlike the header/footer/discount-tabs
+  blocks elsewhere in the file: it's created unconditionally for every page
+  that loads the script.
+- **Fixed bottom-right, hidden until scrolled past 400px**, then fades and
+  slides in (`.is-visible`). `z-index: 40` — below the sticky nav (`50`) and
+  its mega menus (`60`), which occupy the top of the screen, but above
+  ordinary content; the two never actually overlap since this sits at the
+  bottom, but the ordering is stated explicitly rather than left to chance.
+- **Click scrolls to the top via `window.scrollTo({ top: 0, behavior: ... })`**,
+  `"smooth"` normally, `"auto"` (instant) under `prefers-reduced-motion:
+  reduce` — checked at click time, not once at load, so a setting changed
+  mid-session is still respected on the next click.
+- **Verification note**: headless Chrome cannot run `behavior: "smooth"` —
+  same frame-less limitation as the animation-timing entry in Part E — so its
+  scroll-to-top was confirmed two ways instead: the `"auto"`/reduced-motion
+  path was checked directly (jumps to 0 immediately, confirming the click
+  handler and `scrollTo` call are wired correctly), and the smooth path was
+  left to visual judgement.
 
 ## Part D — Open Items (known inconsistencies to revisit)
 - **cpanel-hosting "Why Server Salad" is single-region by design** — see C.12.
