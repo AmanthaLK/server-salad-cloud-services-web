@@ -638,4 +638,31 @@
     applyDiscountHash();
     window.addEventListener("hashchange", applyDiscountHash);
   }
+
+  /* ===== discount-programs/index.html: "Claim Your Discount" CTAs =====
+     Each tab panel's CTA now points at #how-to-claim (the application
+     stepper section further down the page) instead of the external hub —
+     handled here, not left to the browser's native anchor jump, because
+     .nav is `position: sticky` at the top (see css/styles.css): a plain
+     jump lands the section right under it, with its heading hidden behind
+     the bar. Scrolling by hand subtracts the nav's own height. */
+  var discountCtas = document.querySelectorAll(".discount-tabs__cta");
+  var howToClaimSection = document.getElementById("how-to-claim");
+  if (discountCtas.length && howToClaimSection) {
+    discountCtas.forEach(function (cta) {
+      cta.addEventListener("click", function (e) {
+        e.preventDefault();
+        // Queried here, not cached at setup time: .nav lives in the header
+        // partial, injected asynchronously (see fetch above) after this
+        // script's top-level code already ran, so an earlier lookup would
+        // have found nothing and silently zeroed the offset below.
+        var navEl = document.querySelector(".nav");
+        var navHeight = navEl ? navEl.getBoundingClientRect().height : 0;
+        var top = howToClaimSection.getBoundingClientRect().top + window.scrollY - navHeight;
+        var reduceMotion = window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({ top: top, behavior: reduceMotion ? "auto" : "smooth" });
+      });
+    });
+  }
 })();
