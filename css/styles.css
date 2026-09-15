@@ -4731,8 +4731,15 @@ button { font: inherit; cursor: pointer; }
   opacity: 0;
   transform: scale(.4);
 }
+/* Two animations on the same element: the one-shot pop plays first, then
+   (once the visitor has seen it and .6s have passed) an infinite pulse
+   takes over — later in the list wins on the property they share
+   (box-shadow), so the pulse only starts driving the glow ring once the
+   pop has already handed off, rather than the two fighting over it. */
 .discount-stepper__step.is-revealed .discount-stepper__circle {
-  animation: discount-stepper-pop .6s cubic-bezier(.34, 1.56, .64, 1) forwards;
+  animation:
+    discount-stepper-pop .6s cubic-bezier(.34, 1.56, .64, 1) forwards,
+    discount-stepper-pulse 2.4s ease-in-out .6s infinite;
 }
 @keyframes discount-stepper-pop {
   0% {
@@ -4753,6 +4760,12 @@ button { font: inherit; cursor: pointer; }
     border-color: rgba(255, 255, 255, .4);
     box-shadow: 0 0 0 0 rgba(245, 126, 32, 0);
   }
+}
+/* Slow "radar ping" ring that loops forever once a step has revealed —
+   the continuous motion the entrance animation alone didn't have. */
+@keyframes discount-stepper-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 126, 32, .35); }
+  50% { box-shadow: 0 0 0 9px rgba(245, 126, 32, 0); }
 }
 
 .discount-stepper__step-title,
