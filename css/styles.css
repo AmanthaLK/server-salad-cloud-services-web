@@ -4712,10 +4712,10 @@ button { font: inherit; cursor: pointer; }
 .discount-stepper__step-desc {
   margin: 0;
   font-family: "Manrope", var(--font-body);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 23px;
-  color: rgba(245, 245, 247, .72);
+  line-height: 21px;
+  color: rgba(255, 255, 255, .78);
 }
 
 @media (max-width: 560px) {
