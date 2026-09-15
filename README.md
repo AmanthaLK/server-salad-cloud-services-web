@@ -4738,21 +4738,21 @@ button { font: inherit; cursor: pointer; }
      and rejected by the owner — it read as two different heights rather than
      as a deliberate offset. Don't reintroduce it. */
 
-  /* SAMPLE IMAGES — placeholders. Display box is 240px wide by
-     calc(100vh - 123px) tall (roughly 240x900-960 on a typical desktop
-     window; taller on a taller window, since the column's height tracks the
-     viewport — see the geometry comment above). Supply real photos at
-     480x1920 (2x, for a ~1080px-tall window) — `background-size: cover`
-     crops any extra height on a shorter window and upscales slightly (still
-     cropping to fit the width) on a taller one, so exact height isn't
-     critical. Swap these three pairs for the real files; nothing else needs
-     to change. */
-  #discount-panel-1 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/student-academic-1.png"); }
-  #discount-panel-1 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/student-academic-2.png"); }
-  #discount-panel-2 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/startup-1.png"); }
-  #discount-panel-2 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/startup-2.png"); }
-  #discount-panel-3 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/agency-freelancer-1.png"); }
-  #discount-panel-3 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/agency-freelancer-2.png"); }
+  /* SAMPLE IMAGES — placeholders (flat colour blocks) at the current spec:
+     480x1920 JPEG, shown in a 240px-wide box that's calc(100vh - 123px) tall
+     (roughly 240x900-960 on a typical desktop window; taller on a taller
+     window, since the column's height tracks the viewport — see the
+     geometry comment above). `background-size: cover` crops any extra
+     height on a shorter window and upscales slightly (still cropping to fit
+     the width) on a taller one, so exact height isn't critical. Swap these
+     three pairs for the real photos at the same six filenames; nothing else
+     needs to change. */
+  #discount-panel-1 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/student-academic-1.jpg"); }
+  #discount-panel-1 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/student-academic-2.jpg"); }
+  #discount-panel-2 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/startup-1.jpg"); }
+  #discount-panel-2 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/startup-2.jpg"); }
+  #discount-panel-3 .discount-tabs__aside-img--a { background-image: url("../assets/img/discount/agency-freelancer-1.jpg"); }
+  #discount-panel-3 .discount-tabs__aside-img--b { background-image: url("../assets/img/discount/agency-freelancer-2.jpg"); }
 }
 
 @media (max-width: 860px) {
@@ -5911,7 +5911,7 @@ Bare fragment, mounted into `<div id="site-footer"></div>` before the closing
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=390">
 </head>
 <body>
 
@@ -6367,7 +6367,7 @@ mounts, folder-with-`index.html` so the URL is
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=390">
 </head>
 <body>
 
@@ -7349,7 +7349,7 @@ geometry).
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=389">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=390">
 </head>
 <body>
 
@@ -7776,16 +7776,20 @@ SVG file to change colour, change the CSS custom property or the class's
 | `workflow/sitepro-ai-builder.svg` | "Site.pro AI Builder" |
 | `workflow/sitejet-ai-builder.svg` | "Sitejet Builder Suite" |
 | `workflow/temporary-preview-url.svg` | "Temporary Preview URLs" |
-| `discount/student-academic-{1,2}.png` | Discount Programs tab 1 sticky image column (see C.20) — **placeholders** |
-| `discount/startup-{1,2}.png` | Discount Programs tab 2 sticky image column — **placeholders** |
-| `discount/agency-freelancer-{1,2}.png` | Discount Programs tab 3 sticky image column — **placeholders** |
+| `discount/student-academic-{1,2}.jpg` | Discount Programs tab 1 sticky image column (see C.20) — **placeholders** |
+| `discount/startup-{1,2}.jpg` | Discount Programs tab 2 sticky image column — **placeholders** |
+| `discount/agency-freelancer-{1,2}.jpg` | Discount Programs tab 3 sticky image column — **placeholders** |
 
 The six `discount/` files are **sample placeholders**, not final artwork —
-flat colour blocks sized so the layout could be judged (480×1640, from the
-column's original geometry). Replacing them needs nothing but overwriting the
-six files at the same paths — the CSS references those filenames and nothing
-else, and the display box is `background-size: cover` regardless of the
-source file's exact dimensions.
+flat colour blocks at the current 480×1920 spec below, so the layout can be
+judged. Replacing them needs nothing but overwriting the six files at the
+same paths — the CSS references those filenames and nothing else, and the
+display box is `background-size: cover` regardless of the source file's
+exact dimensions. This is the SECOND placeholder set — the owner supplied a
+first set at 480×1640 (the column's original, wider-gap geometry), which was
+replaced wholesale once the gap was tightened and the box grew taller (see
+C.20); the file format also moved from PNG to JPEG in the same swap,
+matching the spec below.
 
 Spec for the real photos, current geometry (the column's gap to the nav/fold
 was tightened from 96px to 24px per owner request, which made the box taller
@@ -8938,14 +8942,15 @@ real. Three shapes, depending on what the element already looks like —
   owner's measured ceiling for a box at this width — treat 90 as the budget.
   See C.20.
 - **discount-programs: the six sticky-column images are placeholders.** Flat
-  colour blocks (480×1640, sized for the column's ORIGINAL, taller-gap
-  geometry — since they're solid colour the mismatch with the current
-  geometry doesn't show). Replacing them means overwriting the six files in
+  colour blocks, currently at the correct 480×1920 spec (see B.9 — this is
+  the second placeholder set; the first, at the column's original 480×1640
+  geometry, was replaced wholesale after the gap was tightened). Replacing
+  them for real photos means overwriting the six `.jpg` files in
   `assets/img/discount/` at the same paths — nothing in the CSS or markup
-  changes. Real-photo spec is in B.9, current size 480×1920; the short
-  version is that the display box is a narrow vertical strip, so the images
-  need a single dominant vertical subject, centred vertically, because
-  `cover` trims top and bottom on a shorter window.
+  changes. The short version of the B.9 spec: the display box is a narrow
+  vertical strip, so the images need a single dominant vertical subject,
+  centred vertically, because `cover` trims top and bottom on a shorter
+  window.
 - **discount-programs: the "Claim Your Discount" button points at
   `https://hub.serversalad.com`** on all three panels. That destination was
   an assumption when the button was built, not something the owner specified
