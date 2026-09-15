@@ -7573,100 +7573,6 @@ geometry).
         </div>
       </div>
     </section>
-
-    <!-- ===== Features =====
-         Duplicated verbatim from cpanel-hosting/index.html's .cph-features
-         section (same classes, markup and copy) per owner request — same
-         starting-point approach already used for the hero above (see its
-         comment). .cph-features/.cph-feature are plain, unscoped classes
-         with their own self-contained CSS (dark gradient band, responsive
-         breakpoints included), so reusing them here needs no CSS changes at
-         all. Copy still describes cPanel Hosting specifically ("LiteSpeed
-         Web Server", "WP Toolkit", etc.) and will need real Discount
-         Programs feature copy once the owner supplies it — see Part D. -->
-    <section class="cph-features">
-      <div class="container cph-features__inner">
-        <div class="cph-features__head">
-          <h2 class="cph-features__title">Loaded Web Hosting Features</h2>
-          <p class="cph-features__subtitle">High-performance, reliable, and secure web hosting built on enterprise cloud infrastructure.</p>
-          <div class="cph-features__underline" aria-hidden="true"></div>
-        </div>
-
-        <div class="cph-features__grid">
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/simple-intuitive.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Simple and Intuitive</h3>
-            <p class="cph-feature__desc">User-friendly cPanel dashboard makes managing your website, domains, and files effortless with a clean, streamlined interface.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/lightning-fast-hosting.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Lightning-Fast Hosting</h3>
-            <p class="cph-feature__desc">LiteSpeed Web Server with server-level caching delivers peak page loading speeds and ultra-responsive performance for your visitors.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/high-base-resources.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">High Base Resources</h3>
-            <p class="cph-feature__desc">Powered by multi-core CPUs and generous memory allocation to ensure your web applications run smoothly without resource throttling.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/wordpress-optimized.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">WordPress Optimized</h3>
-            <p class="cph-feature__desc">WP Toolkit simplifies staging, cloning, and automated security updates to maintain your WordPress sites at peak performance.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/multiple-php-versions.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Multiple PHP Versions</h3>
-            <p class="cph-feature__desc">Easily customize your execution stack by selecting exact PHP versions and required extension modules for your application.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/professional-email-included.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Professional Email Included</h3>
-            <p class="cph-feature__desc">Create custom domain email accounts backed by automated spam filtering to keep your business communications secure.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/free-daily-backups.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Free Daily Backups</h3>
-            <p class="cph-feature__desc">Automated JetBackup technology creates regular account snapshots, protecting your data with instant 1-click restoration.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/free-ssl-certificates.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Free SSL Certificates</h3>
-            <p class="cph-feature__desc">Automated SSL certificates auto-renew for free across all your domains, ensuring complete HTTPS security and traffic encryption.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/one-click-applications.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">One-Click Applications</h3>
-            <p class="cph-feature__desc">Softaculous installer allows you to deploy 300+ web applications instantly without manual setup or complex technical configuration.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/free-site-builder.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Free Site Builder</h3>
-            <p class="cph-feature__desc">Build responsive websites visually using Sitejet Builder, integrated directly into cPanel with zero coding required.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/seamless-migration.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">Seamless Migration</h3>
-            <p class="cph-feature__desc">Our expert migration team handles transferring your existing cPanel account to our platform with zero downtime or data loss.</p>
-          </div>
-
-          <div class="cph-feature">
-            <span class="cph-feature__icon" style="--feature-icon: url(/server-salad-cloud-services-web/assets/img/features/expert-support.svg)" aria-hidden="true"></span>
-            <h3 class="cph-feature__title">24/7 Expert Support</h3>
-            <p class="cph-feature__desc">Our technical team is available 24/7 via tickets, email, and WhatsApp to assist with setup, troubleshooting, and optimization.</p>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js so
@@ -8653,21 +8559,6 @@ real. Three shapes, depending on what the element already looks like —
   instead of leaving an empty, lopsided second column where the screenshot
   would have gone — don't reintroduce a visual without also removing that
   modifier class.
-- **Features section is duplicated verbatim from cpanel-hosting's
-  `.cph-features` section** (see B.6) — same classes, markup and copy,
-  same reuse-first approach as the hero above. Sits **after the tab
-  switcher, below all three panels** — not between the hero and the tabs,
-  where it was first placed (a guess, matching cpanel-hosting's own section
-  order, that put the page's main content beneath an unrelated block and was
-  corrected on owner feedback). Being a sibling of `.discount-tabs` rather
-  than nested inside it, it's structurally unreachable by anything the tab
-  switch does — confirmed by switching tabs and finding it unchanged.
-  `.cph-features`/`.cph-feature` are plain, unscoped classes with fully
-  self-contained CSS (dark gradient band, responsive breakpoints included),
-  so this needed no CSS changes at all — a markup-only copy-paste. Copy
-  still describes cPanel Hosting specifically ("LiteSpeed Web Server",
-  "WP Toolkit", "300+ web applications") and will need real
-  Discount Programs feature copy once the owner supplies it — see Part D.
 - **Tab switcher** (`.discount-tabs*`, see B.1/B.2): 3 tabs across one
   `.discount-tabs__bar` grid (`role="tablist"`), each with a `data-tab` id,
   a `data-hash` for deep-linking, and full ARIA wiring
@@ -9075,13 +8966,6 @@ real. Three shapes, depending on what the element already looks like —
   ("engineered for tomorrow's builders" / "zero long-term commitments") —
   it's owner-supplied final copy, not a draft, but worth a pass once the
   programs themselves are live to confirm the framing still fits.
-- **discount-programs page's Features section is a verbatim copy of
-  cpanel-hosting's, cPanel-specific copy and all** ("LiteSpeed Web Server",
-  "WP Toolkit", "300+ web applications" — see C.20). It was duplicated as a
-  starting point per owner request, same as the hero; needs its own feature
-  set once the owner decides what belongs here (site-wide perks relevant to
-  all three discount programmes? per-programme content? or drop it if it
-  doesn't add anything the tab panels don't already say).
 - **discount-programs page has no Sustainability/eco section or any
   homepage-style dark band** — currently ends straight from the tab panels
   into the footer, unlike the other two pages which both end with the
@@ -9314,3 +9198,10 @@ real. Three shapes, depending on what the element already looks like —
   unchanged value fixes it, the numbers were never wrong, only the paint was
   stale. `will-change` (forcing the element onto its own compositor layer)
   resolved it without needing the exact browser mechanism identified further.
+- **The cpanel-hosting Features section was duplicated onto Discount
+  Programs, then removed.** Tried as a reuse-first starting point (same idea
+  as the hero, which stayed); the owner asked for its removal shortly after,
+  once first placed between the hero and the tab switcher — before the
+  placement itself was even corrected. Removed wholesale rather than left
+  commented out. Unlike the per-tab background photos entry above, this
+  isn't flagged do-not-re-add — just removed for now.
