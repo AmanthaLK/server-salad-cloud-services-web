@@ -705,39 +705,49 @@
         var r = c.getBoundingClientRect();
         centers.push(r.top + r.height / 2 - listTop);
       });
-      var total = centers[centers.length - 1] - centers[0];
-      if (total <= 0) return;
 
-      // 6% of the loop reserved at each end to fade the dot in/out around
-      // the instant reset from the last circle back to the first, so the
-      // jump itself is invisible; a further 3% at each intermediate circle
-      // holds the dot there briefly (a little "beat" on arrival) instead of
-      // sailing straight through; what's left is split across the real
-      // segments in proportion to their measured distance. Per-keyframe
-      // easing (an ease-in-out FROM each keyframe to the next, not the
-      // animation's overall easing) makes it glide — slowing into each
-      // circle and accelerating away — rather than moving at the flat,
-      // mechanical constant speed a single linear easing would give.
+      // The dot travels only the CONNECTOR gaps, never the 40px circles
+      // themselves — CIRCLE_CLEARANCE (radius + the connector's own 6px
+      // margin, see .discount-stepper__connector) keeps it off the numbers
+      // entirely, starting/ending right where the dotted line itself does.
+      var CIRCLE_CLEARANCE = 26;
       var EASE = "cubic-bezier(.61, 0, .36, 1)";
-      var startPad = .06, endPad = .06, holdPad = .03;
-      var stopCount = centers.length - 2; // intermediate circles only
-      var travelFrac = 1 - startPad - endPad - holdPad * stopCount;
-      var keyframes = [
-        { offset: 0, top: centers[0] + "px", opacity: 0, easing: EASE },
-        { offset: startPad, top: centers[0] + "px", opacity: 1, easing: EASE }
-      ];
-      var acc = startPad;
-      for (var i = 1; i < centers.length; i++) {
-        acc += travelFrac * ((centers[i] - centers[i - 1]) / total);
-        var isLast = i === centers.length - 1;
-        var arriveOffset = isLast ? 1 - endPad : acc;
-        keyframes.push({ offset: arriveOffset, top: centers[i] + "px", opacity: 1, easing: EASE });
-        if (!isLast) {
-          acc += holdPad;
-          keyframes.push({ offset: acc, top: centers[i] + "px", opacity: 1, easing: EASE });
-        }
+      var segments = [];
+      for (var i = 0; i < centers.length - 1; i++) {
+        var segStart = centers[i] + CIRCLE_CLEARANCE;
+        var segEnd = centers[i + 1] - CIRCLE_CLEARANCE;
+        if (segEnd > segStart) segments.push({ start: segStart, end: segEnd });
       }
-      keyframes.push({ offset: 1, top: centers[centers.length - 1] + "px", opacity: 0 });
+      if (!segments.length) return;
+
+      var totalLen = 0;
+      segments.forEach(function (s) { totalLen += s.end - s.start; });
+
+      // 90% of the loop is spent on the segments themselves (each fading
+      // in, travelling, then fading out — proportional to its own share of
+      // the total distance so every gap is crossed at the same speed); the
+      // remaining 10% is the invisible reset back to the first segment's
+      // start, so the loop point is never seen. Per-keyframe easing (an
+      // ease-in-out FROM each keyframe to the next) makes each crossing
+      // glide rather than move at a flat, mechanical constant speed.
+      var travelBudget = .9;
+      var keyframes = [];
+      var acc = 0;
+      segments.forEach(function (seg, i) {
+        var segFrac = travelBudget * ((seg.end - seg.start) / totalLen);
+        var fadeIn = segFrac * .18, fadeOut = segFrac * .18;
+        var travel = segFrac - fadeIn - fadeOut;
+        var isLastSegment = i === segments.length - 1;
+
+        keyframes.push({ offset: acc, top: seg.start + "px", opacity: 0, easing: EASE });
+        acc += fadeIn;
+        keyframes.push({ offset: acc, top: seg.start + "px", opacity: 1, easing: EASE });
+        acc += travel;
+        keyframes.push({ offset: acc, top: seg.end + "px", opacity: 1, easing: EASE });
+        acc += fadeOut;
+        keyframes.push({ offset: acc, top: seg.end + "px", opacity: 0, easing: isLastSegment ? undefined : EASE });
+      });
+      keyframes.push({ offset: 1, top: segments[0].start + "px", opacity: 0 });
 
       if (stepperSignalAnim) stepperSignalAnim.cancel();
       stepperSignalAnim = stepperSignalEl.animate(keyframes, {
