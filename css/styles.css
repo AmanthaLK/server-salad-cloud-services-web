@@ -2352,6 +2352,12 @@ button { font: inherit; cursor: pointer; }
 .cph-hero__inner--centered .cph-hero__underline { margin-left: auto; margin-right: auto; }
 .cph-hero__inner--centered .cph-hero__desc { margin-left: auto; margin-right: auto; }
 
+/* Same single-column collapse as --centered (no product-screenshot visual
+   to fill a second column), but left-aligned rather than centred — used by
+   about/index.html. */
+.cph-hero__inner--left { grid-template-columns: minmax(0, 1fr); }
+.cph-hero__inner--left .cph-hero__content { max-width: 700px; }
+
 @media (max-width: 980px) {
   .cph-hero__inner { grid-template-columns: 1fr; padding: 72px 0; }
   .cph-hero__visual { order: -1; }
