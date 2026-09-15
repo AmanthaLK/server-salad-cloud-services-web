@@ -665,4 +665,30 @@
       });
     });
   }
+
+  /* ===== discount-programs/index.html: stepper scroll-reveal =====
+     Adds .is-revealed to each .discount-stepper__step as it scrolls into
+     view (see the pop/glow/draw animation in css/styles.css) — one shot per
+     step, unobserved once triggered, so 1, 2, 3 animate in as the visitor
+     reaches each one instead of all firing together on load. Falls back to
+     revealing everything immediately when IntersectionObserver isn't
+     available, so the content is never stuck invisible. */
+  var stepperSteps = document.querySelectorAll(".discount-stepper__step");
+  if (stepperSteps.length) {
+    if ("IntersectionObserver" in window) {
+      var stepperObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-revealed");
+            stepperObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: .35 }
+      );
+      stepperSteps.forEach(function (step) { stepperObserver.observe(step); });
+    } else {
+      stepperSteps.forEach(function (step) { step.classList.add("is-revealed"); });
+    }
+  }
 })();

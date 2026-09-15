@@ -4718,6 +4718,76 @@ button { font: inherit; cursor: pointer; }
   color: rgba(255, 255, 255, .78);
 }
 
+/* ===== Scroll-reveal for the numbered circles =====
+   js/main.js adds .is-revealed to each .discount-stepper__step as it
+   scrolls into view (IntersectionObserver, one shot per step) — so 1, 2, 3
+   pop in one after another as the visitor scrolls, not all at once on
+   load. The circle overshoots past full size with a brief orange glow
+   ring, then settles back to its normal white-bordered resting look
+   (nothing about the final state changes, only how it arrives); the title
+   and description fade/slide in just after, and the dotted connector
+   "draws" downward last so it reads as pointing at the next number. */
+.discount-stepper__circle {
+  opacity: 0;
+  transform: scale(.4);
+}
+.discount-stepper__step.is-revealed .discount-stepper__circle {
+  animation: discount-stepper-pop .6s cubic-bezier(.34, 1.56, .64, 1) forwards;
+}
+@keyframes discount-stepper-pop {
+  0% {
+    opacity: 0;
+    transform: scale(.4);
+    border-color: rgba(255, 255, 255, .4);
+    box-shadow: 0 0 0 0 rgba(245, 126, 32, 0);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.15);
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 10px rgba(245, 126, 32, .22);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    border-color: rgba(255, 255, 255, .4);
+    box-shadow: 0 0 0 0 rgba(245, 126, 32, 0);
+  }
+}
+
+.discount-stepper__step-title,
+.discount-stepper__step-desc {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .5s ease .15s, transform .5s ease .15s;
+}
+.discount-stepper__step.is-revealed .discount-stepper__step-title,
+.discount-stepper__step.is-revealed .discount-stepper__step-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.discount-stepper__connector {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .45s ease .35s;
+}
+.discount-stepper__step.is-revealed .discount-stepper__connector {
+  transform: scaleY(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discount-stepper__circle,
+  .discount-stepper__step-title,
+  .discount-stepper__step-desc,
+  .discount-stepper__connector {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+}
+
 @media (max-width: 560px) {
   .discount-stepper__inner { padding: 64px 0; }
 }
