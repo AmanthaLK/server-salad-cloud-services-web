@@ -4656,6 +4656,7 @@ button { font: inherit; cursor: pointer; }
 }
 
 .discount-stepper__list {
+  position: relative;
   list-style: none;
   margin: 0 auto;
   padding: 0;
@@ -4677,8 +4678,6 @@ button { font: inherit; cursor: pointer; }
   align-items: center;
 }
 .discount-stepper__circle {
-  position: relative;
-  overflow: hidden;
   flex: 0 0 auto;
   width: 40px;
   height: 40px;
@@ -4733,8 +4732,15 @@ button { font: inherit; cursor: pointer; }
   opacity: 0;
   transform: scale(.4);
 }
+/* Two animations on the same element: the one-shot pop plays first, then
+   (once the visitor has seen it and .6s have passed) an infinite pulse
+   takes over — later in the list wins on the property they share
+   (box-shadow), so the pulse only starts driving the glow ring once the
+   pop has already handed off, rather than the two fighting over it. */
 .discount-stepper__step.is-revealed .discount-stepper__circle {
-  animation: discount-stepper-pop .6s cubic-bezier(.34, 1.56, .64, 1) forwards;
+  animation:
+    discount-stepper-pop .6s cubic-bezier(.34, 1.56, .64, 1) forwards,
+    discount-stepper-pulse 2.4s ease-in-out .6s infinite;
 }
 @keyframes discount-stepper-pop {
   0% {
@@ -4756,26 +4762,11 @@ button { font: inherit; cursor: pointer; }
     box-shadow: 0 0 0 0 rgba(245, 126, 32, 0);
   }
 }
-/* Continuous motion: a soft diagonal light streak sweeps across the circle
-   and its number forever, like the shine pass on a premium button. The
-   circle clips it to its own round shape (overflow: hidden above); the bar
-   starts and ends off to either side, so nothing shows until it's mid-pass. */
-.discount-stepper__circle::before {
-  content: "";
-  position: absolute;
-  top: -60%;
-  left: -60%;
-  width: 40%;
-  height: 220%;
-  transform: rotate(20deg);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
-}
-.discount-stepper__step.is-revealed .discount-stepper__circle::before {
-  animation: discount-stepper-shimmer 2.6s ease-in-out .6s infinite;
-}
-@keyframes discount-stepper-shimmer {
-  0%, 15% { left: -60%; }
-  85%, 100% { left: 130%; }
+/* Slow "radar ping" ring that loops forever once a step has revealed —
+   the continuous motion the entrance animation alone didn't have. */
+@keyframes discount-stepper-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 126, 32, .35); }
+  50% { box-shadow: 0 0 0 9px rgba(245, 126, 32, 0); }
 }
 
 .discount-stepper__step-title,
@@ -4799,6 +4790,29 @@ button { font: inherit; cursor: pointer; }
   transform: scaleY(1);
 }
 
+/* One glowing dot that flows down the WHOLE list — circle 1 to circle 2,
+   then circle 2 to circle 3, then loops back to the top — rather than each
+   connector looping its own separate dot. Positioned/animated entirely by
+   js/main.js (element.animate() against measured circle centres), since
+   the vertical gap between circles differs per step (a 2-line description
+   vs. a 1-line one) and only JS knows those actual pixel distances; this
+   rule just anchors it horizontally on the marker column's centre line,
+   which .discount-stepper__connector also relies on (see its width: 0 comment). */
+.discount-stepper__signal {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  box-shadow: 0 0 6px 1px rgba(245, 126, 32, .6);
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .discount-stepper__circle,
   .discount-stepper__step-title,
@@ -4809,7 +4823,7 @@ button { font: inherit; cursor: pointer; }
     animation: none;
     transition: none;
   }
-  .discount-stepper__circle::before { display: none; }
+  .discount-stepper__signal { display: none; }
 }
 
 @media (max-width: 560px) {

@@ -666,21 +666,102 @@
     });
   }
 
+  /* ===== discount-programs/index.html: traveling signal dot =====
+     One glowing dot flows down the WHOLE list — circle 1 to circle 2, then
+     circle 2 to circle 3, then loops back to the top — rather than each
+     connector looping its own separate dot (an earlier version of this,
+     replaced per owner feedback: "set it to go from each circle to each
+     circle"). Positions are MEASURED, not assumed evenly spaced: step 1's
+     description wraps to two lines while 2 and 3 wrap to one, so the real
+     gap between circle 1 and 2 differs from the gap between 2 and 3. Each
+     keyframe's offset is scaled by its share of the TOTAL distance, so the
+     Web Animations API interpolates at a constant speed rather than
+     spending equal time on unequal distances (which would visibly speed up
+     or slow down at the shorter gap). Recomputed on resize, since wrapping
+     changes with viewport width. Only started once the last step has
+     scrolled into view (below), so the dot never appears to travel past a
+     circle that hasn't popped in yet. */
+  var stepperList = document.querySelector(".discount-stepper__list");
+  var stepperCircles = document.querySelectorAll(".discount-stepper__circle");
+  var startStepperSignal = function () {};
+  if (stepperList && stepperCircles.length > 1) {
+    var stepperReduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)");
+    var stepperSignalEl = null;
+    var stepperSignalAnim = null;
+
+    startStepperSignal = function () {
+      if (stepperReduceMotion && stepperReduceMotion.matches) return;
+      if (!stepperSignalEl) {
+        stepperSignalEl = document.createElement("span");
+        stepperSignalEl.className = "discount-stepper__signal";
+        stepperSignalEl.setAttribute("aria-hidden", "true");
+        stepperList.appendChild(stepperSignalEl);
+      }
+
+      var listTop = stepperList.getBoundingClientRect().top;
+      var centers = [];
+      stepperCircles.forEach(function (c) {
+        var r = c.getBoundingClientRect();
+        centers.push(r.top + r.height / 2 - listTop);
+      });
+      var total = centers[centers.length - 1] - centers[0];
+      if (total <= 0) return;
+
+      // 6% of the loop reserved at each end to fade the dot in/out around
+      // the instant reset from the last circle back to the first, so the
+      // jump itself is invisible; the remaining 88% is split across the
+      // real segments in proportion to their measured distance.
+      var startPad = .06, endPad = .06, travelFrac = 1 - startPad - endPad;
+      var keyframes = [
+        { offset: 0, top: centers[0] + "px", opacity: 0 },
+        { offset: startPad, top: centers[0] + "px", opacity: 1 }
+      ];
+      var acc = startPad;
+      for (var i = 1; i < centers.length; i++) {
+        acc += travelFrac * ((centers[i] - centers[i - 1]) / total);
+        var isLast = i === centers.length - 1;
+        keyframes.push({
+          offset: isLast ? 1 - endPad : acc,
+          top: centers[i] + "px",
+          opacity: 1
+        });
+      }
+      keyframes.push({ offset: 1, top: centers[centers.length - 1] + "px", opacity: 0 });
+
+      if (stepperSignalAnim) stepperSignalAnim.cancel();
+      stepperSignalAnim = stepperSignalEl.animate(keyframes, {
+        duration: 4500,
+        iterations: Infinity,
+        easing: "linear"
+      });
+    };
+
+    window.addEventListener("resize", function () {
+      if (stepperSignalEl) startStepperSignal();
+    });
+  }
+
   /* ===== discount-programs/index.html: stepper scroll-reveal =====
      Adds .is-revealed to each .discount-stepper__step as it scrolls into
-     view (see the pop/glow/draw animation in css/styles.css) — one shot per
+     view (see the pop/glow animation in css/styles.css) — one shot per
      step, unobserved once triggered, so 1, 2, 3 animate in as the visitor
      reaches each one instead of all firing together on load. Falls back to
      revealing everything immediately when IntersectionObserver isn't
      available, so the content is never stuck invisible. */
   var stepperSteps = document.querySelectorAll(".discount-stepper__step");
   if (stepperSteps.length) {
+    var stepperLastStep = stepperSteps[stepperSteps.length - 1];
+    var revealStepperStep = function (step) {
+      step.classList.add("is-revealed");
+      if (step === stepperLastStep) startStepperSignal();
+    };
     if ("IntersectionObserver" in window) {
       var stepperObserver = new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            entry.target.classList.add("is-revealed");
+            revealStepperStep(entry.target);
             stepperObserver.unobserve(entry.target);
           });
         },
@@ -688,7 +769,7 @@
       );
       stepperSteps.forEach(function (step) { stepperObserver.observe(step); });
     } else {
-      stepperSteps.forEach(function (step) { step.classList.add("is-revealed"); });
+      stepperSteps.forEach(revealStepperStep);
     }
   }
 })();
