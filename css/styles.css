@@ -2352,11 +2352,13 @@ button { font: inherit; cursor: pointer; }
 .cph-hero__inner--centered .cph-hero__underline { margin-left: auto; margin-right: auto; }
 .cph-hero__inner--centered .cph-hero__desc { margin-left: auto; margin-right: auto; }
 
-/* Same single-column collapse as --centered (no product-screenshot visual
-   to fill a second column), but left-aligned rather than centred — used by
-   about/index.html. */
-.cph-hero__inner--left { grid-template-columns: minmax(0, 1fr); }
-.cph-hero__inner--left .cph-hero__content { max-width: 700px; }
+/* Left-aligned rather than centred, and keeps a two-column split (content
+   in the left half, right half left empty — no product-screenshot visual
+   to put there) rather than --centered's single full-width column, so the
+   description reads as a half-page column instead of stretching edge to
+   edge. Used by about/index.html. The base .cph-hero__inner media query
+   still collapses this to one column on narrower screens. */
+.cph-hero__inner--left { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 
 @media (max-width: 980px) {
   .cph-hero__inner { grid-template-columns: 1fr; padding: 72px 0; }
