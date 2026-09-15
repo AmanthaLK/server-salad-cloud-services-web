@@ -24,9 +24,24 @@
        js/main.js so every page shares the same markup from one file. -->
   <div id="site-header"></div>
 
-  <!-- Placeholder page per owner request: just the shared header/footer
-       shell for now, black background + white text, no content yet. -->
-  <main class="about-page"></main>
+  <main class="about-page">
+    <!-- ===== Hero =====
+         Duplicated from discount-programs/index.html's hero (itself
+         duplicated from cpanel-hosting), same .cph-hero* classes, per owner
+         request — copy still says "Discount Programs" and will need real
+         About copy once the owner supplies it. -->
+    <section class="cph-hero">
+      <div class="cph-hero__bg" aria-hidden="true"></div>
+
+      <div class="container cph-hero__inner cph-hero__inner--centered">
+        <div class="cph-hero__content">
+          <h1 class="cph-hero__title">Discount <span class="cph-hero__title-accent">Programs</span></h1>
+          <div class="cph-hero__underline" aria-hidden="true"></div>
+          <p class="cph-hero__desc">High-performance cloud hosting engineered for tomorrow's builders. We offer specialized hosting discounts to lower financial barriers for verified students, early-stage startups, and client-focused web agencies. Deploy on enterprise infrastructure with zero long-term commitments.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- Footer is a shared partial (partials/footer.html), injected by js/main.js so
        every page includes the same markup from one file. See README "Footer" notes. -->
