@@ -4802,15 +4802,34 @@ button { font: inherit; cursor: pointer; }
   position: absolute;
   left: 20px;
   top: 0;
-  width: 6px;
-  height: 6px;
-  margin-left: -3px;
-  margin-top: -3px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
   border-radius: 50%;
-  background: var(--brand-orange);
-  box-shadow: 0 0 6px 1px rgba(245, 126, 32, .6);
+  background: radial-gradient(circle at 35% 30%, #fff 0%, var(--brand-orange) 55%, rgba(245, 126, 32, 0) 78%);
+  /* Layered glow (tight hot core, then two softer, wider halos) reads as a
+     brighter, richer light source than one flat blur would. */
+  box-shadow:
+    0 0 4px 1px rgba(255, 255, 255, .95),
+    0 0 14px 4px rgba(245, 126, 32, .55),
+    0 0 28px 9px rgba(245, 126, 32, .22);
   opacity: 0;
   pointer-events: none;
+}
+/* A short comet tail trailing above the dot, in the direction it just
+   travelled from (it moves downward), so it reads as a streak of light
+   rather than a bare dot hopping between points. */
+.discount-stepper__signal::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 2px;
+  height: 28px;
+  transform: translateX(-50%);
+  background: linear-gradient(to top, rgba(245, 126, 32, .55), rgba(245, 126, 32, 0));
+  border-radius: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

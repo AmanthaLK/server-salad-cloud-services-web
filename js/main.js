@@ -710,30 +710,39 @@
 
       // 6% of the loop reserved at each end to fade the dot in/out around
       // the instant reset from the last circle back to the first, so the
-      // jump itself is invisible; the remaining 88% is split across the
-      // real segments in proportion to their measured distance.
-      var startPad = .06, endPad = .06, travelFrac = 1 - startPad - endPad;
+      // jump itself is invisible; a further 3% at each intermediate circle
+      // holds the dot there briefly (a little "beat" on arrival) instead of
+      // sailing straight through; what's left is split across the real
+      // segments in proportion to their measured distance. Per-keyframe
+      // easing (an ease-in-out FROM each keyframe to the next, not the
+      // animation's overall easing) makes it glide — slowing into each
+      // circle and accelerating away — rather than moving at the flat,
+      // mechanical constant speed a single linear easing would give.
+      var EASE = "cubic-bezier(.61, 0, .36, 1)";
+      var startPad = .06, endPad = .06, holdPad = .03;
+      var stopCount = centers.length - 2; // intermediate circles only
+      var travelFrac = 1 - startPad - endPad - holdPad * stopCount;
       var keyframes = [
-        { offset: 0, top: centers[0] + "px", opacity: 0 },
-        { offset: startPad, top: centers[0] + "px", opacity: 1 }
+        { offset: 0, top: centers[0] + "px", opacity: 0, easing: EASE },
+        { offset: startPad, top: centers[0] + "px", opacity: 1, easing: EASE }
       ];
       var acc = startPad;
       for (var i = 1; i < centers.length; i++) {
         acc += travelFrac * ((centers[i] - centers[i - 1]) / total);
         var isLast = i === centers.length - 1;
-        keyframes.push({
-          offset: isLast ? 1 - endPad : acc,
-          top: centers[i] + "px",
-          opacity: 1
-        });
+        var arriveOffset = isLast ? 1 - endPad : acc;
+        keyframes.push({ offset: arriveOffset, top: centers[i] + "px", opacity: 1, easing: EASE });
+        if (!isLast) {
+          acc += holdPad;
+          keyframes.push({ offset: acc, top: centers[i] + "px", opacity: 1, easing: EASE });
+        }
       }
       keyframes.push({ offset: 1, top: centers[centers.length - 1] + "px", opacity: 0 });
 
       if (stepperSignalAnim) stepperSignalAnim.cancel();
       stepperSignalAnim = stepperSignalEl.animate(keyframes, {
         duration: 2000,
-        iterations: Infinity,
-        easing: "linear"
+        iterations: Infinity
       });
     };
 
