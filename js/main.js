@@ -731,7 +731,7 @@
 
       if (stepperSignalAnim) stepperSignalAnim.cancel();
       stepperSignalAnim = stepperSignalEl.animate(keyframes, {
-        duration: 4500,
+        duration: 2000,
         iterations: Infinity,
         easing: "linear"
       });
