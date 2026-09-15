@@ -4615,3 +4615,102 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .back-to-top { transition: opacity .15s ease, visibility .15s ease; transform: none; }
 }
+
+/* ===== Discount Programs: "How to Claim Your Discount" stepper =====
+   Sits after the tab switcher, page-wide (one instance, not per-tab). Same
+   dark "content band" gradient as .cph-features/.migration for the site's
+   alternating light/dark rhythm — duplicated here rather than shared via
+   class, since this component's structure (a numbered vertical stepper) has
+   nothing else in common with those. */
+.discount-stepper {
+  position: relative;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 12%, rgba(245, 126, 32, .12) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(245, 126, 32, .08) 0, transparent 45%),
+    linear-gradient(135deg, #1b2427 0%, #2b383c 52%, #141b1d 100%);
+}
+.discount-stepper__inner { padding: 88px 0; }
+.discount-stepper__head { text-align: center; margin-bottom: 64px; }
+.discount-stepper__title {
+  margin: 0;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: .2px;
+}
+.discount-stepper__underline {
+  width: 64px;
+  height: 2px;
+  margin: 36px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--brand-orange));
+}
+
+.discount-stepper__list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 640px;
+}
+/* Each step is a 2-column grid: a fixed-width marker (circle + the dotted
+   line down to the next step) and the text body. The connector is a flex
+   child of the marker, not an absolutely-positioned line, so it stretches to
+   exactly the step's own height automatically — no measuring needed, and it
+   still works if a description ever wraps to more lines. */
+.discount-stepper__step {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  column-gap: 24px;
+}
+.discount-stepper__marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.discount-stepper__circle {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255, 255, 255, .4);
+  border-radius: 50%;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+.discount-stepper__connector {
+  flex: 1 1 auto;
+  width: 0;
+  margin: 6px 0;
+  border-left: 2px dotted rgba(255, 255, 255, .3);
+}
+.discount-stepper__body { padding-bottom: 40px; }
+/* Last step has no .discount-stepper__connector in the markup and needs no
+   trailing gap either — nothing follows it. */
+.discount-stepper__step:last-child .discount-stepper__body { padding-bottom: 0; }
+
+.discount-stepper__step-title {
+  margin: 0 0 8px;
+  font-family: "Cairo", var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 26px;
+  color: #fff;
+}
+.discount-stepper__step-desc {
+  margin: 0;
+  font-family: "Manrope", var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 23px;
+  color: rgba(245, 245, 247, .72);
+}
+
+@media (max-width: 560px) {
+  .discount-stepper__inner { padding: 64px 0; }
+}

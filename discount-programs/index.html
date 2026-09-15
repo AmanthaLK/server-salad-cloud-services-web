@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=390">
+  <link rel="stylesheet" href="/server-salad-cloud-services-web/css/styles.css?v=391">
 </head>
 <body>
 
@@ -253,17 +253,55 @@
       </div>
     </section>
 
-    <!-- Title/subtitle/underline duplicated from cpanel-hosting's
-         .cph-features__head (same classes as the section that used to sit
-         here) — the 12-card .cph-features__grid was removed per owner
-         request, this head was kept. -->
-    <section class="cph-features">
-      <div class="container cph-features__inner">
-        <div class="cph-features__head">
-          <h2 class="cph-features__title">Loaded Web Hosting Features</h2>
-          <p class="cph-features__subtitle">High-performance, reliable, and secure web hosting built on enterprise cloud infrastructure.</p>
-          <div class="cph-features__underline" aria-hidden="true"></div>
+    <!-- ===== How to Claim Your Discount (application stepper) =====
+         Replaces the earlier head-only stub (the leftover title/subtitle
+         from the removed cpanel-hosting Features duplicate) per owner
+         request, per an owner-supplied reference: 3-step numbered walkthrough
+         with a dotted connector between steps. New classes (.discount-stepper*)
+         rather than reusing .cph-features* — this isn't a duplicate of
+         anything on cpanel-hosting, so its own name is honest about that.
+         Step titles/descriptions are the owner's exact supplied copy. No
+         subtitle: the reference's paragraph under the heading was guidance
+         about WHERE to place this section, addressed to the site owner, not
+         copy meant for visitors — so nothing was invented in its place. -->
+    <section class="discount-stepper">
+      <div class="container discount-stepper__inner">
+        <div class="discount-stepper__head">
+          <h2 class="discount-stepper__title">How to Claim Your Discount</h2>
+          <div class="discount-stepper__underline" aria-hidden="true"></div>
         </div>
+
+        <ol class="discount-stepper__list">
+          <li class="discount-stepper__step">
+            <div class="discount-stepper__marker" aria-hidden="true">
+              <span class="discount-stepper__circle">1</span>
+              <span class="discount-stepper__connector"></span>
+            </div>
+            <div class="discount-stepper__body">
+              <h3 class="discount-stepper__step-title">Choose Your Plan</h3>
+              <p class="discount-stepper__step-desc">Select any qualifying cPanel shared or cloud hosting package that fits your project requirements.</p>
+            </div>
+          </li>
+          <li class="discount-stepper__step">
+            <div class="discount-stepper__marker" aria-hidden="true">
+              <span class="discount-stepper__circle">2</span>
+              <span class="discount-stepper__connector"></span>
+            </div>
+            <div class="discount-stepper__body">
+              <h3 class="discount-stepper__step-title">Submit Quick Verification</h3>
+              <p class="discount-stepper__step-desc">Upload your student ID, business registration document, or agency portfolio link during checkout.</p>
+            </div>
+          </li>
+          <li class="discount-stepper__step">
+            <div class="discount-stepper__marker" aria-hidden="true">
+              <span class="discount-stepper__circle">3</span>
+            </div>
+            <div class="discount-stepper__body">
+              <h3 class="discount-stepper__step-title">Instant Discount Applied</h3>
+              <p class="discount-stepper__step-desc">Our team verifies your submission within 24 hours and applies your recurring discount to your account.</p>
+            </div>
+          </li>
+        </ol>
       </div>
     </section>
   </main>
