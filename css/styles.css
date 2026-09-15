@@ -4857,3 +4857,13 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 560px) {
   .discount-stepper__inner { padding: 64px 0; }
 }
+
+/* ===== about/index.html: placeholder shell =====
+   Owner asked for an empty page (black background, white text) as a
+   starting point — no sections yet. min-height keeps a short/empty page
+   from collapsing to nothing between the sticky nav and the footer. */
+.about-page {
+  min-height: 60vh;
+  background: #000;
+  color: #fff;
+}
