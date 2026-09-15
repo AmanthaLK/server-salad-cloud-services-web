@@ -4816,6 +4816,23 @@ button { font: inherit; cursor: pointer; }
   visibility: hidden;
   transform: translateY(12px);
   transition: opacity .2s ease, transform .2s ease, visibility .2s, background .15s ease;
+  /* Promotes this button to its own compositing layer. Without it, the button
+     was completely invisible on the Discount Programs page specifically —
+     present in the DOM, correctly opacity:1/visible after scrolling, z-index
+     40 as declared, yet nothing painted there. It was NOT a z-index/stacking
+     precedence bug: bisecting found an inline z-index of 41 (one more than
+     the CSS value) "fixed" it, and so did setting an inline z-index back to
+     the SAME 40 already in this rule — changing nothing about the numbers,
+     only forcing the browser to redo the stacking calculation. That points
+     at a stale paint/compositing bug triggered by toggling opacity/
+     visibility/transform via a class on a fixed element that shares the page
+     with position:sticky descendants elsewhere (this page's
+     .discount-tabs__aside image columns) — the other two pages have no such
+     descendants and never showed the bug. will-change forces the button onto
+     its own layer up front, sidestepping whatever stale recalculation caused
+     it, the same way .discount-tabs__indicator and .hero__logos already use
+     will-change: transform for compositor promotion elsewhere in this file. */
+  will-change: transform, opacity;
 }
 .back-to-top:hover { background: #e06f16; }
 .back-to-top.is-visible {
@@ -8799,6 +8816,23 @@ real. Three shapes, depending on what the element already looks like —
   path was checked directly (jumps to 0 immediately, confirming the click
   handler and `scrollTo` call are wired correctly), and the smooth path was
   left to visual judgement.
+- **`will-change: transform, opacity` is load-bearing, not decoration.**
+  Shortly after shipping, the button was invisible on Discount Programs
+  specifically — present in the DOM, `opacity: 1`/`visibility: visible` after
+  scrolling, `z-index: 40` exactly as declared, yet nothing painted there on
+  that one page. It was **not** a z-index/stacking precedence bug: bisecting
+  found that an inline `z-index: 41` "fixed" it, and so did setting an inline
+  `z-index: 40` — the SAME number already in the rule, changing nothing about
+  the numbers, only forcing the browser to redo the stacking calculation. That
+  points at a stale paint/compositing bug triggered by toggling opacity/
+  visibility/transform via a class on a fixed element that shares the page
+  with `position: sticky` descendants elsewhere — this page's
+  `.discount-tabs__aside` image columns (see C.20); the other two pages have
+  none and never showed it. `will-change` forces the button onto its own
+  compositor layer up front, the same technique `.discount-tabs__indicator`
+  and `.hero__logos` already use for unrelated reasons — sidestepping
+  whatever stale recalculation caused this rather than chasing its exact
+  mechanism further.
 
 ## Part D — Open Items (known inconsistencies to revisit)
 - **cpanel-hosting "Why Server Salad" is single-region by design** — see C.12.
@@ -9136,3 +9170,14 @@ real. Three shapes, depending on what the element already looks like —
   in the markup. On `.is-active` the reveal would replay on every page load —
   and on this page in particular, the owner has repeatedly and correctly read
   that kind of on-load motion as the page flashing.
+- **A fixed-position element can render invisible on one page only, for
+  reasons that have nothing to do with its own z-index.** The back-to-top
+  button (C.21) vanished on Discount Programs specifically, with every
+  computed style exactly as declared (`opacity: 1`, `z-index: 40`) — a stale
+  paint/compositing bug, not a stacking precedence one, triggered by that
+  page's `position: sticky` descendants elsewhere in the tree. Bisecting by
+  setting an inline style to the SAME value already in the CSS — and watching
+  the bug disappear anyway — is what told the two apart: if reapplying an
+  unchanged value fixes it, the numbers were never wrong, only the paint was
+  stale. `will-change` (forcing the element onto its own compositor layer)
+  resolved it without needing the exact browser mechanism identified further.

@@ -4578,6 +4578,23 @@ button { font: inherit; cursor: pointer; }
   visibility: hidden;
   transform: translateY(12px);
   transition: opacity .2s ease, transform .2s ease, visibility .2s, background .15s ease;
+  /* Promotes this button to its own compositing layer. Without it, the button
+     was completely invisible on the Discount Programs page specifically —
+     present in the DOM, correctly opacity:1/visible after scrolling, z-index
+     40 as declared, yet nothing painted there. It was NOT a z-index/stacking
+     precedence bug: bisecting found an inline z-index of 41 (one more than
+     the CSS value) "fixed" it, and so did setting an inline z-index back to
+     the SAME 40 already in this rule — changing nothing about the numbers,
+     only forcing the browser to redo the stacking calculation. That points
+     at a stale paint/compositing bug triggered by toggling opacity/
+     visibility/transform via a class on a fixed element that shares the page
+     with position:sticky descendants elsewhere (this page's
+     .discount-tabs__aside image columns) — the other two pages have no such
+     descendants and never showed the bug. will-change forces the button onto
+     its own layer up front, sidestepping whatever stale recalculation caused
+     it, the same way .discount-tabs__indicator and .hero__logos already use
+     will-change: transform for compositor promotion elsewhere in this file. */
+  will-change: transform, opacity;
 }
 .back-to-top:hover { background: #e06f16; }
 .back-to-top.is-visible {
