@@ -4781,12 +4781,39 @@ button { font: inherit; cursor: pointer; }
 }
 
 .discount-stepper__connector {
+  position: relative;
   transform: scaleY(0);
   transform-origin: top;
   transition: transform .45s ease .35s;
 }
 .discount-stepper__step.is-revealed .discount-stepper__connector {
   transform: scaleY(1);
+}
+/* A second, different continuous motion from the circles' pulse: a small
+   glowing dot travels down the dotted line once it's finished drawing in,
+   reading as a signal passing from this step to the next. Centred on the
+   line via `left`, since the connector itself is a 0-width box whose
+   border-left sits exactly on the marker column's centre line. */
+.discount-stepper__connector::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  box-shadow: 0 0 6px 1px rgba(245, 126, 32, .6);
+  opacity: 0;
+}
+.discount-stepper__step.is-revealed .discount-stepper__connector::after {
+  animation: discount-stepper-travel 2.2s linear .9s infinite;
+}
+@keyframes discount-stepper-travel {
+  0% { top: 0; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4799,6 +4826,7 @@ button { font: inherit; cursor: pointer; }
     animation: none;
     transition: none;
   }
+  .discount-stepper__connector::after { display: none; }
 }
 
 @media (max-width: 560px) {
