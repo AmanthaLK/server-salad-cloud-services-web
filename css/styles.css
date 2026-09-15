@@ -4704,9 +4704,9 @@ button { font: inherit; cursor: pointer; }
 .discount-stepper__step-title {
   margin: 0 0 8px;
   font-family: "Cairo", var(--font-heading);
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 600;
-  line-height: 26px;
+  line-height: 25px;
   color: #fff;
 }
 .discount-stepper__step-desc {
